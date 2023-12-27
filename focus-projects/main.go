@@ -20,10 +20,10 @@ func main() {
 	app := fiber.New()
 
 	app.Get("/projects", getAllProjectsHandler)
-	app.Get("/projects/:id", getProjectHandler)
-	app.Post("/projects", createProjectHandler)
-	app.Put("/projects/:id", updateProjectHandler)
-	app.Delete("/projects/:id", deleteProjectHandler)
+	app.Get("/project/:id", getProjectHandler)
+	app.Post("/project", createProjectHandler)
+	app.Put("/project/:id", updateProjectHandler)
+	app.Delete("/project/:id", deleteProjectHandler)
 
 	log.Fatal(app.Listen(fmt.Sprintf(":%v", port)))
 }
@@ -31,9 +31,7 @@ func main() {
 func getAllProjectsHandler(c *fiber.Ctx) error {
 	projects, err := GetAll()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Cannot retrieve projects",
-		})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Cannot retrieve projects"})
 	}
 
 	fmt.Println(projects)
@@ -44,21 +42,15 @@ func getAllProjectsHandler(c *fiber.Ctx) error {
 func getProjectHandler(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid project ID",
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid project ID"})
 	}
 
 	project, err := Get(id)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error fetching project",
-		})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error fetching project"})
 	}
 	if project == nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": "Project not found",
-		})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Project not found"})
 	}
 	return c.JSON(project)
 }
@@ -66,43 +58,31 @@ func getProjectHandler(c *fiber.Ctx) error {
 func createProjectHandler(c *fiber.Ctx) error {
 	p := new(Project)
 	if err := c.BodyParser(p); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Error parsing request",
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Error parsing request"})
 	}
 
 	id, err := Create(*p)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error creating project",
-		})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error creating project"})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"id": id,
-	})
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"id": id})
 }
 
 func updateProjectHandler(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid project ID",
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid project ID"})
 	}
 
 	p := Project{ID: id}
 	if err := c.BodyParser(&p); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Error parsing request",
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Error parsing request"})
 	}
 
 	err = Update(p)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error updating project",
-		})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error updating project"})
 	}
 
 	return c.SendStatus(fiber.StatusOK)
@@ -111,17 +91,13 @@ func updateProjectHandler(c *fiber.Ctx) error {
 func deleteProjectHandler(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid project ID",
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid project ID"})
 	}
 
 	err = Delete(id)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error deleting project",
-		})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error deleting project"})
 	}
 
-	return c.SendStatus(fiber.StatusNoContent)
+	return c.SendStatus(fiber.StatusOK)
 }
