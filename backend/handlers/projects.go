@@ -1,35 +1,15 @@
-package main
+package handlers
 
 import (
 	"fmt"
-	"log"
 
+	"git.bhasher.com/bhasher/focus/backend/db"
+	"git.bhasher.com/bhasher/focus/backend/types"
 	"github.com/gofiber/fiber/v2"
-	_ "github.com/mattn/go-sqlite3"
 )
 
-func main() {
-	driver := "sqlite3"
-	connStr := "db.sqlite"
-	port := "3000"
-
-	if err := InitDB(driver, connStr); err != nil {
-		log.Fatal(err)
-	}
-
-	app := fiber.New()
-
-	app.Get("/projects", getAllProjectsHandler)
-	app.Get("/project/:id", getProjectHandler)
-	app.Post("/project", createProjectHandler)
-	app.Put("/project/:id", updateProjectHandler)
-	app.Delete("/project/:id", deleteProjectHandler)
-
-	log.Fatal(app.Listen(fmt.Sprintf(":%v", port)))
-}
-
-func getAllProjectsHandler(c *fiber.Ctx) error {
-	projects, err := GetAll()
+func GetAllProjects(c *fiber.Ctx) error {
+	projects, err := db.GetAllProjects()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Cannot retrieve projects"})
 	}
@@ -39,13 +19,13 @@ func getAllProjectsHandler(c *fiber.Ctx) error {
 	return c.JSON(projects)
 }
 
-func getProjectHandler(c *fiber.Ctx) error {
+func GetProject(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid project ID"})
 	}
 
-	project, err := Get(id)
+	project, err := db.GetProject(id)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error fetching project"})
 	}
@@ -55,13 +35,13 @@ func getProjectHandler(c *fiber.Ctx) error {
 	return c.JSON(project)
 }
 
-func createProjectHandler(c *fiber.Ctx) error {
-	p := new(Project)
+func CreateProject(c *fiber.Ctx) error {
+	p := new(types.Project)
 	if err := c.BodyParser(p); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Error parsing request"})
 	}
 
-	id, err := Create(*p)
+	id, err := db.CreateProject(*p)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error creating project"})
 	}
@@ -69,18 +49,18 @@ func createProjectHandler(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"id": id})
 }
 
-func updateProjectHandler(c *fiber.Ctx) error {
+func UpdateProject(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid project ID"})
 	}
 
-	p := Project{ID: id}
+	p := types.Project{ID: id}
 	if err := c.BodyParser(&p); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Error parsing request"})
 	}
 
-	err = Update(p)
+	err = db.UpdateProject(p)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error updating project"})
 	}
@@ -88,13 +68,13 @@ func updateProjectHandler(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusOK)
 }
 
-func deleteProjectHandler(c *fiber.Ctx) error {
+func DeleteProject(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid project ID"})
 	}
 
-	err = Delete(id)
+	err = db.DeleteProject(id)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error deleting project"})
 	}

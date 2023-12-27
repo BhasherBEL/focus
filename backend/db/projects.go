@@ -1,36 +1,10 @@
-package main
+package db
 
 import (
-	"database/sql"
+	"git.bhasher.com/bhasher/focus/backend/types"
 )
 
-var db *sql.DB
-
-type Project struct {
-	ID    int    `json:"id"`
-	Title string `json:"title"`
-}
-
-func InitDB(driver string, connStr string) error {
-	var err error
-	db, err = sql.Open(driver, connStr)
-	if err != nil {
-		return err
-	}
-
-	_, err = db.Exec(`
-        CREATE TABLE IF NOT EXISTS projects (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT
-        );
-    `)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func Create(p Project) (int, error) {
+func CreateProject(p types.Project) (int, error) {
 	res, err := db.Exec("INSERT INTO projects (title) VALUES (?)", p.Title)
 	if err != nil {
 		return 0, err
@@ -44,16 +18,16 @@ func Create(p Project) (int, error) {
 	return int(id), nil
 }
 
-func GetAll() ([]Project, error) {
+func GetAllProjects() ([]types.Project, error) {
 	rows, err := db.Query("SELECT * FROM projects")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var projects []Project
+	var projects []types.Project
 	for rows.Next() {
-		var p Project
+		var p types.Project
 		if err := rows.Scan(&p.ID, &p.Title); err != nil {
 			return nil, err
 		}
@@ -67,8 +41,8 @@ func GetAll() ([]Project, error) {
 	return projects, nil
 }
 
-func Get(id int) (*Project, error) {
-	var p Project
+func GetProject(id int) (*types.Project, error) {
+	var p types.Project
 
 	err := db.QueryRow("SELECT * FROM projects WHERE id = ?", id).Scan(&p.ID, &p.Title)
 	if err != nil {
@@ -78,12 +52,12 @@ func Get(id int) (*Project, error) {
 	return &p, nil
 }
 
-func Delete(id int) error {
+func DeleteProject(id int) error {
 	_, err := db.Exec("DELETE FROM projects WHERE id = ?", id)
 	return err
 }
 
-func Update(p Project) error {
+func UpdateProject(p types.Project) error {
 	_, err := db.Exec("UPDATE projects SET title = ? WHERE id = ?", p.Title, p.ID)
 	return err
 }

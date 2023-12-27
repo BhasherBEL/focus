@@ -1,4 +1,4 @@
-module git.bhasher.com/focus/focus-lists
+module git.bhasher.com/bhasher/focus/backend
 
 go 1.21.4
 

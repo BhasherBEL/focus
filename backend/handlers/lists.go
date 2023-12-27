@@ -1,40 +1,20 @@
-package main
+package handlers
 
 import (
-	"fmt"
-	"log"
 	"strconv"
 
+	"git.bhasher.com/bhasher/focus/backend/db"
+	"git.bhasher.com/bhasher/focus/backend/types"
 	"github.com/gofiber/fiber/v2"
 )
 
-func main() {
-	driver := "sqlite3"
-	connStr := "db.sqlite"
-	port := "3001"
-
-	if err := InitDB(driver, connStr); err != nil {
-		log.Fatal(err)
-	}
-
-	app := fiber.New()
-
-	app.Post("/list", createListHandler)
-	app.Get("/lists/:board_id", getAllListsHandler)
-	app.Get("/list/:id", getListHandler)
-	app.Delete("/list/:id", deleteListHandler)
-	app.Put("/list/:id", updateListHandler)
-
-	log.Fatal(app.Listen(fmt.Sprintf(":%v", port)))
-}
-
-func createListHandler(c *fiber.Ctx) error {
-	list := List{}
+func CreateList(c *fiber.Ctx) error {
+	list := types.List{}
 	if err := c.BodyParser(&list); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse request"})
 	}
 
-	id, err := Create(list)
+	id, err := db.CreateList(list)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Cannot create list"})
 	}
@@ -42,13 +22,13 @@ func createListHandler(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"id": id})
 }
 
-func getAllListsHandler(c *fiber.Ctx) error {
-	boardID, err := strconv.Atoi(c.Params("board_id"))
+func GetAllListsOf(c *fiber.Ctx) error {
+	projectID, err := strconv.Atoi(c.Params("project_id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid board ID"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid project ID"})
 	}
 
-	lists, err := GetAll(boardID)
+	lists, err := db.GetAllListsOf(projectID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Cannot retrieve lists"})
 	}
@@ -56,13 +36,13 @@ func getAllListsHandler(c *fiber.Ctx) error {
 	return c.JSON(lists)
 }
 
-func getListHandler(c *fiber.Ctx) error {
+func GetList(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid list ID"})
 	}
 
-	list, err := Get(id)
+	list, err := db.GetList(id)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Cannot retrieve list"})
 	}
@@ -73,13 +53,13 @@ func getListHandler(c *fiber.Ctx) error {
 	return c.JSON(list)
 }
 
-func deleteListHandler(c *fiber.Ctx) error {
+func DeleteList(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid list ID"})
 	}
 
-	err = Delete(id)
+	err = db.DeleteList(id)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Cannot delete list"})
 	}
@@ -87,18 +67,18 @@ func deleteListHandler(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
-func updateListHandler(c *fiber.Ctx) error {
+func UpdateList(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid list ID"})
 	}
 
-	list := List{ID: id}
+	list := types.List{ID: id}
 	if err := c.BodyParser(&list); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse request"})
 	}
 
-	err = Update(list)
+	err = db.UpdateList(list)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Cannot update list"})
 	}
