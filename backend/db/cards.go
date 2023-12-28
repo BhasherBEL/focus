@@ -3,7 +3,7 @@ package db
 import "git.bhasher.com/bhasher/focus/backend/types"
 
 func CreateCard(c types.Card) (int, error) {
-	res, err := db.Exec("INSERT INTO cards (list_id, title, content) VALUES (?, ?, ?)", c.ListID, c.Title, c.Content)
+	res, err := db.Exec("INSERT INTO cards (project_id, title, content) VALUES (?, ?, ?)", c.ProjectID, c.Title, c.Content)
 	if err != nil {
 		return 0, err
 	}
@@ -16,8 +16,8 @@ func CreateCard(c types.Card) (int, error) {
 	return int(id), nil
 }
 
-func GetAllCardsOf(listID int) ([]types.Card, error) {
-	rows, err := db.Query("SELECT * FROM cards WHERE list_id = ?", listID)
+func GetAllCardsOf(projectID int) ([]types.Card, error) {
+	rows, err := db.Query("SELECT * FROM cards WHERE project_id = ?", projectID)
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +26,7 @@ func GetAllCardsOf(listID int) ([]types.Card, error) {
 	var cards []types.Card
 	for rows.Next() {
 		var c types.Card
-		if err := rows.Scan(&c.ID, &c.ListID, &c.Title, &c.Content); err != nil {
+		if err := rows.Scan(&c.ID, &c.ProjectID, &c.Title, &c.Content); err != nil {
 			return nil, err
 		}
 		cards = append(cards, c)
@@ -42,7 +42,7 @@ func GetAllCardsOf(listID int) ([]types.Card, error) {
 func GetCard(id int) (*types.Card, error) {
 	var c types.Card
 
-	err := db.QueryRow("SELECT * FROM cards WHERE id = ?", id).Scan(&c.ID, &c.ListID, &c.Title, &c.Content)
+	err := db.QueryRow("SELECT * FROM cards WHERE id = ?", id).Scan(&c.ID, &c.ProjectID, &c.Title, &c.Content)
 	if err != nil {
 		return nil, err
 	}
@@ -56,6 +56,6 @@ func DeleteCard(id int) error {
 }
 
 func UpdateCard(c types.Card) error {
-	_, err := db.Exec("UPDATE cards SET list_id = ?, title = ?, content = ? WHERE id = ?", c.ListID, c.Title, c.Content, c.ID)
+	_, err := db.Exec("UPDATE cards SET project_id = ?, title = ?, content = ? WHERE id = ?", c.ProjectID, c.Title, c.Content, c.ID)
 	return err
 }

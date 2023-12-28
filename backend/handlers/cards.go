@@ -23,9 +23,9 @@ func CreateCards(c *fiber.Ctx) error {
 }
 
 func GetAllCardsOf(c *fiber.Ctx) error {
-	listID, err := strconv.Atoi(c.Params("list_id"))
+	listID, err := strconv.Atoi(c.Params("project_id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid list ID"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid project_id"})
 	}
 
 	lists, err := db.GetAllListsOf(listID)
