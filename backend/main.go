@@ -30,17 +30,17 @@ func main() {
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 
-	app.Get("/projects", handlers.GetAllProjects)
-	app.Get("/project/:id", handlers.GetProject)
-	app.Post("/project", handlers.CreateProject)
-	app.Put("/project/:id", handlers.UpdateProject)
-	app.Delete("/project/:id", handlers.DeleteProject)
+	app.Get("/api/projects", handlers.GetAllProjects)
+	app.Get("/api/project/:id", handlers.GetProject)
+	app.Post("/api/project", handlers.CreateProject)
+	app.Put("/api/project/:id", handlers.UpdateProject)
+	app.Delete("/api/project/:id", handlers.DeleteProject)
 
-	app.Post("/list", handlers.CreateList)
-	app.Get("/lists/:board_id", handlers.GetAllListsOf)
-	app.Get("/list/:id", handlers.GetList)
-	app.Delete("/list/:id", handlers.DeleteList)
-	app.Put("/list/:id", handlers.UpdateList)
+	app.Post("/api/list", handlers.CreateList)
+	app.Get("/api/lists/:board_id", handlers.GetAllListsOf)
+	app.Get("/api/list/:id", handlers.GetList)
+	app.Delete("/api/list/:id", handlers.DeleteList)
+	app.Put("/api/list/:id", handlers.UpdateList)
 
 	log.Fatal(app.Listen(fmt.Sprintf(":%v", port)))
 }
