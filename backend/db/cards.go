@@ -16,19 +16,26 @@ func CreateCard(c types.Card) (int, error) {
 	return int(id), nil
 }
 
-func GetAllCardsOf(projectID int) ([]types.Card, error) {
+func GetAllCardsOf(projectID int) ([]types.FullCard, error) {
 	rows, err := db.Query("SELECT * FROM cards WHERE project_id = ?", projectID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var cards []types.Card
+	var cards []types.FullCard
 	for rows.Next() {
-		var c types.Card
+		var c types.FullCard
 		if err := rows.Scan(&c.ID, &c.ProjectID, &c.Title, &c.Content); err != nil {
 			return nil, err
 		}
+
+		tags, err := GetAllTagsOfCard(c.ID)
+		if err != nil {
+			return nil, err
+		}
+		c.Tags = tags
+
 		cards = append(cards, c)
 	}
 
@@ -39,13 +46,19 @@ func GetAllCardsOf(projectID int) ([]types.Card, error) {
 	return cards, nil
 }
 
-func GetCard(id int) (*types.Card, error) {
-	var c types.Card
+func GetCard(id int) (*types.FullCard, error) {
+	var c types.FullCard
 
 	err := db.QueryRow("SELECT * FROM cards WHERE id = ?", id).Scan(&c.ID, &c.ProjectID, &c.Title, &c.Content)
 	if err != nil {
 		return nil, err
 	}
+
+	tags, err := GetAllTagsOfCard(id)
+	if err != nil {
+		return nil, err
+	}
+	c.Tags = tags
 
 	return &c, nil
 }

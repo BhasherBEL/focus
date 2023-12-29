@@ -8,31 +8,21 @@
 		id: number;
 		title: string;
 		content: string;
+		tags: Tag[];
 	}
 
-	export let card: Card = {
-		id: 0,
-		title: 'No title',
-		content: 'Nocontent'
-	};
-
-	interface FullTag {
+	interface Tag {
 		tag_id: number;
 		tag_title: string;
 		value: string;
 	}
 
-	let tags: FullTag[];
-
-	onMount(async () => {
-		const response = await axios.get(`${backend}/api/cardtags/${card.id}`);
-
-		if (response.data.status === 'ok') {
-			tags = response.data.data;
-		} else {
-			console.error(response.data);
-		}
-	});
+	export let card: Card = {
+		id: 0,
+		title: 'No title',
+		content: 'Nocontent',
+		tags: []
+	};
 </script>
 
 <svelte:head>
@@ -41,11 +31,9 @@
 
 <div class="card" draggable={true}>
 	<div class="title">{card.title}</div>
-	{#if tags}
+	{#if card.tags}
 		<div class="tags">
-			<!-- <span class="tag" style="background-color: #874d45;">HIGH</span>
-			<span class="tag" style="background-color: #4a8645;">PERSONAL</span> -->
-			{#each tags as tag}
+			{#each card.tags as tag}
 				<span class="tag" style="border: 1px solid #333">{tag.value}</span>
 			{/each}
 		</div>
