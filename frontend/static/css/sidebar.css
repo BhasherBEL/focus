@@ -5,6 +5,7 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
+    float: left;
 }
 
 #sidebar .logo {

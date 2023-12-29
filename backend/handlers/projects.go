@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"fmt"
-
 	"git.bhasher.com/bhasher/focus/backend/db"
 	"git.bhasher.com/bhasher/focus/backend/types"
 	"github.com/gofiber/fiber/v2"
@@ -13,8 +11,6 @@ func GetAllProjects(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Cannot retrieve projects"})
 	}
-
-	fmt.Println(projects)
 
 	return c.JSON(projects)
 }

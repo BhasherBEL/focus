@@ -27,10 +27,10 @@ func InitDB(driver string, connStr string) error {
         );
 		CREATE TABLE IF NOT EXISTS cards (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-			list_id INTEGER,
+			project_id INTEGER,
             title TEXT,
 			content TEXT,
-			FOREIGN KEY(list_id) REFERENCES lists(id)
+			FOREIGN KEY(project_id) REFERENCES projects(id)
         );
     `)
 	if err != nil {

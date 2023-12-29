@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"strconv"
 
 	"git.bhasher.com/bhasher/focus/backend/db"
@@ -16,24 +17,24 @@ func CreateCards(c *fiber.Ctx) error {
 
 	id, err := db.CreateCard(card)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Cannot create card"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Cannot create card", "trace": fmt.Sprint(err)})
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"id": id})
 }
 
 func GetAllCardsOf(c *fiber.Ctx) error {
-	listID, err := strconv.Atoi(c.Params("project_id"))
+	projectID, err := strconv.Atoi(c.Params("project_id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid project_id"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "error": "Invalid project_id"})
 	}
 
-	lists, err := db.GetAllListsOf(listID)
+	projects, err := db.GetAllCardsOf(projectID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Cannot retrieve cards"})
 	}
 
-	return c.JSON(lists)
+	return c.JSON(fiber.Map{"status": "ok", "data": projects})
 }
 
 func GetCard(c *fiber.Ctx) error {
