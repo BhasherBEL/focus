@@ -49,4 +49,4 @@
 	{/if}
 </div>
 
-<ModalCard bind:show={showModal} {card} onCancel={cancelEdit} />
+<ModalCard bind:show={showModal} bind:card onCancel={cancelEdit} />

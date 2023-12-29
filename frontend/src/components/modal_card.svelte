@@ -18,7 +18,7 @@
 				content: tempCard.content
 			});
 
-			card = tempCard;
+			card = { ...tempCard };
 		}
 		if (closeModal) show = false;
 	}
@@ -32,18 +32,6 @@
 			<div class="header">
 				<input class="title" bind:value={tempCard.title} on:blur={() => save(false)} />
 				<div class="buttons">
-					<button on:click={() => save(true)}>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="24"
-							fill="white"
-							viewBox="0 0 24 24"
-						>
-							<path d="M0 0h24v24H0z" fill="none" />
-							<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-						</svg>
-					</button>
 					<button on:click={onCancel}>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
