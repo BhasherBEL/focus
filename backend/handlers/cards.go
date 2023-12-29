@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func CreateCards(c *fiber.Ctx) error {
+func CreateCard(c *fiber.Ctx) error {
 	card := types.Card{}
 	if err := c.BodyParser(&card); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse request"})

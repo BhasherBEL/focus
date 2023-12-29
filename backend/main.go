@@ -42,11 +42,23 @@ func main() {
 	app.Delete("/api/list/:id", handlers.DeleteList)
 	app.Put("/api/list/:id", handlers.UpdateList)
 
-	app.Post("/api/card", handlers.CreateCards)
+	app.Post("/api/card", handlers.CreateCard)
 	app.Get("/api/cards/:project_id", handlers.GetAllCardsOf)
 	app.Get("/api/card/:id", handlers.GetCard)
 	app.Delete("/api/card/:id", handlers.DeleteCard)
 	app.Put("/api/card/:id", handlers.UpdateCard)
+
+	app.Post("/api/tag", handlers.CreateTag)
+	app.Get("/api/tags/:project_id", handlers.GetAllTagsOf)
+	app.Get("/api/tag/:id", handlers.GetTag)
+	app.Delete("/api/tag/:id", handlers.DeleteTag)
+	app.Put("/api/tag/:id", handlers.UpdateTag)
+
+	app.Post("/api/cardtag", handlers.CreateTagOfCard)
+	app.Get("/api/cardtags/:card_id", handlers.GetAllTagsOfCard)
+	app.Delete("/api/cardtag/:card_id/:tag_id", handlers.DeleteTagOfCard)
+	app.Delete("/api/cardtags/:card_id", handlers.DeleteTagsOfCard)
+	app.Put("/api/cardtag/:card_id/:tag_id", handlers.UpdateTag)
 
 	log.Fatal(app.Listen(fmt.Sprintf(":%v", port)))
 }
