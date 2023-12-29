@@ -58,7 +58,7 @@ func main() {
 	app.Get("/api/cardtags/:card_id", handlers.GetAllTagsOfCard)
 	app.Delete("/api/cardtag/:card_id/:tag_id", handlers.DeleteTagOfCard)
 	app.Delete("/api/cardtags/:card_id", handlers.DeleteTagsOfCard)
-	app.Put("/api/cardtag/:card_id/:tag_id", handlers.UpdateTag)
+	app.Put("/api/cardtag/:card_id/:tag_id", handlers.UpdateTagOfCard)
 
 	log.Fatal(app.Listen(fmt.Sprintf(":%v", port)))
 }

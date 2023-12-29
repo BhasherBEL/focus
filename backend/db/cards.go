@@ -30,7 +30,7 @@ func GetAllCardsOf(projectID int) ([]types.FullCard, error) {
 			return nil, err
 		}
 
-		tags, err := GetAllTagsOfCard(c.ID)
+		tags, err := GetAllTagsOfCard(c.ID, projectID)
 		if err != nil {
 			return nil, err
 		}
@@ -54,7 +54,7 @@ func GetCard(id int) (*types.FullCard, error) {
 		return nil, err
 	}
 
-	tags, err := GetAllTagsOfCard(id)
+	tags, err := GetAllTagsOfCard(id, c.ProjectID)
 	if err != nil {
 		return nil, err
 	}

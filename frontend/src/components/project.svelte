@@ -1,29 +1,11 @@
 <script lang="ts">
 	import axios from 'axios';
 	import { onMount } from 'svelte';
-	import Card from './card.svelte';
+	import CardC from './card.svelte';
+	import { backend } from '../stores/config';
+	import type { Card, Project } from '../stores/interfaces';
 
 	export let projectId: number = 0;
-
-	const backend = 'http://127.0.0.1:3000';
-
-	interface Project {
-		id: number | undefined;
-		title: string;
-	}
-
-	interface Tag {
-		tag_id: number;
-		tag_title: string;
-		value: string;
-	}
-
-	interface Card {
-		id: number;
-		title: string;
-		content: string;
-		tags: Tag[];
-	}
 
 	let project: Project;
 	let cards: Card[];
@@ -45,6 +27,8 @@
 
 <svelte:head>
 	<link rel="stylesheet" type="text/css" href="/css/project.css" />
+	<link rel="stylesheet" type="text/css" href="/css/card.css" />
+	<link rel="stylesheet" type="text/css" href="/css/modalCard.css" />
 </svelte:head>
 
 {#if project}
@@ -54,7 +38,7 @@
 		<ul>
 			{#if cards}
 				{#each cards as card}
-					<Card {card} />
+					<CardC {card} />
 				{/each}
 			{/if}
 		</ul>

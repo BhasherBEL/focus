@@ -29,7 +29,7 @@ func GetAllTagsOfCard(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "error": "Invalid card_id"})
 	}
 
-	cardtags, err := db.GetAllTagsOfCard(cardID)
+	cardtags, err := db.GetAllTagsOfCard(cardID, -1)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "error": "Cannot retrieve tags of card", "stack": fmt.Sprint(err)})
 	}
@@ -78,7 +78,7 @@ func UpdateTagOfCard(c *fiber.Ctx) error {
 
 	tag_id, err := strconv.Atoi(c.Params("tag_id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid tag ID"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "error": "Invalid tag ID", "stack": fmt.Sprint(err)})
 	}
 
 	cardtag := types.CardTag{CardID: card_id, TagID: tag_id}

@@ -26,12 +26,12 @@ func CreateCard(c *fiber.Ctx) error {
 func GetAllCardsOf(c *fiber.Ctx) error {
 	projectID, err := strconv.Atoi(c.Params("project_id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "error": "Invalid project_id"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "error": "Invalid project_id", "trace": fmt.Sprint(err)})
 	}
 
 	projects, err := db.GetAllCardsOf(projectID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Cannot retrieve cards"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "error": "Cannot retrieve cards", "trace": fmt.Sprint(err)})
 	}
 
 	return c.JSON(fiber.Map{"status": "ok", "data": projects})
