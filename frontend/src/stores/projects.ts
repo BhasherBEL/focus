@@ -1,9 +1,8 @@
 import axios from "axios";
 import { writable } from "svelte/store";
+import { backend } from "./config";
 
 export const projects = getProjects();
-
-const backend = 'http://127.0.0.1:3000'
 
 interface Project {
     id: number | undefined,
@@ -16,7 +15,7 @@ function getProjects() {
     return {
         subscribe,
         init: async () => {
-            const response = await axios.get(`${backend}/api/projects`);
+            const response = await axios.get(`${backend}/api/v1/projects`);
 
             if(response.status < 303) {
                 const data: Project[] = response.data;
@@ -27,7 +26,7 @@ function getProjects() {
             }
         },
         add: async (project: Project) => {
-            const response = await axios.post(`${backend}/api/project`, project);
+            const response = await axios.post(`${backend}/api/v1/projects`, project);
 
             if(response.status < 303) {
                 project.id = response.data["id"];
@@ -38,9 +37,8 @@ function getProjects() {
             }
         },
         edit: async (project: Project) => {
-            const response = await axios.put(`${backend}/api/project/${project.id}`, project)
+            const response = await axios.put(`${backend}/api/v1/projects/${project.id}`, project)
         
-
             if(response.status < 303) {
                 update((oldProjects: Project[]) => {
                     for(let p of oldProjects){

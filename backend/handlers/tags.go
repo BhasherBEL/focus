@@ -52,7 +52,7 @@ func GetProjectTags(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(tags)
+	return c.Status(fiber.StatusOK).JSON(tags)
 }
 
 func GetTag(c *fiber.Ctx) error {

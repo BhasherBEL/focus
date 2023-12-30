@@ -3,13 +3,7 @@
 	import { backend } from '../stores/config';
 	import type { Tag } from '../stores/interfaces';
 
-	export let tag: Tag = {
-		card_id: 0,
-		tag_id: 0,
-		tag_title: 'No title',
-		value: ''
-	};
-
+	export let tag: Tag;
 	let newValue: string = tag.value;
 
 	export let removeTag: (id: number) => void;
@@ -18,20 +12,18 @@
 		if (tag.value === newValue) return;
 		// DELETE
 		if (tag.value !== '' && newValue === '') {
-			axios.delete(`${backend}/api/cardtag/${tag.card_id}/${tag.tag_id}`);
+			axios.delete(`${backend}/api/v1/cards/${tag.card_id}/tags/${tag.tag_id}`);
 			return;
 		}
 		// CREATE
 		if (tag.value === '' && newValue !== '') {
-			axios.post(`${backend}/api/cardtag`, {
-				card_id: tag.card_id,
-				tag_id: tag.tag_id,
+			axios.post(`${backend}/api/v1/cards/${tag.card_id}/tags/${tag.tag_id}`, {
 				value: newValue
 			});
 			return;
 		}
 		// UPDATE
-		axios.put(`${backend}/api/cardtag/${tag.card_id}/${tag.tag_id}`, {
+		axios.put(`${backend}/api/v1/cards/${tag.card_id}/tags/${tag.tag_id}`, {
 			value: newValue
 		});
 

@@ -74,7 +74,7 @@ func UpdateTag(t types.Tag) (int64, error) {
 
 func ExistTag(id int) (bool, error) {
 	var count int
-	err := db.QueryRow("SELECT COUNT(*) FROM tas WHERE id = ?", id).Scan(&count)
+	err := db.QueryRow("SELECT COUNT(*) FROM tags WHERE id = ?", id).Scan(&count)
 	if err != nil {
 		return false, err
 	}

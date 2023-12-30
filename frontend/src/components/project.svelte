@@ -3,22 +3,23 @@
 	import { onMount } from 'svelte';
 	import CardC from './card.svelte';
 	import { backend } from '../stores/config';
-	import type { Card, Project } from '../stores/interfaces';
+	import { type Project, type Card, parseCards } from '../stores/interfaces';
+	import status from '../utils/status';
 
-	export let projectId: number = 0;
+	export let projectId: number;
 
 	let project: Project;
 	let cards: Card[];
 
 	onMount(async () => {
-		let response = await axios.get(`${backend}/api/project/${projectId}`);
+		let response = await axios.get(`${backend}/api/v1/projects/${projectId}`);
 
 		project = response.data;
 
-		response = await axios.get(`${backend}/api/cards/${projectId}`);
+		response = await axios.get(`${backend}/api/v1/projects/${projectId}/cards`);
 
-		if (response.data.status === 'ok') {
-			cards = response.data.data;
+		if (response.status === status.OK) {
+			cards = parseCards(response.data);
 		} else {
 			console.error(response.data);
 		}
@@ -27,13 +28,13 @@
 	let modalID = -1;
 
 	async function newCard() {
-		const response = await axios.post(`${backend}/api/card`, {
+		const response = await axios.post(`${backend}/api/v1/cards`, {
 			project_id: projectId,
 			title: 'Untitled',
 			content: ''
 		});
 
-		if (response.data.status !== 'ok') {
+		if (response.status !== status.Created) {
 			console.error(response.data);
 			return;
 		}
@@ -53,9 +54,9 @@
 	}
 
 	async function deleteCard(cardID: number) {
-		const response = await axios.delete(`${backend}/api/card/${cardID}`);
+		const response = await axios.delete(`${backend}/api/v1/cards/${cardID}`);
 
-		if (response.status !== 204) {
+		if (response.status !== status.NoContent) {
 			console.error(response.data);
 			return;
 		}

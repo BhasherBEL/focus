@@ -12,8 +12,12 @@
 	let tempCard: Card = { ...card };
 
 	function save(closeModal: boolean = true) {
-		if (card != tempCard) {
-			axios.put(`${backend}/api/card/${card.id}`, {
+		if (
+			card.project_id != tempCard.project_id ||
+			card.title !== tempCard.title ||
+			card.content !== tempCard.content
+		) {
+			axios.put(`${backend}/api/v1/cards/${card.id}`, {
 				project_id: tempCard.project_id,
 				title: tempCard.title,
 				content: tempCard.content
@@ -70,7 +74,7 @@
 				</div>
 			</div>
 			<div class="tags">
-				<ModalTags {tempCard} />
+				<ModalTags bind:card />
 			</div>
 			<div class="body">
 				<textarea

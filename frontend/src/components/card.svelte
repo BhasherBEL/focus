@@ -2,17 +2,9 @@
 	import axios from 'axios';
 	import type { Card } from '../stores/interfaces';
 	import ModalCard from './modal_card.svelte';
-	import { backend } from '../stores/config';
 
-	export let card: Card = {
-		id: 0,
-		project_id: 0,
-		title: 'No title',
-		content: 'Nocontent',
-		tags: []
-	};
-
-	export let showModal = false;
+	export let card: Card;
+	export let showModal: boolean;
 	export let onDelete: () => void;
 
 	function editCard() {

@@ -17,3 +17,14 @@ export interface Tag {
     tag_title: string;
     value: string;
 }
+
+export function parseCard (c: any) {
+    let card: Card = c;
+    if (card.tags == null) card.tags = [];
+    return card;
+};
+
+export function parseCards (cards: any) {
+    if (cards == null) return [];
+    return cards.map(parseCard);
+}

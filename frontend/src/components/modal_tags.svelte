@@ -2,33 +2,26 @@
 	import axios from 'axios';
 	import ModalTag from './modal_tag.svelte';
 	import { backend } from '../stores/config';
+	import status from '../utils/status';
 	import type { Card } from '../stores/interfaces';
 
-	export let tempCard: Card = {
-		id: 0,
-		project_id: 0,
-		title: 'No title',
-		content: 'Nocontent',
-		tags: []
-	};
+	export let card: Card;
 
 	let newTagName = '';
 
 	async function addTag() {
 		if (newTagName === '') return;
 
-		const response = await axios.post(`${backend}/api/tag`, {
-			project_id: tempCard.project_id,
+		const response = await axios.post(`${backend}/api/v1/tags`, {
+			project_id: card.project_id,
 			title: newTagName,
 			type: 0
 		});
 
-		const { id } = response.data.id;
+		if (response.status !== status.Created) return console.error(response);
+		const id = response.data.id;
 
-		tempCard.tags = [
-			...tempCard.tags,
-			{ card_id: tempCard.id, tag_id: id, tag_title: newTagName, value: '' }
-		];
+		card.tags = [...card.tags, { card_id: card.id, tag_id: id, tag_title: newTagName, value: '' }];
 		newTagName = '';
 	}
 
@@ -39,14 +32,14 @@
 	}
 
 	function removeTag(id: number) {
-		tempCard.tags = tempCard.tags.filter((tag) => tag.tag_id !== id);
+		card.tags = card.tags.filter((tag) => tag.tag_id !== id);
 	}
 </script>
 
 <table>
-	{#if tempCard.tags}
-		{#each tempCard.tags as tag}
-			<ModalTag {tag} {removeTag} />
+	{#if card.tags}
+		{#each card.tags as tag}
+			<ModalTag bind:tag {removeTag} />
 		{/each}
 	{/if}
 	<tr class="tag">
