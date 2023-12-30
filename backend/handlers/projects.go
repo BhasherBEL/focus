@@ -1,18 +1,39 @@
 package handlers
 
 import (
+	"fmt"
+
 	"git.bhasher.com/bhasher/focus/backend/db"
 	"git.bhasher.com/bhasher/focus/backend/types"
+	"git.bhasher.com/bhasher/focus/backend/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
 func GetAllProjects(c *fiber.Ctx) error {
 	projects, err := db.GetAllProjects()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Cannot retrieve projects"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Cannot retrieve projects",
+			"trace": fmt.Sprint(err),
+		})
 	}
 
-	return c.JSON(projects)
+	halProjects := make([]fiber.Map, len(projects))
+	for i, p := range projects {
+		halProjects[i] = fiber.Map{
+			"project": p,
+			"_links":  utils.HALProjectLinks(p.ID),
+		}
+	}
+
+	return utils.SendHAL(c, fiber.StatusOK, fiber.Map{
+		"_links": fiber.Map{
+			"self": fiber.Map{"href": "/api/projects"},
+		},
+		"_embedded": fiber.Map{
+			"projects": halProjects,
+		},
+	})
 }
 
 func GetProject(c *fiber.Ctx) error {
@@ -23,12 +44,19 @@ func GetProject(c *fiber.Ctx) error {
 
 	project, err := db.GetProject(id)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error fetching project"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error fetching project",
+			"trace": fmt.Sprint(err),
+		})
 	}
 	if project == nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Project not found"})
+		return c.SendStatus(fiber.StatusNotFound)
 	}
-	return c.JSON(project)
+
+	return utils.SendHAL(c, fiber.StatusOK, fiber.Map{
+		"project": project,
+		"_links":  utils.HALProjectLinks(project.ID),
+	})
 }
 
 func CreateProject(c *fiber.Ctx) error {
@@ -39,10 +67,17 @@ func CreateProject(c *fiber.Ctx) error {
 
 	id, err := db.CreateProject(*p)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error creating project"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error creating project",
+			"trace": fmt.Sprint(err),
+		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"id": id})
+	c.Location(fmt.Sprintf("/api/projects/%v", id))
+	return utils.SendHAL(c, fiber.StatusCreated, fiber.Map{
+		"id":     id,
+		"_links": utils.HALProjectLinks(id),
+	})
 }
 
 func UpdateProject(c *fiber.Ctx) error {
@@ -56,12 +91,27 @@ func UpdateProject(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Error parsing request"})
 	}
 
-	err = db.UpdateProject(p)
+	exists, err := db.ExistProject(id)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error updating project"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error finding project",
+			"trace": fmt.Sprint(err),
+		})
 	}
 
-	return c.SendStatus(fiber.StatusOK)
+	if !exists {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
+	err = db.UpdateProject(p)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error updating project",
+			"trace": fmt.Sprint(err),
+		})
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
 }
 
 func DeleteProject(c *fiber.Ctx) error {
@@ -70,10 +120,25 @@ func DeleteProject(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid project ID"})
 	}
 
-	err = db.DeleteProject(id)
+	exists, err := db.ExistProject(id)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Error deleting project"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error finding project",
+			"trace": fmt.Sprint(err),
+		})
 	}
 
-	return c.SendStatus(fiber.StatusOK)
+	if !exists {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
+	err = db.DeleteProject(id)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error deleting project",
+			"trace": fmt.Sprint(err),
+		})
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
 }

@@ -6,21 +6,33 @@ import (
 
 	"git.bhasher.com/bhasher/focus/backend/db"
 	"git.bhasher.com/bhasher/focus/backend/types"
+	"git.bhasher.com/bhasher/focus/backend/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
 func CreateCard(c *fiber.Ctx) error {
 	card := types.Card{}
 	if err := c.BodyParser(&card); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "error": "Cannot parse request", "trace": fmt.Sprint(err)})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Cannot parse request",
+			"trace": fmt.Sprint(err),
+		})
 	}
 
 	id, err := db.CreateCard(card)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "error": "Cannot create card", "trace": fmt.Sprint(err)})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Cannot create card",
+			"trace": fmt.Sprint(err),
+		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"status": "ok", "id": id})
+	c.Status(fiber.StatusCreated)
+	c.Location(fmt.Sprintf("/api/cards/%v", id))
+	return c.JSON(fiber.Map{
+		"id":     id,
+		"_links": utils.HALProjectLinks(id),
+	})
 }
 
 func GetAllCardsOf(c *fiber.Ctx) error {

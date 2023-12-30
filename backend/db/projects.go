@@ -61,3 +61,13 @@ func UpdateProject(p types.Project) error {
 	_, err := db.Exec("UPDATE projects SET title = ? WHERE id = ?", p.Title, p.ID)
 	return err
 }
+
+func ExistProject(id int) (bool, error) {
+	var count int
+	err := db.QueryRow("SELECT COUNT(*) FROM projects WHERE id = ?", id).Scan(&count)
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
+}
