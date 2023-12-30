@@ -12,7 +12,8 @@
 		tags: []
 	};
 
-	let showModal = false;
+	export let showModal = false;
+	export let onDelete: () => void;
 
 	function editCard() {
 		showModal = true;
@@ -49,4 +50,4 @@
 	{/if}
 </div>
 
-<ModalCard bind:show={showModal} bind:card onCancel={cancelEdit} />
+<ModalCard bind:show={showModal} bind:card onCancel={cancelEdit} {onDelete} />
