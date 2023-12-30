@@ -10,6 +10,15 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+func cardsTagsRouter(router fiber.Router) error {
+	router.Get("/", GetCardTags)
+	router.Delete("/", DeleteCardTags)
+	router.Post("/:tag_id", CreateCardTag)
+	router.Put("/:tag_id", UpdateCardTag)
+	router.Delete("/:tag_id", DeleteCardTag)
+	return nil
+}
+
 func CreateCardTag(c *fiber.Ctx) error {
 	cardID, err := strconv.Atoi(c.Params("card_id"))
 	if err != nil {

@@ -9,6 +9,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+func tagsRouter(router fiber.Router) {
+	router.Post("/", CreateTag)
+	router.Get("/:id", GetTag)
+	router.Delete("/:id", DeleteTag)
+	router.Put("/:id", UpdateTag)
+}
+
 func CreateTag(c *fiber.Ctx) error {
 	tag := types.Tag{}
 	if err := c.BodyParser(&tag); err != nil {
@@ -24,35 +31,6 @@ func CreateTag(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"id": id})
-}
-
-func GetProjectTags(c *fiber.Ctx) error {
-	projectID, err := strconv.Atoi(c.Params("project_id"))
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid project_id"})
-	}
-
-	exists, err := db.ExistProject(projectID)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error finding project",
-			"trace": fmt.Sprint(err),
-		})
-	}
-
-	if !exists {
-		return c.SendStatus(fiber.StatusNotFound)
-	}
-
-	tags, err := db.GetProjectTags(projectID)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Cannot retrieve tags",
-			"trace": fmt.Sprint(err),
-		})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(tags)
 }
 
 func GetTag(c *fiber.Ctx) error {

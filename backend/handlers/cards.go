@@ -9,6 +9,17 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+func cardsRouter(router fiber.Router) error {
+	router.Post("/", CreateCard)
+	router.Get("/:id", GetCard)
+	router.Put("/:id", UpdateCard)
+	router.Delete("/:id", DeleteCard)
+
+	cardsTagsRouter(router.Group("/:card_id/tags"))
+	return nil
+
+}
+
 func CreateCard(c *fiber.Ctx) error {
 	card := types.Card{}
 	if err := c.BodyParser(&card); err != nil {
@@ -29,38 +40,6 @@ func CreateCard(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"id": id,
 	})
-}
-
-func GetProjectCards(c *fiber.Ctx) error {
-	projectID, err := strconv.Atoi(c.Params("project_id"))
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid project_id",
-			"trace": fmt.Sprint(err),
-		})
-	}
-
-	exists, err := db.ExistProject(projectID)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error finding project",
-			"trace": fmt.Sprint(err),
-		})
-	}
-
-	if !exists {
-		return c.SendStatus(fiber.StatusNotFound)
-	}
-
-	cards, err := db.GetProjectsCards(projectID)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Cannot retrieve cards",
-			"trace": fmt.Sprint(err),
-		})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(cards)
 }
 
 func GetCard(c *fiber.Ctx) error {

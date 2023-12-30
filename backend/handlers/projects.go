@@ -2,11 +2,23 @@ package handlers
 
 import (
 	"fmt"
+	"strconv"
 
 	"git.bhasher.com/bhasher/focus/backend/db"
 	"git.bhasher.com/bhasher/focus/backend/types"
 	"github.com/gofiber/fiber/v2"
 )
+
+func projectsRouter(router fiber.Router) error {
+	router.Post("/", CreateProject)
+	router.Get("/", GetAllProjects)
+	router.Get("/:id", GetProject)
+	router.Put("/:id", UpdateProject)
+	router.Delete("/:id", DeleteProject)
+	router.Get(":id/cards", GetProjectCards)
+	router.Get(":id/tags", GetProjectTags)
+	return nil
+}
 
 func GetAllProjects(c *fiber.Ctx) error {
 	projects, err := db.GetAllProjects()
@@ -104,4 +116,62 @@ func DeleteProject(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
+}
+
+func GetProjectCards(c *fiber.Ctx) error {
+	projectID, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid project ID"})
+	}
+
+	exists, err := db.ExistProject(projectID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error finding project",
+			"trace": fmt.Sprint(err),
+		})
+	}
+
+	if !exists {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
+	cards, err := db.GetProjectsCards(projectID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Cannot retrieve cards",
+			"trace": fmt.Sprint(err),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(cards)
+}
+
+func GetProjectTags(c *fiber.Ctx) error {
+	projectID, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid project ID"})
+	}
+
+	exists, err := db.ExistProject(projectID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error finding project",
+			"trace": fmt.Sprint(err),
+		})
+	}
+
+	if !exists {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
+	tags, err := db.GetProjectTags(projectID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Cannot retrieve tags",
+			"trace": fmt.Sprint(err),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(tags)
 }
