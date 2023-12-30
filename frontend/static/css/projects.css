@@ -1,0 +1,72 @@
+#projects {
+    margin: 40px;
+}
+
+#projects h2 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+#projects ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#projects li {
+    cursor: pointer;
+    margin: 10px 0;
+    border: 1px solid #555;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between
+}
+
+#projects .title {
+    font-weight: bold;
+    padding: 20px;
+    width: 100%;
+}
+
+#projects .title:hover {
+    background-color: #303030;
+}
+
+#projects .buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+}
+
+#projects li img {
+    padding: 20px;
+}
+
+#projects li img:hover {
+    background-color: #333;
+}
+
+#projects input {
+    padding: 20px;
+    width: 100%;
+    background-color: #333;
+    color: inherit;
+    font-weight: bold;
+    font-size: inherit;
+}
+
+#projects #add {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+    cursor: pointer;
+}
+
+#projects #add:hover {
+    background-color: #303030;
+}

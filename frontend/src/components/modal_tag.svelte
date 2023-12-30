@@ -1,31 +1,44 @@
 <script lang="ts">
-	import axios from 'axios';
-	import { backend } from '../stores/config';
 	import type { Tag } from '../stores/interfaces';
+	import api, { processError } from '../utils/api';
+	import status from '../utils/status';
 
 	export let tag: Tag;
 	let newValue: string = tag.value;
 
 	export let removeTag: (id: number) => void;
 
-	function saveTag() {
+	async function saveTag() {
 		if (tag.value === newValue) return;
 		// DELETE
 		if (tag.value !== '' && newValue === '') {
-			axios.delete(`${backend}/api/v1/cards/${tag.card_id}/tags/${tag.tag_id}`);
-			return;
+			const response = await api.delete(`/v1/cards/${tag.card_id}/tags/${tag.tag_id}`);
+
+			if (response.status !== status.NoContent) {
+				processError(response, 'Failed to delete tag');
+				return;
+			}
 		}
 		// CREATE
-		if (tag.value === '' && newValue !== '') {
-			axios.post(`${backend}/api/v1/cards/${tag.card_id}/tags/${tag.tag_id}`, {
+		else if (tag.value === '' && newValue !== '') {
+			const response = await api.post(`/v1/cards/${tag.card_id}/tags/${tag.tag_id}`, {
 				value: newValue
 			});
-			return;
+			if (response.status !== status.Created) {
+				processError(response, 'Failed to create tag');
+				return;
+			}
 		}
 		// UPDATE
-		axios.put(`${backend}/api/v1/cards/${tag.card_id}/tags/${tag.tag_id}`, {
-			value: newValue
-		});
+		else {
+			const response = await api.put(`/v1/cards/${tag.card_id}/tags/${tag.tag_id}`, {
+				value: newValue
+			});
+			if (response.status !== status.NoContent) {
+				processError(response, 'Failed to update tag');
+				return;
+			}
+		}
 
 		tag.value = newValue;
 	}

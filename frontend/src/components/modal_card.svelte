@@ -1,8 +1,8 @@
 <script lang="ts">
-	import axios from 'axios';
 	import ModalTags from './modal_tags.svelte';
 	import type { Card } from '../stores/interfaces';
-	import { backend } from '../stores/config';
+	import api, { processError } from '../utils/api';
+	import status from '../utils/status';
 
 	export let show: boolean;
 	export let card: Card;
@@ -11,17 +11,22 @@
 
 	let tempCard: Card = { ...card };
 
-	function save(closeModal: boolean = true) {
+	async function save(closeModal: boolean = true) {
 		if (
 			card.project_id != tempCard.project_id ||
 			card.title !== tempCard.title ||
 			card.content !== tempCard.content
 		) {
-			axios.put(`${backend}/api/v1/cards/${card.id}`, {
+			const response = await api.put(`/v1/cards/${card.id}`, {
 				project_id: tempCard.project_id,
 				title: tempCard.title,
 				content: tempCard.content
 			});
+
+			if (response.status !== status.NoContent) {
+				processError(response, 'Failed to update card');
+				return;
+			}
 
 			card = { ...tempCard };
 		}

@@ -1,9 +1,8 @@
 <script lang="ts">
-	import axios from 'axios';
 	import ModalTag from './modal_tag.svelte';
-	import { backend } from '../stores/config';
 	import status from '../utils/status';
 	import type { Card } from '../stores/interfaces';
+	import api, { processError } from '../utils/api';
 
 	export let card: Card;
 
@@ -12,13 +11,16 @@
 	async function addTag() {
 		if (newTagName === '') return;
 
-		const response = await axios.post(`${backend}/api/v1/tags`, {
+		const response = await api.post(`/v1/tags`, {
 			project_id: card.project_id,
 			title: newTagName,
 			type: 0
 		});
 
-		if (response.status !== status.Created) return console.error(response);
+		if (response.status !== status.Created) {
+			processError(response, 'Failed to create tag');
+			return;
+		}
 		const id = response.data.id;
 
 		card.tags = [...card.tags, { card_id: card.id, tag_id: id, tag_title: newTagName, value: '' }];

@@ -1,10 +1,9 @@
 <script lang="ts">
-	import axios from 'axios';
 	import { onMount } from 'svelte';
 	import CardC from './card.svelte';
-	import { backend } from '../stores/config';
 	import { type Project, type Card, parseCards } from '../stores/interfaces';
 	import status from '../utils/status';
+	import api, { processError } from '../utils/api';
 
 	export let projectId: number;
 
@@ -12,30 +11,38 @@
 	let cards: Card[];
 
 	onMount(async () => {
-		let response = await axios.get(`${backend}/api/v1/projects/${projectId}`);
+		let response = await api.get(`/v1/projects/${projectId}`);
+
+		if (response.status !== status.OK) {
+			processError(response, 'Failed to fetch project');
+			return;
+		}
 
 		project = response.data;
 
-		response = await axios.get(`${backend}/api/v1/projects/${projectId}/cards`);
+		response = await api.get(`/v1/projects/${projectId}/cards`, {
+			validateStatus: () => true
+		});
 
 		if (response.status === status.OK) {
 			cards = parseCards(response.data);
 		} else {
-			console.error(response.data);
+			cards = [];
+			processError(response, 'Failed to fetch cards');
 		}
 	});
 
 	let modalID = -1;
 
 	async function newCard() {
-		const response = await axios.post(`${backend}/api/v1/cards`, {
+		const response = await api.post(`/v1/cards`, {
 			project_id: projectId,
 			title: 'Untitled',
 			content: ''
 		});
 
 		if (response.status !== status.Created) {
-			console.error(response.data);
+			processError(response, 'Failed to create card');
 			return;
 		}
 
@@ -54,10 +61,10 @@
 	}
 
 	async function deleteCard(cardID: number) {
-		const response = await axios.delete(`${backend}/api/v1/cards/${cardID}`);
+		const response = await api.delete(`/v2/cards/${cardID}`);
 
 		if (response.status !== status.NoContent) {
-			console.error(response.data);
+			processError(response, 'Failed to delete card');
 			return;
 		}
 

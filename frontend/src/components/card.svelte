@@ -1,5 +1,4 @@
 <script lang="ts">
-	import axios from 'axios';
 	import type { Card } from '../stores/interfaces';
 	import ModalCard from './modal_card.svelte';
 

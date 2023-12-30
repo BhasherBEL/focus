@@ -1,5 +1,7 @@
+import { toastAlert } from "../utils/toasts";
+
 export interface Project {
-    id: number | undefined;
+    id: number;
     title: string;
 }
 
@@ -26,5 +28,16 @@ export function parseCard (c: any) {
 
 export function parseCards (cards: any) {
     if (cards == null) return [];
-    return cards.map(parseCard);
+
+    let cardsArray;
+    try {
+       cardsArray = JSON.parse(cards);
+    } catch (e) {
+        toastAlert('Error', 'Could not parse cards');
+        return [];
+    }
+
+    if (cardsArray == null) return [];
+
+    return cardsArray.map(parseCard);
 }
