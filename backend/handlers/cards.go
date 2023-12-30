@@ -6,7 +6,6 @@ import (
 
 	"git.bhasher.com/bhasher/focus/backend/db"
 	"git.bhasher.com/bhasher/focus/backend/types"
-	"git.bhasher.com/bhasher/focus/backend/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -27,54 +26,85 @@ func CreateCard(c *fiber.Ctx) error {
 		})
 	}
 
-	c.Status(fiber.StatusCreated)
-	c.Location(fmt.Sprintf("/api/cards/%v", id))
-	return c.JSON(fiber.Map{
-		"id":     id,
-		"_links": utils.HALProjectLinks(id),
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"id": id,
 	})
 }
 
-func GetAllCardsOf(c *fiber.Ctx) error {
+func GetProjectCards(c *fiber.Ctx) error {
 	projectID, err := strconv.Atoi(c.Params("project_id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "error": "Invalid project_id", "trace": fmt.Sprint(err)})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid project_id",
+			"trace": fmt.Sprint(err),
+		})
 	}
 
-	projects, err := db.GetAllCardsOf(projectID)
+	exists, err := db.ExistProject(projectID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "error": "Cannot retrieve cards", "trace": fmt.Sprint(err)})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error finding project",
+			"trace": fmt.Sprint(err),
+		})
 	}
 
-	return c.JSON(fiber.Map{"status": "ok", "data": projects})
+	if !exists {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
+	cards, err := db.GetProjectsCards(projectID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Cannot retrieve cards",
+			"trace": fmt.Sprint(err),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(cards)
 }
 
 func GetCard(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid card ID"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid card ID",
+			"trace": fmt.Sprint(err),
+		})
 	}
 
 	card, err := db.GetCard(id)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Cannot retrieve card"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Cannot retrieve card",
+			"trace": fmt.Sprint(err),
+		})
 	}
 	if card == nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Card not found"})
+		return c.SendStatus(fiber.StatusNotFound)
 	}
 
-	return c.JSON(card)
+	return c.Status(fiber.StatusOK).JSON(card)
 }
 
 func DeleteCard(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "error": "Invalid card ID", "trace": fmt.Sprint(err)})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid card ID",
+			"trace": fmt.Sprint(err),
+		})
 	}
 
-	err = db.DeleteCard(id)
+	count, err := db.DeleteCard(id)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "error": "Cannot delete card", "trace": fmt.Sprint(err)})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Cannot delete card",
+			"trace": fmt.Sprint(err),
+		})
+	}
+
+	if count == 0 {
+		return c.SendStatus(fiber.StatusNotFound)
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
@@ -91,9 +121,16 @@ func UpdateCard(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse request"})
 	}
 
-	err = db.UpdateCard(card)
+	count, err := db.UpdateCard(card)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Cannot update card"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Cannot update card",
+			"trace": fmt.Sprint(err),
+		})
+	}
+
+	if count == 0 {
+		return c.SendStatus(fiber.StatusNotFound)
 	}
 
 	return c.SendStatus(fiber.StatusOK)

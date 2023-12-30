@@ -4,12 +4,12 @@ import (
 	"git.bhasher.com/bhasher/focus/backend/types"
 )
 
-func AddTagToCard(ct types.CardTag) error {
+func CreateCardTag(ct types.CardTag) error {
 	_, err := db.Exec("INSERT INTO cardtags (card_id, tag_id, value) VALUES (?, ?, ?)", ct.CardID, ct.TagID, ct.Value)
 	return err
 }
 
-func GetAllTagsOfCard(cardID int, projectID int) ([]types.FullCardTag, error) {
+func GetCardTags(cardID int, projectID int) ([]types.FullCardTag, error) {
 	if projectID < 0 {
 		card, err := GetCard(cardID)
 		if err != nil {
@@ -44,17 +44,26 @@ func GetAllTagsOfCard(cardID int, projectID int) ([]types.FullCardTag, error) {
 	return cardtags, nil
 }
 
-func DeleteTagOfCard(card_id int, tag_id int) error {
-	_, err := db.Exec("DELETE FROM cardtags WHERE card_id = ? AND tag_id = ?", card_id, tag_id)
-	return err
+func DeleteCardTag(card_id int, tag_id int) (int64, error) {
+	res, err := db.Exec("DELETE FROM cardtags WHERE card_id = ? AND tag_id = ?", card_id, tag_id)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
 }
 
-func DeleteTagsOfCard(card_id int) error {
-	_, err := db.Exec("DELETE FROM cardtags WHERE card_id = ?", card_id)
-	return err
+func DeleteCardTags(card_id int) (int64, error) {
+	res, err := db.Exec("DELETE FROM cardtags WHERE card_id = ?", card_id)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
 }
 
-func UpdateTagOfCard(ct types.CardTag) error {
-	_, err := db.Exec("UPDATE cardtags SET value = ? WHERE card_id = ? AND tag_id = ?", ct.Value, ct.CardID, ct.TagID)
-	return err
+func UpdateCardTag(ct types.CardTag) (int64, error) {
+	res, err := db.Exec("UPDATE cardtags SET value = ? WHERE card_id = ? AND tag_id = ?", ct.Value, ct.CardID, ct.TagID)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
 }

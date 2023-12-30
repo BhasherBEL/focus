@@ -16,7 +16,7 @@ func CreateCard(c types.Card) (int, error) {
 	return int(id), nil
 }
 
-func GetAllCardsOf(projectID int) ([]types.FullCard, error) {
+func GetProjectsCards(projectID int) ([]types.FullCard, error) {
 	rows, err := db.Query("SELECT * FROM cards WHERE project_id = ?", projectID)
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func GetAllCardsOf(projectID int) ([]types.FullCard, error) {
 			return nil, err
 		}
 
-		tags, err := GetAllTagsOfCard(c.ID, projectID)
+		tags, err := GetCardTags(c.ID, projectID)
 		if err != nil {
 			return nil, err
 		}
@@ -47,14 +47,21 @@ func GetAllCardsOf(projectID int) ([]types.FullCard, error) {
 }
 
 func GetCard(id int) (*types.FullCard, error) {
-	var c types.FullCard
 
-	err := db.QueryRow("SELECT * FROM cards WHERE id = ?", id).Scan(&c.ID, &c.ProjectID, &c.Title, &c.Content)
+	rows, err := db.Query("SELECT * FROM cards WHERE id = ?", id)
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
-	tags, err := GetAllTagsOfCard(id, c.ProjectID)
+	if !rows.Next() {
+		return nil, nil
+	}
+
+	var c types.FullCard
+	rows.Scan(&c.ID, &c.ProjectID, &c.Title, &c.Content)
+
+	tags, err := GetCardTags(id, c.ProjectID)
 	if err != nil {
 		return nil, err
 	}
@@ -63,12 +70,28 @@ func GetCard(id int) (*types.FullCard, error) {
 	return &c, nil
 }
 
-func DeleteCard(id int) error {
-	_, err := db.Exec("DELETE FROM cards WHERE id = ?", id)
-	return err
+func DeleteCard(id int) (int64, error) {
+	res, err := db.Exec("DELETE FROM cards WHERE id = ?", id)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
 }
 
-func UpdateCard(c types.Card) error {
-	_, err := db.Exec("UPDATE cards SET project_id = ?, title = ?, content = ? WHERE id = ?", c.ProjectID, c.Title, c.Content, c.ID)
-	return err
+func UpdateCard(c types.Card) (int64, error) {
+	res, err := db.Exec("UPDATE cards SET project_id = ?, title = ?, content = ? WHERE id = ?", c.ProjectID, c.Title, c.Content, c.ID)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
+
+func ExistCard(id int) (bool, error) {
+	var count int
+	err := db.QueryRow("SELECT COUNT(*) FROM cards WHERE id = ?", id).Scan(&count)
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
 }

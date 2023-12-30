@@ -43,6 +43,7 @@ func InitDB(driver string, connStr string) error {
 			card_id INTEGER,
 			tag_id INTEGER,
 			value TEXT,
+			PRIMARY KEY(card_id, tag_id),
 			FOREIGN KEY(card_id) REFERENCES cards(id)
 			FOREIGN KEY(tag_id) REFERENCES tags(id)
         );

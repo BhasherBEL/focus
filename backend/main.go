@@ -35,8 +35,8 @@ func main() {
 	app.Get("/api/projects/:id", handlers.GetProject)
 	app.Put("/api/projects/:id", handlers.UpdateProject)
 	app.Delete("/api/projects/:id", handlers.DeleteProject)
-	app.Get("/api/projects/:project_id/cards", handlers.GetAllCardsOf)
-	app.Get("/api/projects/:project_id/tags", handlers.GetAllTagsOf)
+	app.Get("/api/projects/:project_id/cards", handlers.GetProjectCards)
+	app.Get("/api/projects/:project_id/tags", handlers.GetProjectTags)
 
 	app.Post("/api/cards", handlers.CreateCard)
 	app.Get("/api/cards/:id", handlers.GetCard)
@@ -48,11 +48,11 @@ func main() {
 	app.Delete("/api/tags/:id", handlers.DeleteTag)
 	app.Put("/api/tags/:id", handlers.UpdateTag)
 
-	app.Post("/api/cards/:card_id/tags/:tag_id", handlers.CreateTagOfCard)
-	app.Get("/api/cards/:card_id/tags", handlers.GetAllTagsOfCard)
-	app.Put("/api/cards/:card_id/tags/:tag_id", handlers.UpdateTagOfCard)
-	app.Delete("/api/cards/:card_id/tags/:tag_id", handlers.DeleteTagOfCard)
-	app.Delete("/api/cards/:card_id/tags", handlers.DeleteTagsOfCard)
+	app.Post("/api/cards/:card_id/tags/:tag_id", handlers.CreateCardTag)
+	app.Get("/api/cards/:card_id/tags", handlers.GetCardTags)
+	app.Put("/api/cards/:card_id/tags/:tag_id", handlers.UpdateCardTag)
+	app.Delete("/api/cards/:card_id/tags/:tag_id", handlers.DeleteCardTag)
+	app.Delete("/api/cards/:card_id/tags", handlers.DeleteCardTags)
 
 	log.Fatal(app.Listen(fmt.Sprintf(":%v", port)))
 }

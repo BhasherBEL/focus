@@ -44,22 +44,37 @@ func GetAllProjects() ([]types.Project, error) {
 func GetProject(id int) (*types.Project, error) {
 	var p types.Project
 
-	err := db.QueryRow("SELECT * FROM projects WHERE id = ?", id).Scan(&p.ID, &p.Title)
+	rows, err := db.Query("SELECT * FROM projects WHERE id = ?", id)
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
+	if !rows.Next() {
+		return nil, nil
+	}
+
+	if err := rows.Scan(&p.ID, &p.Title); err != nil {
+		return nil, err
+	}
 	return &p, nil
+
 }
 
-func DeleteProject(id int) error {
-	_, err := db.Exec("DELETE FROM projects WHERE id = ?", id)
-	return err
+func DeleteProject(id int) (int64, error) {
+	res, err := db.Exec("DELETE FROM projects WHERE id = ?", id)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
 }
 
-func UpdateProject(p types.Project) error {
-	_, err := db.Exec("UPDATE projects SET title = ? WHERE id = ?", p.Title, p.ID)
-	return err
+func UpdateProject(p types.Project) (int64, error) {
+	res, err := db.Exec("UPDATE projects SET title = ? WHERE id = ?", p.Title, p.ID)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
 }
 
 func ExistProject(id int) (bool, error) {

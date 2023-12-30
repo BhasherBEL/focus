@@ -5,7 +5,6 @@ import (
 
 	"git.bhasher.com/bhasher/focus/backend/db"
 	"git.bhasher.com/bhasher/focus/backend/types"
-	"git.bhasher.com/bhasher/focus/backend/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -18,22 +17,7 @@ func GetAllProjects(c *fiber.Ctx) error {
 		})
 	}
 
-	halProjects := make([]fiber.Map, len(projects))
-	for i, p := range projects {
-		halProjects[i] = fiber.Map{
-			"project": p,
-			"_links":  utils.HALProjectLinks(p.ID),
-		}
-	}
-
-	return utils.SendHAL(c, fiber.StatusOK, fiber.Map{
-		"_links": fiber.Map{
-			"self": fiber.Map{"href": "/api/projects"},
-		},
-		"_embedded": fiber.Map{
-			"projects": halProjects,
-		},
-	})
+	return c.Status(fiber.StatusOK).JSON(projects)
 }
 
 func GetProject(c *fiber.Ctx) error {
@@ -53,10 +37,7 @@ func GetProject(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 
-	return utils.SendHAL(c, fiber.StatusOK, fiber.Map{
-		"project": project,
-		"_links":  utils.HALProjectLinks(project.ID),
-	})
+	return c.Status(fiber.StatusOK).JSON(project)
 }
 
 func CreateProject(c *fiber.Ctx) error {
@@ -73,10 +54,8 @@ func CreateProject(c *fiber.Ctx) error {
 		})
 	}
 
-	c.Location(fmt.Sprintf("/api/projects/%v", id))
-	return utils.SendHAL(c, fiber.StatusCreated, fiber.Map{
-		"id":     id,
-		"_links": utils.HALProjectLinks(id),
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"id": id,
 	})
 }
 
@@ -91,24 +70,16 @@ func UpdateProject(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Error parsing request"})
 	}
 
-	exists, err := db.ExistProject(id)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error finding project",
-			"trace": fmt.Sprint(err),
-		})
-	}
-
-	if !exists {
-		return c.SendStatus(fiber.StatusNotFound)
-	}
-
-	err = db.UpdateProject(p)
+	count, err := db.UpdateProject(p)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error updating project",
 			"trace": fmt.Sprint(err),
 		})
+	}
+
+	if count == 0 {
+		return c.SendStatus(fiber.StatusNotFound)
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
@@ -120,24 +91,16 @@ func DeleteProject(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid project ID"})
 	}
 
-	exists, err := db.ExistProject(id)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error finding project",
-			"trace": fmt.Sprint(err),
-		})
-	}
-
-	if !exists {
-		return c.SendStatus(fiber.StatusNotFound)
-	}
-
-	err = db.DeleteProject(id)
+	count, err := db.DeleteProject(id)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error deleting project",
 			"trace": fmt.Sprint(err),
 		})
+	}
+
+	if count == 0 {
+		return c.SendStatus(fiber.StatusNotFound)
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
