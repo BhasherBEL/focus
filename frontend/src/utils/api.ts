@@ -15,8 +15,6 @@ export function processError (response: AxiosResponse<any, any>, message: string
     let title = `${response.status} ${response.statusText}`;
     let subtitle = message;
 
-    console.log(response.headers)
-
     if(response.headers["content-type"] === "application/json") {
         const parsed = response.data;
         subtitle = parsed.error;
@@ -24,8 +22,6 @@ export function processError (response: AxiosResponse<any, any>, message: string
             subtitle += '<br><br>' + parsed.trace;
         }
     } 
-
-    axios.get(backend + '/api/trace');
 
     toastAlert(title, subtitle);
 } 

@@ -42,10 +42,12 @@ func InitDB(driver string, connStr string) error {
 		CREATE TABLE IF NOT EXISTS cardtags (
 			card_id INTEGER,
 			tag_id INTEGER,
+			option_id TEXT,
 			value TEXT,
 			PRIMARY KEY(card_id, tag_id),
 			FOREIGN KEY(card_id) REFERENCES cards(id)
 			FOREIGN KEY(tag_id) REFERENCES tags(id)
+			FOREIGN KEY(option_id) REFERENCES tagsoptions(id)
         );
 		CREATE TABLE IF NOT EXISTS tagsoptions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

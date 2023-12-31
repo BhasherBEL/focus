@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ModalTag from './modal_tag.svelte';
 	import status from '../utils/status';
-	import type { Card } from '../stores/interfaces';
+	import type { Card, MeTag } from '../stores/interfaces';
 	import api, { processError } from '../utils/api';
 
 	export let card: Card;
@@ -23,7 +23,7 @@
 		}
 		const id = response.data.id;
 
-		card.tags = [...card.tags, { card_id: card.id, tag_id: id, tag_title: newTagName, value: '' }];
+		card.tags = [...card.tags, { card_id: card.id, tag_id: id, option_id: -1, value: '' }];
 		newTagName = '';
 	}
 

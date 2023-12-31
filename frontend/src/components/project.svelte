@@ -1,9 +1,16 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import CardC from './card.svelte';
-	import { type Project, type Card, parseCards } from '../stores/interfaces';
+	import {
+		type Project,
+		type Card,
+		parseCards,
+		type MeTag,
+		parseMeTags
+	} from '../stores/interfaces';
 	import status from '../utils/status';
 	import api, { processError } from '../utils/api';
+	import projectTags from '../stores/projectTags';
 
 	export let projectId: number;
 
@@ -20,15 +27,18 @@
 
 		project = response.data;
 
-		response = await api.get(`/v1/projects/${projectId}/cards`, {
-			validateStatus: () => true
-		});
+		response = await api.get(`/v1/projects/${projectId}/cards`);
 
 		if (response.status === status.OK) {
 			cards = parseCards(response.data);
 		} else {
 			cards = [];
 			processError(response, 'Failed to fetch cards');
+			return;
+		}
+
+		if (!(await projectTags.init(projectId))) {
+			return;
 		}
 	});
 

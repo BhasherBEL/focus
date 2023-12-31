@@ -26,11 +26,7 @@
 			return;
 		}
 
-		console.log(newTitle);
-
 		project.title = newTitle;
-
-		console.log(project.title);
 
 		edit = false;
 	}
