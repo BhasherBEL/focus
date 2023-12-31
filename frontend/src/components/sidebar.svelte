@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import api, { processError } from '../utils/api';
 	import type { View } from '../stores/interfaces';
-	import currentView from '../stores/currentView';
+	import { currentView } from '../stores/smallStore';
 
 	export let projectID: number;
 	let views: View[];

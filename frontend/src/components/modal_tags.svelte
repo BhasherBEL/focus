@@ -12,7 +12,7 @@
 		if (newTagName === '') return;
 
 		const response = await api.post(`/v1/tags`, {
-			project_id: card.project_id,
+			project_id: card.projectId,
 			title: newTagName,
 			type: 0
 		});

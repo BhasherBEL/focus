@@ -1,35 +1,23 @@
 <script lang="ts">
-	import currentModalCard from '../stores/currentModalCard';
 	import type { Card } from '../stores/interfaces';
 	import projectTags from '../stores/projectTags';
+	import { currentModalCard } from '../stores/smallStore';
 	import ModalCard from './modal_card.svelte';
 
 	export let card: Card;
-	let showModal: boolean = $currentModalCard == card.id;
-	export let onDelete: () => void;
-
-	function editCard() {
-		showModal = true;
-	}
-
-	function cancelEdit() {
-		showModal = false;
-	}
-
-	function editCardHandler(event: KeyboardEvent) {
-		if (event.key === 'Enter') {
-			editCard();
-		}
-	}
 </script>
 
 <div
 	class="card"
 	tabindex="0"
 	draggable={true}
-	on:click={editCard}
+	on:click={() => ($currentModalCard = card.id)}
 	role="button"
-	on:keydown={editCardHandler}
+	on:keydown={(e) => {
+		if (e.key === 'Enter') {
+			$currentModalCard = card.id;
+		}
+	}}
 >
 	<div class="title">{card.title}</div>
 	{#if card.tags}
@@ -49,4 +37,4 @@
 	{/if}
 </div>
 
-<ModalCard bind:show={showModal} bind:card onCancel={cancelEdit} {onDelete} />
+<ModalCard bind:card />

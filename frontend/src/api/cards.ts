@@ -18,7 +18,7 @@ export async function newCardApi(projectId: number): Promise<Card> {
 
 	return {
 		id: id,
-		project_id: projectId,
+		projectId: projectId,
 		title: 'Untitled',
 		content: '',
 		tags: []

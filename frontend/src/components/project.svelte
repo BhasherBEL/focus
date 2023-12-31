@@ -1,18 +1,16 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import CardC from './card.svelte';
 	import { type Project, type Card, parseCards, type View } from '../stores/interfaces';
 	import projectTags from '../stores/projectTags';
-	import currentView from '../stores/currentView';
 	import { deleteCardApi, newCardApi } from '../api/cards';
 	import { getProjectAPI, getProjectCardsAPI } from '../api/projects';
 	import Column from './column.svelte';
-	import currentModalCard from '../stores/currentModalCard';
+	import { cards, currentModalCard, currentView } from '../stores/smallStore';
 
 	export let projectId: number;
 
 	let project: Project;
-	let cards: Card[] = [];
+	// let cards: Card[] = [];
 	let view: View | null = null;
 	let columns: { id: number; title: string; cards: Card[] }[] = [];
 
@@ -21,8 +19,9 @@
 			project = p;
 		});
 
-		getProjectCardsAPI(projectId).then((c) => {
-			cards = parseCards(c);
+		cards.init(projectId);
+
+		cards.subscribe((c) => {
 			loadColumns();
 		});
 
@@ -36,21 +35,6 @@
 		});
 	});
 
-	function newCard() {
-		newCardApi(projectId).then((card) => {
-			cards = [...cards, card];
-			currentModalCard.set(card.id);
-			loadColumns();
-		});
-	}
-
-	function deleteCard(id: number) {
-		deleteCardApi(id).then(() => {
-			cards = cards.filter((card) => card.id !== id);
-			loadColumns();
-		});
-	}
-
 	function loadColumns() {
 		if (!view) return;
 		let primary_tag_id = view.primary_tag_id;
@@ -59,17 +43,22 @@
 				return {
 					id: o.id,
 					title: o.value,
-					cards: cards.filter((c) => c.tags.map((t) => t.option_id).includes(o.id))
+					cards: $cards?.filter((c) => c.tags.map((t) => t.option_id).includes(o.id)) || []
 				};
 			}) || [];
 		columns.push({
 			id: -1,
 			title: 'No tag',
-			cards: cards.filter((c) => {
-				const tag = c.tags.find((t) => t.tag_id === primary_tag_id);
-				return tag?.option_id == -1;
-			})
+			cards:
+				$cards?.filter((c) => {
+					const tag = c.tags.find((t) => t.tag_id === primary_tag_id);
+					return tag?.option_id == -1;
+				}) || []
 		});
+	}
+
+	async function newCard() {
+		await cards.add(projectId);
 	}
 </script>
 
@@ -85,40 +74,26 @@
 			<h2>{project.title}</h2>
 			<button on:click={newCard}>New card</button>
 		</header>
-		{#if view && $projectTags[view.primary_tag_id]}
+		{#if view && $projectTags[view.primary_tag_id] && $cards}
 			<div class="grid">
 				{#each $projectTags[view.primary_tag_id].options as option}
-					<Column tag_id={view.primary_tag_id} {option} bind:cards deleteCard />
+					<Column
+						title={option.value}
+						cards={$cards.filter((c) => c.tags.map((t) => t.option_id).includes(option.id))}
+					/>
 				{/each}
+				<Column
+					title={`No ${$projectTags[view.primary_tag_id]?.title || 'tag'}`}
+					cards={$cards.filter((c) => c.tags.find((t) => t.tag_id)?.option_id == -1 || false)}
+				/>
 			</div>
-		{:else}
-			<!-- <ul>
-				{#if cards}
-					{#each cards as card}
-						<CardC
-							{card}
-							showModal={modalID === card.id}
-							onDelete={async () => await deleteCard(card.id)}
-						/>
-					{/each}
-				{/if}
-			</ul> -->
 		{/if}
 	</div>
 {/if}
 
 <style>
-	#project .grid {
+	.grid {
 		display: flex;
 		flex-direction: row;
-	}
-
-	#project .column {
-		width: 200px;
-		margin: 0 10px;
-	}
-
-	#project .column h3 {
-		text-align: center;
 	}
 </style>
