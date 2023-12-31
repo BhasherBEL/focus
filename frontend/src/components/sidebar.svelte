@@ -16,12 +16,12 @@
 		}
 
 		views = response.data;
+
+		if (views.length > 0) currentView.set(views[0]);
 	});
 </script>
 
-<svelte:head>
-	<link rel="stylesheet" type="text/css" href="/css/sidebar.css" />
-</svelte:head>
+<link rel="stylesheet" type="text/css" href="/css/sidebar.css" />
 
 <div id="sidebar" class="sidebar">
 	<div class="logo">

@@ -1,10 +1,11 @@
 <script lang="ts">
+	import currentModalCard from '../stores/currentModalCard';
 	import type { Card } from '../stores/interfaces';
 	import projectTags from '../stores/projectTags';
 	import ModalCard from './modal_card.svelte';
 
 	export let card: Card;
-	export let showModal: boolean;
+	let showModal: boolean = $currentModalCard == card.id;
 	export let onDelete: () => void;
 
 	function editCard() {

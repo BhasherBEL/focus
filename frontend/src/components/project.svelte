@@ -2,105 +2,75 @@
 	import { onMount } from 'svelte';
 	import CardC from './card.svelte';
 	import { type Project, type Card, parseCards, type View } from '../stores/interfaces';
-	import status from '../utils/status';
-	import api, { processError } from '../utils/api';
 	import projectTags from '../stores/projectTags';
 	import currentView from '../stores/currentView';
-	import Card from './card.svelte';
+	import { deleteCardApi, newCardApi } from '../api/cards';
+	import { getProjectAPI, getProjectCardsAPI } from '../api/projects';
+	import Column from './column.svelte';
+	import currentModalCard from '../stores/currentModalCard';
 
 	export let projectId: number;
 
 	let project: Project;
-	let cards: Card[];
+	let cards: Card[] = [];
+	let view: View | null = null;
+	let columns: { id: number; title: string; cards: Card[] }[] = [];
 
 	onMount(async () => {
-		let response = await api.get(`/v1/projects/${projectId}`);
+		getProjectAPI(projectId).then((p) => {
+			project = p;
+		});
 
-		if (response.status !== status.OK) {
-			processError(response, 'Failed to fetch project');
-			return;
-		}
-
-		project = response.data;
-
-		response = await api.get(`/v1/projects/${projectId}/cards`);
-
-		if (response.status === status.OK) {
-			cards = parseCards(response.data);
-		} else {
-			cards = [];
-			processError(response, 'Failed to fetch cards');
-			return;
-		}
+		getProjectCardsAPI(projectId).then((c) => {
+			cards = parseCards(c);
+			loadColumns();
+		});
 
 		if (!(await projectTags.init(projectId))) {
 			return;
 		}
+
+		currentView.subscribe((v) => {
+			view = v;
+			loadColumns();
+		});
 	});
 
-	let modalID = -1;
-
-	async function newCard() {
-		const response = await api.post(`/v1/cards`, {
-			project_id: projectId,
-			title: 'Untitled',
-			content: ''
+	function newCard() {
+		newCardApi(projectId).then((card) => {
+			cards = [...cards, card];
+			currentModalCard.set(card.id);
+			loadColumns();
 		});
-
-		if (response.status !== status.Created) {
-			processError(response, 'Failed to create card');
-			return;
-		}
-
-		const id: number = response.data.id;
-
-		let card: Card = {
-			id: id,
-			project_id: projectId,
-			title: 'Untitled',
-			content: '',
-			tags: []
-		};
-
-		cards = [...cards, card];
-		modalID = id;
 	}
 
-	async function deleteCard(cardID: number) {
-		const response = await api.delete(`/v2/cards/${cardID}`);
-
-		if (response.status !== status.NoContent) {
-			processError(response, 'Failed to delete card');
-			return;
-		}
-
-		cards = cards.filter((card) => card.id !== cardID);
+	function deleteCard(id: number) {
+		deleteCardApi(id).then(() => {
+			cards = cards.filter((card) => card.id !== id);
+			loadColumns();
+		});
 	}
 
-	let view: View | null = null;
-	let columns: { id: number; title: string; cards: Card[] }[] = [];
-
-	currentView.subscribe((v) => {
-		view = v;
-		if (!v) return;
-		let primary_tag_id = v.primary_tag_id;
-		columns = $projectTags[primary_tag_id].options.map((o) => {
-			return {
-				id: o.id,
-				title: o.value,
-				cards: cards.filter((c) => c.tags.map((t) => t.option_id).includes(o.id))
-			};
-		});
+	function loadColumns() {
+		if (!view) return;
+		let primary_tag_id = view.primary_tag_id;
+		columns =
+			$projectTags[primary_tag_id]?.options.map((o) => {
+				return {
+					id: o.id,
+					title: o.value,
+					cards: cards.filter((c) => c.tags.map((t) => t.option_id).includes(o.id))
+				};
+			}) || [];
 		columns.push({
 			id: -1,
 			title: 'No tag',
 			cards: cards.filter((c) => {
 				const tag = c.tags.find((t) => t.tag_id === primary_tag_id);
-
 				return tag?.option_id == -1;
 			})
 		});
-	});
+	}
 </script>
 
 <svelte:head>
@@ -115,25 +85,14 @@
 			<h2>{project.title}</h2>
 			<button on:click={newCard}>New card</button>
 		</header>
-		{#if view}
+		{#if view && $projectTags[view.primary_tag_id]}
 			<div class="grid">
-				{#each columns as column}
-					<div class="column">
-						<h3>{column.title}</h3>
-						<ul>
-							{#each column.cards as card}
-								<CardC
-									{card}
-									showModal={modalID === card.id}
-									onDelete={async () => await deleteCard(card.id)}
-								/>
-							{/each}
-						</ul>
-					</div>
+				{#each $projectTags[view.primary_tag_id].options as option}
+					<Column tag_id={view.primary_tag_id} {option} bind:cards deleteCard />
 				{/each}
 			</div>
 		{:else}
-			<ul>
+			<!-- <ul>
 				{#if cards}
 					{#each cards as card}
 						<CardC
@@ -143,7 +102,7 @@
 						/>
 					{/each}
 				{/if}
-			</ul>
+			</ul> -->
 		{/if}
 	</div>
 {/if}
