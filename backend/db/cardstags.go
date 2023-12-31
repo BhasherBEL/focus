@@ -18,7 +18,7 @@ func GetCardTags(cardID int, projectID int) ([]types.FullCardTag, error) {
 		projectID = card.ProjectID
 	}
 
-	rows, err := db.Query(`SELECT t.id, t.title, COALESCE(ct.value, '')
+	rows, err := db.Query(`SELECT t.id, t.title, t.type, COALESCE(ct.value, '')
 	FROM tags t
 	LEFT JOIN cardtags ct ON ct.tag_id = t.id AND ct.card_id = ?
 	WHERE t.project_id = ?
@@ -31,7 +31,7 @@ func GetCardTags(cardID int, projectID int) ([]types.FullCardTag, error) {
 	var cardtags []types.FullCardTag
 	for rows.Next() {
 		ct := types.FullCardTag{CardID: cardID}
-		if err := rows.Scan(&ct.TagID, &ct.TagTitle, &ct.Value); err != nil {
+		if err := rows.Scan(&ct.TagID, &ct.TagTitle, &ct.TagType, &ct.Value); err != nil {
 			return nil, err
 		}
 		cardtags = append(cardtags, ct)

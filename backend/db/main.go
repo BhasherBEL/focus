@@ -47,6 +47,12 @@ func InitDB(driver string, connStr string) error {
 			FOREIGN KEY(card_id) REFERENCES cards(id)
 			FOREIGN KEY(tag_id) REFERENCES tags(id)
         );
+		CREATE TABLE IF NOT EXISTS tagsoptions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+			tag_id INTEGER,
+			value TEXT,
+			FOREIGN KEY(tag_id) REFERENCES tags(id)
+        );
     `)
 	if err != nil {
 		return err

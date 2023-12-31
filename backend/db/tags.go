@@ -16,19 +16,25 @@ func CreateTag(t types.Tag) (int, error) {
 	return int(id), nil
 }
 
-func GetProjectTags(projectID int) ([]types.Tag, error) {
+func GetProjectTags(projectID int) ([]types.FullTag, error) {
 	rows, err := db.Query("SELECT * FROM tags WHERE project_id = ?", projectID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var tags []types.Tag
+	var tags []types.FullTag
 	for rows.Next() {
-		var t types.Tag
+		var t types.FullTag
 		if err := rows.Scan(&t.ID, &t.ProjectID, &t.Title, &t.Type); err != nil {
 			return nil, err
 		}
+
+		t.Options, err = GetTagOptions(t.ID)
+		if err != nil {
+			return nil, err
+		}
+
 		tags = append(tags, t)
 	}
 
@@ -80,4 +86,62 @@ func ExistTag(id int) (bool, error) {
 	}
 
 	return count > 0, nil
+}
+
+func CreateTagOption(to types.TagOption) (int, error) {
+	res, err := db.Exec("INSERT INTO tagsoptions (tag_id, value) VALUES (?, ?)", to.TagID, to.Value)
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
+}
+
+func GetTagOptions(tagID int) ([]types.TagOption, error) {
+	rows, err := db.Query("SELECT * FROM tagsoptions WHERE tag_id = ?", tagID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var options []types.TagOption
+	for rows.Next() {
+		var to types.TagOption
+		if err := rows.Scan(&to.ID, &to.TagID, &to.Value); err != nil {
+			return nil, err
+		}
+		options = append(options, to)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return options, nil
+}
+
+func DeleteTagOption(id int) (int64, error) {
+	res, err := db.Exec("DELETE FROM tagsoptions WHERE id = ?", id)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
+
+func UpdateTagOption(to types.TagOption) (int64, error) {
+	res, err := db.Exec("UPDATE tagsoptions SET tag_id = ?, value = ? WHERE id = ?", to.TagID, to.Value, to.ID)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
+
+func DeleteTagOptions(tagID int) error {
+	_, err := db.Exec("DELETE FROM tagsoptions WHERE tag_id = ?", tagID)
+	return err
 }
