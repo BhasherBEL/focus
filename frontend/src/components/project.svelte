@@ -1,16 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import CardC from './card.svelte';
-	import {
-		type Project,
-		type Card,
-		parseCards,
-		type MeTag,
-		parseMeTags
-	} from '../stores/interfaces';
+	import { type Project, type Card, parseCards, type View } from '../stores/interfaces';
 	import status from '../utils/status';
 	import api, { processError } from '../utils/api';
 	import projectTags from '../stores/projectTags';
+	import currentView from '../stores/currentView';
+	import Card from './card.svelte';
 
 	export let projectId: number;
 
@@ -80,6 +76,31 @@
 
 		cards = cards.filter((card) => card.id !== cardID);
 	}
+
+	let view: View | null = null;
+	let columns: { id: number; title: string; cards: Card[] }[] = [];
+
+	currentView.subscribe((v) => {
+		view = v;
+		if (!v) return;
+		let primary_tag_id = v.primary_tag_id;
+		columns = $projectTags[primary_tag_id].options.map((o) => {
+			return {
+				id: o.id,
+				title: o.value,
+				cards: cards.filter((c) => c.tags.map((t) => t.option_id).includes(o.id))
+			};
+		});
+		columns.push({
+			id: -1,
+			title: 'No tag',
+			cards: cards.filter((c) => {
+				const tag = c.tags.find((t) => t.tag_id === primary_tag_id);
+
+				return tag?.option_id == -1;
+			})
+		});
+	});
 </script>
 
 <svelte:head>
@@ -94,16 +115,51 @@
 			<h2>{project.title}</h2>
 			<button on:click={newCard}>New card</button>
 		</header>
-		<ul>
-			{#if cards}
-				{#each cards as card}
-					<CardC
-						{card}
-						showModal={modalID === card.id}
-						onDelete={async () => await deleteCard(card.id)}
-					/>
+		{#if view}
+			<div class="grid">
+				{#each columns as column}
+					<div class="column">
+						<h3>{column.title}</h3>
+						<ul>
+							{#each column.cards as card}
+								<CardC
+									{card}
+									showModal={modalID === card.id}
+									onDelete={async () => await deleteCard(card.id)}
+								/>
+							{/each}
+						</ul>
+					</div>
 				{/each}
-			{/if}
-		</ul>
+			</div>
+		{:else}
+			<ul>
+				{#if cards}
+					{#each cards as card}
+						<CardC
+							{card}
+							showModal={modalID === card.id}
+							onDelete={async () => await deleteCard(card.id)}
+						/>
+					{/each}
+				{/if}
+			</ul>
+		{/if}
 	</div>
 {/if}
+
+<style>
+	#project .grid {
+		display: flex;
+		flex-direction: row;
+	}
+
+	#project .column {
+		width: 200px;
+		margin: 0 10px;
+	}
+
+	#project .column h3 {
+		text-align: center;
+	}
+</style>

@@ -3,13 +3,16 @@
 	import Sidebar from '../../components/sidebar.svelte';
 	import { page } from '$app/stores';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
+	import type { View } from '../../stores/interfaces';
 
-	let projectId: number = +$page.params.project;
+	let projectID: number = +$page.params.project;
+
+	let currentView: View;
 </script>
 
 <div id="projectPage">
-	<Sidebar />
-	<Project {projectId} />
+	<Sidebar {projectID} />
+	<Project projectId={projectID} />
 </div>
 <SvelteToast />
 

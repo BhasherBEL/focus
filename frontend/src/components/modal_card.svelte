@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ModalTags from './modal_tags.svelte';
-	import type { Card, MeTag } from '../stores/interfaces';
+	import type { Card } from '../stores/interfaces';
 	import api, { processError } from '../utils/api';
 	import status from '../utils/status';
 

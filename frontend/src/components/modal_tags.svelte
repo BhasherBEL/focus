@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ModalTag from './modal_tag.svelte';
 	import status from '../utils/status';
-	import type { Card, MeTag } from '../stores/interfaces';
+	import type { Card } from '../stores/interfaces';
 	import api, { processError } from '../utils/api';
 
 	export let card: Card;

@@ -23,10 +23,7 @@ func cardsRouter(router fiber.Router) error {
 func CreateCard(c *fiber.Ctx) error {
 	card := types.Card{}
 	if err := c.BodyParser(&card); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Cannot parse request",
-			"trace": fmt.Sprint(err),
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse request"})
 	}
 
 	id, err := db.CreateCard(card)
@@ -45,10 +42,7 @@ func CreateCard(c *fiber.Ctx) error {
 func GetCard(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid card ID",
-			"trace": fmt.Sprint(err),
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid card ID"})
 	}
 
 	card, err := db.GetCard(id)
@@ -68,10 +62,7 @@ func GetCard(c *fiber.Ctx) error {
 func DeleteCard(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid card ID",
-			"trace": fmt.Sprint(err),
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid card ID"})
 	}
 
 	count, err := db.DeleteCard(id)

@@ -10,6 +10,7 @@ func v1Router(router fiber.Router) error {
 	projectsRouter(router.Group("/projects"))
 	cardsRouter(router.Group("/cards"))
 	tagsRouter(router.Group("/tags"))
+	viewsRouter(router.Group("/views"))
 	return nil
 }
 

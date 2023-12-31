@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type Card, type MeTag } from '../stores/interfaces';
+	import type { Card } from '../stores/interfaces';
 	import projectTags from '../stores/projectTags';
 	import ModalCard from './modal_card.svelte';
 

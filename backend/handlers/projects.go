@@ -17,6 +17,7 @@ func projectsRouter(router fiber.Router) error {
 	router.Delete("/:id", DeleteProject)
 	router.Get(":id/cards", GetProjectCards)
 	router.Get(":id/tags", GetProjectTags)
+	router.Get(":id/views", GetProjectViews)
 	return nil
 }
 
@@ -174,4 +175,33 @@ func GetProjectTags(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(tags)
+}
+
+func GetProjectViews(c *fiber.Ctx) error {
+	projectID, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid project ID"})
+	}
+
+	exists, err := db.ExistProject(projectID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error finding project",
+			"trace": fmt.Sprint(err),
+		})
+	}
+
+	if !exists {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+
+	views, err := db.GetProjectViews(projectID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Cannot retrieve views",
+			"trace": fmt.Sprint(err),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(views)
 }

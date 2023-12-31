@@ -34,6 +34,14 @@ export interface TagOption {
     value: string;
 }
 
+export interface View {
+    id: number;
+    project_id: number;
+    primary_tag_id: number;
+    secondary_tag_id: number;
+    title: string;
+}
+
 export function parseCard (c: any) {
     let card: Card = c;
 if (card.tags == null) card.tags = [];

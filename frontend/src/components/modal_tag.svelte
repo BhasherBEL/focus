@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { TagValue, MeTag } from '../stores/interfaces';
+	import type { TagValue } from '../stores/interfaces';
 	import projectTags from '../stores/projectTags';
 	import api, { processError } from '../utils/api';
 	import status from '../utils/status';

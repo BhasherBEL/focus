@@ -55,6 +55,16 @@ func InitDB(driver string, connStr string) error {
 			value TEXT,
 			FOREIGN KEY(tag_id) REFERENCES tags(id)
         );
+		CREATE TABLE IF NOT EXISTS views (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			project_id INTEGER,
+			primary_tag_id INTEGER,
+			secondary_tag_id INTEGER,
+			title TEXT,
+			FOREIGN KEY(project_id) REFERENCES projects(id),
+			FOREIGN KEY(primary_tag_id) REFERENCES tags(id),
+			FOREIGN KEY(secondary_tag_id) REFERENCES tags(id)
+		);
     `)
 	if err != nil {
 		return err
