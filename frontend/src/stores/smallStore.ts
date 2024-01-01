@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import { parseCards, type Card, type View } from './interfaces';
+import { parseCards, type Card, type View, type TagValue } from './interfaces';
 import { deleteCardApi, newCardApi } from '../api/cards';
 import { getProjectCardsAPI } from '../api/projects';
 
@@ -19,10 +19,10 @@ export const cards = (() => {
 				set(parseCards(c));
 			});
 		},
-		add: async (projectId: number) => {
-			await newCardApi(projectId).then((card) => {
-				currentModalCard.set(card.id);
+		add: async (projectId: number, tags: TagValue[]) => {
+			await newCardApi(projectId, tags).then((card) => {
 				update((cards) => [...cards, card]);
+				currentModalCard.set(card.id);
 			});
 		},
 		remove: async (card: Card) => {

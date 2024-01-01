@@ -1,8 +1,8 @@
-import type { Card } from '../stores/interfaces';
+import type { Card, TagValue } from '../stores/interfaces';
 import api, { processError } from '../utils/api';
 import status from '../utils/status';
 
-export async function newCardApi(projectId: number): Promise<Card> {
+export async function newCardApi(projectId: number, tags: TagValue[]): Promise<Card> {
 	const response = await api.post(`/v1/cards`, {
 		project_id: projectId,
 		title: 'Untitled',
@@ -16,12 +16,14 @@ export async function newCardApi(projectId: number): Promise<Card> {
 
 	const id: number = response.data.id;
 
+	tags.forEach((tag) => (tag.card_id = id));
+
 	return {
 		id: id,
 		projectId: projectId,
 		title: 'Untitled',
 		content: '',
-		tags: []
+		tags: tags
 	};
 }
 

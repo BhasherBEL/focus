@@ -3,7 +3,7 @@
 	import type { Project } from '../stores/interfaces';
 	import { onMount } from 'svelte';
 	import api, { processError } from '../utils/api';
-	import SelectProject from '../components/selectProject.svelte';
+	import SelectProject from '../components/projects/selectProject.svelte';
 
 	let projects: Project[];
 
@@ -46,11 +46,7 @@
 	}
 </script>
 
-<svelte:head>
-	<link rel="stylesheet" type="text/css" href="/css/projects.css" />
-</svelte:head>
-
-<section id="projects">
+<section>
 	<h2>Projects</h2>
 	<ul>
 		{#if projects}
@@ -75,3 +71,30 @@
 </section>
 
 <SvelteToast />
+
+<style lang="less">
+	section {
+		margin: 40px;
+	}
+	h2 {
+		text-align: center;
+		margin-bottom: 40px;
+	}
+
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	#add {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		padding: 20px 0;
+		cursor: pointer;
+	}
+
+	#add:hover {
+		background-color: #303030;
+	}
+</style>

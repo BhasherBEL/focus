@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { Project } from '../stores/interfaces';
-	import api, { processError } from '../utils/api';
-	import status from '../utils/status';
+	import type { Project } from '../../stores/interfaces';
+	import api, { processError } from '../../utils/api';
+	import status from '../../utils/status';
 
 	export let project: Project;
 	export let deleteProject: (project: Project) => void;
@@ -94,3 +94,50 @@
 		/>
 	</div>
 </li>
+
+<style lang="less">
+	li {
+		cursor: pointer;
+		margin: 10px 0;
+		border: 1px solid #555;
+		border-radius: 4px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.title {
+		font-weight: bold;
+		padding: 20px;
+		width: 100%;
+	}
+
+	.title:hover {
+		background-color: #303030;
+	}
+
+	.buttons {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	li img {
+		padding: 20px;
+	}
+
+	li img:hover {
+		background-color: #333;
+	}
+
+	input {
+		padding: 20px;
+		width: 100%;
+		background-color: #333;
+		color: inherit;
+		font-weight: bold;
+		font-size: inherit;
+	}
+</style>

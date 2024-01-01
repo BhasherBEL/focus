@@ -1,11 +1,12 @@
 <script lang="ts">
-	import type { TagValue } from '../stores/interfaces';
-	import projectTags from '../stores/projectTags';
-	import api, { processError } from '../utils/api';
-	import status from '../utils/status';
+	import type { TagValue } from '../../../stores/interfaces';
+	import projectTags from '../../../stores/projectTags';
+	import { cards } from '../../../stores/smallStore';
+	import api, { processError } from '../../../utils/api';
+	import status from '../../../utils/status';
 
 	export let tag: TagValue;
-	export let removeTag: (id: number) => void;
+	// export let removeTag: (id: number) => void;
 	let newValue: string = tag.value;
 	let newOption: number = tag.option_id;
 
@@ -47,6 +48,7 @@
 
 		tag.value = newValue;
 		tag.option_id = newOption;
+		cards.reload();
 	}
 
 	async function newTagOption() {

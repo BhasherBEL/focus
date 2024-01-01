@@ -1,23 +1,33 @@
 <script lang="ts">
-	import Project from '../../components/project.svelte';
-	import Sidebar from '../../components/sidebar.svelte';
 	import { page } from '$app/stores';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
-	import type { View } from '../../stores/interfaces';
+	import { onMount } from 'svelte';
+	import { getProjectAPI } from '../../api/projects';
+	import { type Project as P } from '../../stores/interfaces';
+	import Sidebar from '../../components/sidebar.svelte';
+	import Project from '../../components/project/project.svelte';
 
-	let projectID: number = +$page.params.project;
+	let projectId: number = +$page.params.project;
 
-	let currentView: View;
+	let project: P;
+
+	onMount(() => {
+		getProjectAPI(projectId).then((p) => {
+			project = p;
+		});
+	});
 </script>
 
-<div id="projectPage">
-	<Sidebar {projectID} />
-	<Project projectId={projectID} />
-</div>
-<SvelteToast />
+{#if project}
+	<div>
+		<Sidebar {project} />
+		<Project {project} />
+	</div>
+	<SvelteToast />
+{/if}
 
 <style>
-	#projectPage {
+	div {
 		display: flex;
 	}
 </style>

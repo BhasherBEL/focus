@@ -1,8 +1,8 @@
 <script lang="ts">
+	import type { Card } from '../../../stores/interfaces';
+	import api, { processError } from '../../../utils/api';
+	import status from '../../../utils/status';
 	import ModalTag from './modal_tag.svelte';
-	import status from '../utils/status';
-	import type { Card } from '../stores/interfaces';
-	import api, { processError } from '../utils/api';
 
 	export let card: Card;
 
@@ -41,7 +41,7 @@
 <table>
 	{#if card.tags}
 		{#each card.tags as tag}
-			<ModalTag bind:tag {removeTag} />
+			<ModalTag bind:tag />
 		{/each}
 	{/if}
 	<tr class="tag">

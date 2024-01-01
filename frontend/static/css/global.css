@@ -8,3 +8,12 @@ body {
     color: white;
     background-color: #252525;
 }
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul {
+    list-style: none;
+}
