@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
-	import type { Project, TagValue } from '../../stores/interfaces';
-	import { cards } from '../../stores/smallStore';
+	import type { Project, TagValue, View } from '../../stores/interfaces';
+	import { cards, currentView } from '../../stores/smallStore';
 	import projectTags from '../../stores/projectTags';
+	import GroupMenu from './groupMenu.svelte';
 
 	export let project: Project;
+	export let currentTagId: number;
+	let groupMenuOpen = false;
 
 	function getEmptyTags(): TagValue[] {
 		const tags: TagValue[] = [];
@@ -18,16 +21,41 @@
 		}
 		return tags;
 	}
+
+	async function setGroup(id: number): Promise<boolean> {
+		if ($currentView == null) return false;
+
+		return await currentView.update({
+			...$currentView,
+			primary_tag_id: id
+		});
+	}
 </script>
 
 <header>
 	<h2>{project.title}</h2>
 	<nav>
-		<span>Group</span>
-		<span>Sub-group</span>
-		<span>Filter</span>
-		<span>Sort</span>
-		<button on:click={async () => cards.add(project.id, getEmptyTags())}>New</button>
+		<div>
+			<button
+				on:click={() => (groupMenuOpen = !groupMenuOpen)}
+				class:defined={$currentView?.primary_tag_id}>Group</button
+			>
+			<GroupMenu
+				isOpen={groupMenuOpen}
+				choices={Object.values($projectTags).map((tag) => ({ id: tag.id, value: tag.title }))}
+				onChoice={async (id) => {
+					if (!(await setGroup(id))) return;
+					groupMenuOpen = false;
+				}}
+				currentChoice={currentTagId}
+			/>
+		</div>
+		<div>
+			<button class:disabled={true}>Sub-group</button>
+		</div>
+		<button>Filter</button>
+		<button>Sort</button>
+		<button id="newButton" on:click={async () => cards.add(project.id, getEmptyTags())}>New</button>
 	</nav>
 </header>
 
@@ -45,32 +73,34 @@
 	}
 
 	nav {
-		* {
-			cursor: pointer;
-		}
-
-		span {
-			margin-right: 10px;
-			color: #aaa;
-			padding: 5px 10px;
-			border-radius: 7px;
-
-			&:hover {
-				// background-color: #fff2;
-			}
-		}
+		display: flex;
+		flex-direction: row;
+		align-items: center;
 
 		button {
-			background: #324067;
-			color: inherit;
+			cursor: pointer;
+			color: #aaa;
+			padding: 5px 10px;
+			margin-left: 10px;
+			border-radius: 7px;
 			border: none;
-			border-radius: 10px;
-			padding: 10px 20px;
+			background-color: transparent;
 			font-size: inherit;
 
-			&:hover {
-				// background-color: #3a4a77;
+			&.defined {
+				color: #6481cc;
 			}
+
+			&.disabled {
+				color: #555;
+				cursor: not-allowed;
+			}
+		}
+
+		#newButton {
+			background: #324067;
+			border-radius: 10px;
+			padding: 10px 20px;
 		}
 	}
 </style>

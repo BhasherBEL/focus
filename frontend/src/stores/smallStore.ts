@@ -2,8 +2,29 @@ import { writable } from 'svelte/store';
 import { parseCards, type Card, type View, type TagValue } from './interfaces';
 import { deleteCardApi, newCardApi } from '../api/cards';
 import { getProjectCardsAPI } from '../api/projects';
+import api, { processError } from '../utils/api';
+import status from '../utils/status';
 
-export const currentView = writable(null as View | null);
+export const currentView = (() => {
+	const { subscribe, set, update } = writable(null as View | null);
+
+	return {
+		subscribe,
+		set,
+		update: async (view: View): Promise<boolean> => {
+			const response = await api.put(`/v1/views/${view.id}`, view);
+
+			if (response.status !== status.NoContent) {
+				processError(response, 'Failed to update view');
+				return false;
+			}
+
+			set(view);
+
+			return true;
+		}
+	};
+})();
 
 export const currentModalCard = writable(-1);
 

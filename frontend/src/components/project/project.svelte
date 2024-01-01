@@ -25,8 +25,8 @@
 
 {#if project}
 	<section>
-		<Header {project} />
 		{#if view && $projectTags[view.primary_tag_id] && $cards}
+			<Header {project} currentTagId={view.primary_tag_id} />
 			<div class="grid">
 				{#each $projectTags[view.primary_tag_id].options as option}
 					<Column
