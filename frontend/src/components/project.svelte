@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { type Project, type Card, parseCards, type View } from '../stores/interfaces';
+	import { type Project, type Card, type TagOption, type View } from '../stores/interfaces';
 	import projectTags from '../stores/projectTags';
-	import { deleteCardApi, newCardApi } from '../api/cards';
-	import { getProjectAPI, getProjectCardsAPI } from '../api/projects';
+	import { getProjectAPI } from '../api/projects';
 	import Column from './column.svelte';
-	import { cards, currentModalCard, currentView } from '../stores/smallStore';
+	import { cards, currentView } from '../stores/smallStore';
 
 	export let projectId: number;
 
@@ -69,7 +68,7 @@
 </svelte:head>
 
 {#if project}
-	<div id="project">
+	<section>
 		<header>
 			<h2>{project.title}</h2>
 			<button on:click={newCard}>New card</button>
@@ -78,22 +77,32 @@
 			<div class="grid">
 				{#each $projectTags[view.primary_tag_id].options as option}
 					<Column
-						title={option.value}
-						cards={$cards.filter((c) => c.tags.map((t) => t.option_id).includes(option.id))}
+						{option}
+						columnCards={$cards.filter((c) => c.tags.map((t) => t.option_id).includes(option.id))}
 					/>
 				{/each}
 				<Column
-					title={`No ${$projectTags[view.primary_tag_id]?.title || 'tag'}`}
-					cards={$cards.filter((c) => c.tags.find((t) => t.tag_id)?.option_id == -1 || false)}
+					option={{
+						id: -1,
+						tag_id: view.primary_tag_id,
+						value: `No ${$projectTags[view.primary_tag_id].title}`
+					}}
+					columnCards={$cards.filter((c) => c.tags.find((t) => t.tag_id)?.option_id == -1 || false)}
 				/>
 			</div>
 		{/if}
-	</div>
+	</section>
 {/if}
 
 <style>
+	section {
+		display: flex;
+		flex-direction: column;
+	}
+
 	.grid {
 		display: flex;
 		flex-direction: row;
+		flex: 1;
 	}
 </style>

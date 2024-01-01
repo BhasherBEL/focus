@@ -1,5 +1,3 @@
-import { toastAlert } from '../utils/toasts';
-
 export interface Project {
 	id: number;
 	title: string;

@@ -7,6 +7,8 @@ export const currentView = writable(null as View | null);
 
 export const currentModalCard = writable(-1);
 
+export const currentDraggedCard = writable(null as Card | null);
+
 export const cards = (() => {
 	const { subscribe, set, update } = writable([] as Card[]);
 
@@ -28,6 +30,9 @@ export const cards = (() => {
 				update((cards) => cards.filter((c) => c.id !== card.id));
 				currentModalCard.set(-1);
 			});
+		},
+		reload: () => {
+			update((cards) => cards);
 		}
 	};
 })();

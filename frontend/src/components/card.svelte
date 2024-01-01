@@ -1,16 +1,18 @@
 <script lang="ts">
 	import type { Card } from '../stores/interfaces';
 	import projectTags from '../stores/projectTags';
-	import { currentModalCard } from '../stores/smallStore';
+	import { currentDraggedCard, currentModalCard } from '../stores/smallStore';
 	import ModalCard from './modal_card.svelte';
 
 	export let card: Card;
 </script>
 
+<!-- on:dragend={() => currentDraggedCard.set(null)} -->
 <div
 	class="card"
 	tabindex="0"
 	draggable={true}
+	on:dragstart={() => currentDraggedCard.set(card)}
 	on:click={() => ($currentModalCard = card.id)}
 	role="button"
 	on:keydown={(e) => {
