@@ -53,8 +53,8 @@
 		<div>
 			<button class:disabled={true}>Sub-group</button>
 		</div>
-		<button>Filter</button>
-		<button>Sort</button>
+		<button class:disabled={true}>Filter</button>
+		<button class:disabled={true}>Sort</button>
 		<button id="newButton" on:click={async () => cards.add(project.id, getEmptyTags())}>New</button>
 	</nav>
 </header>

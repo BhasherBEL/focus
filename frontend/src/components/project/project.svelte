@@ -3,7 +3,7 @@
 	import Column from './column.svelte';
 	import type { Project, View } from '../../stores/interfaces';
 	import projectTags from '../../stores/projectTags';
-	import { cards, currentView } from '../../stores/smallStore';
+	import { cards, currentView, views } from '../../stores/smallStore';
 	import Header from './header.svelte';
 
 	export let project: Project;
