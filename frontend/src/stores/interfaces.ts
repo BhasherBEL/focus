@@ -5,7 +5,7 @@ export interface Project {
 
 export interface Card {
 	id: number;
-	projectId: number;
+	project_id: number;
 	title: string;
 	content: string;
 	tags: TagValue[];

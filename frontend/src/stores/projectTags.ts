@@ -2,6 +2,7 @@ import { get, writable } from 'svelte/store';
 import type { MeTag, TagOption } from './interfaces';
 import api, { processError } from '../utils/api';
 import status from '../utils/status';
+import { cards } from './smallStore';
 
 const { subscribe, set, update } = writable({} as { [key: number]: MeTag });
 
@@ -48,6 +49,25 @@ export default {
 			tags[tag_id].options.push(option);
 			return tags;
 		});
+	},
+	deleteOption: async (tag_id: number, option_id: number) => {
+		const response = await api.delete(`/v1/tags/${tag_id}/options/${option_id}`);
+
+		if (response.status !== status.NoContent) {
+			processError(response, 'Failed to delete tag option');
+			return;
+		}
+
+		update((tags) => {
+			tags[tag_id].options = tags[tag_id].options.filter((option) => option.id !== option_id);
+			return tags;
+		});
+
+		for (const card of get(cards)) {
+			//TODO: same in db
+			card.tags.filter((tag) => tag.tag_id !== tag_id || tag.option_id !== option_id);
+		}
+		cards.reload();
 	},
 	delete: async (tag_id: number) => {
 		const response = await api.delete(`/v1/tags/${tag_id}`);

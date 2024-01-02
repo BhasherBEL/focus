@@ -41,7 +41,9 @@
 						tag_id: view.primary_tag_id,
 						value: `No ${$projectTags[view.primary_tag_id].title}`
 					}}
-					columnCards={$cards.filter((c) => c.tags.find((t) => t.tag_id)?.option_id == -1 || false)}
+					columnCards={$cards.filter(
+						(c) => !c.tags.map((t) => t.tag_id).includes(view?.primary_tag_id || -2)
+					)}
 					projectId={project.id}
 					editable={false}
 				/>

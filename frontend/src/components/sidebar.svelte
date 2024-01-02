@@ -13,7 +13,6 @@
 	let viewEditValue: string;
 
 	onMount(async () => {
-		console.log('aaa');
 		await views.init(project.id);
 
 		if ($views.length > 0) currentView.set($views[0]);

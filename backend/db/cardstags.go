@@ -18,10 +18,15 @@ func GetCardTags(cardID int, projectID int) ([]types.FullCardTag, error) {
 		projectID = card.ProjectID
 	}
 
-	rows, err := db.Query(`SELECT t.id, t.title, t.type, COALESCE(ct.option_id, -1), COALESCE(ct.value, '')
-	FROM tags t
-	LEFT JOIN cardtags ct ON ct.tag_id = t.id AND ct.card_id = ?
-	WHERE t.project_id = ?
+	// rows, err := db.Query(`SELECT t.id, t.title, t.type, COALESCE(ct.option_id, -1), COALESCE(ct.value, '')
+	// FROM tags t
+	// LEFT JOIN cardtags ct ON ct.tag_id = t.id AND ct.card_id = ?
+	// WHERE t.project_id = ?
+	// `, cardID, projectID)
+	rows, err := db.Query(`SELECT t.id, t.title, t.type, ct.option_id, ct.value
+	FROM cardtags ct
+	INNER JOIN tags t ON t.id = ct.tag_id
+	WHERE ct.card_id = ? AND t.project_id = ?
 	`, cardID, projectID)
 	if err != nil {
 		return nil, err

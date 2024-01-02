@@ -13,12 +13,12 @@
 
 	async function save(closeModal: boolean = true) {
 		if (
-			card.projectId != tempCard.projectId ||
+			card.project_id != tempCard.project_id ||
 			card.title !== tempCard.title ||
 			card.content !== tempCard.content
 		) {
 			const response = await api.put(`/v1/cards/${card.id}`, {
-				project_id: tempCard.projectId,
+				project_id: tempCard.project_id,
 				title: tempCard.title,
 				content: tempCard.content
 			});
@@ -131,10 +131,6 @@
 	}
 
 	.modal .buttons button:first-child:hover {
-		background-color: #343;
-	}
-
-	.modal .buttons button:last-child:hover {
 		background-color: #433;
 	}
 
@@ -147,18 +143,6 @@
 		min-height: 200px;
 		resize: vertical;
 		font-family: inherit;
-	}
-
-	.modal td {
-		margin-right: 40px;
-	}
-
-	.modal td:first-child {
-		font-weight: bold;
-	}
-
-	.modal td:last-child {
-		margin-right: 0;
 	}
 
 	.modal td button {

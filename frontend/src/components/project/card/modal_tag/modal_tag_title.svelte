@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import type { MeTag } from '../../../stores/interfaces';
-	import Menu from '../../tuils/menu.svelte';
-	import projectTags from '../../../stores/projectTags';
-	import { toastAlert } from '../../../utils/toasts';
+	import type { MeTag } from '../../../../stores/interfaces';
+	import Menu from '../../../tuils/menu.svelte';
+	import projectTags from '../../../../stores/projectTags';
+	import { toastAlert } from '../../../../utils/toasts';
+	import ModalTagTypes from './modal_tag_types.svelte';
 
 	export let projectTag: MeTag;
 
@@ -65,12 +66,24 @@
 					}
 				}}
 			/>
-			<button>Type: </button>
+			<ModalTagTypes
+				type={projectTag.type}
+				onChoice={async (id) => {
+					projectTag.type = id;
+
+					await projectTags.update(projectTag);
+				}}
+			/>
 			{#if askConfirm}
 				<div class="askconfirm">
 					<span>Confirm?</span>
 					<div>
-						<button on:click={() => {}}>✓</button>
+						<button
+							on:click={() => {
+								projectTags.delete(projectTag.id);
+								isMenuOpen = false;
+							}}>✓</button
+						>
 						<button on:click={() => (askConfirm = false)}>✗</button>
 					</div>
 				</div>
@@ -82,10 +95,15 @@
 </td>
 
 <style lang="less">
+	td {
+		min-width: 120px;
+	}
+
 	.title {
 		padding: 3px 5px;
 		margin: 2px;
 		border-radius: 5px;
+		height: 28px;
 
 		&:hover {
 			background-color: #fff2;

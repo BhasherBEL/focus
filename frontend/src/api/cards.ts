@@ -20,7 +20,7 @@ export async function newCardApi(projectId: number, tags: TagValue[]): Promise<C
 
 	return {
 		id: id,
-		projectId: projectId,
+		project_id: projectId,
 		title: 'Untitled',
 		content: '',
 		tags: tags
