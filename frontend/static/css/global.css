@@ -17,3 +17,16 @@ a {
 ul {
     list-style: none;
 }
+
+button:not(.real) {
+    border: none;
+    background-color: inherit;
+    color: inherit;
+    font-size: inherit;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+button:not(.real):hover {
+   background-color: #fff2; 
+}

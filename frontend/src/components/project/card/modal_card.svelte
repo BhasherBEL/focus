@@ -65,9 +65,6 @@
 {/if}
 
 <style lang="less">
-	.content {
-	}
-
 	.modal {
 		background-color: rgba(0, 0, 0, 0.8);
 		position: fixed;

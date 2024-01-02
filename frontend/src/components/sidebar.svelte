@@ -166,6 +166,7 @@
 		}
 
 		input {
+			cursor: pointer;
 			padding: 10px;
 			border-radius: 5px;
 			background-color: transparent;

@@ -102,7 +102,7 @@ func UpdateTag(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 
-	return c.SendStatus(fiber.StatusOK)
+	return c.SendStatus(fiber.StatusNoContent)
 }
 
 func CreateTagOption(c *fiber.Ctx) error {

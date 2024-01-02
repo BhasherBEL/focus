@@ -2,6 +2,7 @@
 	import type { Card } from '../../../stores/interfaces';
 	import api, { processError } from '../../../utils/api';
 	import status from '../../../utils/status';
+	import AddIcon from '../../icons/addIcon.svelte';
 	import ModalTag from './modal_tag.svelte';
 
 	export let card: Card;
@@ -50,19 +51,7 @@
 		>
 		<td
 			><button on:click={addTag}>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="16"
-					height="16"
-					viewBox="0 0 24 24"
-					stroke="white"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<line x1="12" y1="5" x2="12" y2="19"></line>
-					<line x1="5" y1="12" x2="19" y2="12"></line>
-				</svg>
+				<AddIcon />
 			</button>
 		</td>
 	</tr>
