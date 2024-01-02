@@ -79,6 +79,10 @@
 		}
 
 		tagValue = undefined;
+
+		card.tags = card.tags.filter((t) => t.tag_id !== projectTag.id);
+
+		cards.reload();
 	}
 
 	function createOption() {

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
 	import type { Project, TagValue, View } from '../../stores/interfaces';
-	import { cards, currentView } from '../../stores/smallStore';
+	import { cards, currentView, views } from '../../stores/smallStore';
 	import projectTags from '../../stores/projectTags';
 	import GroupMenu from './groupMenu.svelte';
 
@@ -25,10 +25,16 @@
 	async function setGroup(id: number): Promise<boolean> {
 		if ($currentView == null) return false;
 
-		return await currentView.update({
+		const view = {
 			...$currentView,
 			primary_tag_id: id
-		});
+		};
+
+		const res = await views.edit(view);
+
+		if (res) currentView.set(view);
+
+		return res;
 	}
 </script>
 

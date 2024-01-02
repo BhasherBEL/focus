@@ -10,19 +10,19 @@ export const currentView = (() => {
 
 	return {
 		subscribe,
-		set,
-		update: async (view: View): Promise<boolean> => {
-			const response = await api.put(`/v1/views/${view.id}`, view);
+		set
+		// update: async (view: View): Promise<boolean> => {
+		// 	const response = await api.put(`/v1/views/${view.id}`, view);
 
-			if (response.status !== status.NoContent) {
-				processError(response, 'Failed to update view');
-				return false;
-			}
+		// 	if (response.status !== status.NoContent) {
+		// 		processError(response, 'Failed to update view');
+		// 		return false;
+		// 	}
 
-			set(view);
+		// 	set(view);
 
-			return true;
-		}
+		// 	return true;
+		// }
 	};
 })();
 
@@ -136,6 +136,6 @@ export const views = (() => {
 		init,
 		add,
 		remove,
-		update: edit
+		edit
 	};
 })();

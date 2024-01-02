@@ -10,10 +10,12 @@
 	let tagType = getTagTypeFromId(projectTag.type);
 </script>
 
-<td>
-	{#if tagType?.hasOptions}
-		<SelectTags multiple={false} {projectTag} {card} bind:tagValue />
-	{:else if !tagType?.hasOptions}
-		<input />
-	{/if}
-</td>
+{#if tagType}
+	<td>
+		{#if tagType?.hasOptions}
+			<SelectTags multiple={false} {projectTag} {card} bind:tagValue />
+		{:else if !tagType?.hasOptions}
+			<input />
+		{/if}
+	</td>
+{/if}

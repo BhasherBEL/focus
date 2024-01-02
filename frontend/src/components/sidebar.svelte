@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import api, { processError } from '../utils/api';
 	import type { Project, View } from '../stores/interfaces';
 	import { currentView, views } from '../stores/smallStore';
@@ -35,9 +35,10 @@
 	}
 
 	async function saveView(view: View) {
+		await tick();
 		if (!view || !$views.includes(view)) return;
 		if (viewEditId === view.id && viewEditValue !== view.title) {
-			if (!(await views.update(view))) return;
+			if (!(await views.edit(view))) return;
 		}
 
 		viewEditId = -1;
