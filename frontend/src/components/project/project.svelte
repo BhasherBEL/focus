@@ -67,13 +67,21 @@
 	section {
 		display: flex;
 		flex-direction: column;
-		width: 100%;
-		margin: 0 40px;
+		height: 100vh;
+		transition: all 0.3s ease-in-out;
+		width: 100vw;
+
+		@media (min-width: 800px) {
+			margin-left: 250px;
+			width: calc(100vw - 250px);
+		}
 	}
 
 	.grid {
 		display: flex;
 		flex-direction: row;
 		flex: 1;
+		overflow: scroll;
+		padding: 0 40px;
 	}
 </style>

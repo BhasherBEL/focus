@@ -7,11 +7,14 @@
 	import projectTags from '../stores/projectTags';
 	import EditIcon from './icons/editIcon.svelte';
 	import { get } from 'svelte/store';
+	import MenuOpener from './icons/menu_opener.svelte';
 
 	export let project: Project;
 
 	let viewEditId: number;
 	let viewEditValue: string;
+
+	let isVisible = false;
 
 	onMount(async () => {
 		await views.init(project.id);
@@ -46,7 +49,7 @@
 	}
 </script>
 
-<nav>
+<nav class:hidden={!isVisible}>
 	<div>
 		<div id="branding">
 			<span id="title">Focus.</span>
@@ -119,23 +122,68 @@
 		</div>
 	</div>
 </nav>
+<button class="toggle" class:open={isVisible} on:click={() => (isVisible = !isVisible)}>
+	<MenuOpener />
+</button>
 
 <style lang="less">
 	nav {
-		min-width: 300px;
+		position: fixed;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		width: 250px;
 		background-color: #273049;
-		height: 100vh;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
 		font-size: 22px;
+		transition: transform 0.3s ease-in-out;
+	}
+
+	.toggle {
+		visibility: hidden;
+		position: fixed;
+		top: 5px;
+		left: 5px;
+		border-radius: 50%;
+		width: 50px;
+		height: 50px;
+		transform: scale(1);
+		transition-property: left, transform;
+		transition-duration: 0.3s;
+		transition-timing-function: ease-in-out;
+
+		&:hover {
+			cursor: pointer;
+			background-color: #fff2;
+		}
+
+		&:active {
+			background-color: #fff2;
+		}
+
+		&.open {
+			left: 195px;
+			transform: scaleX(-1);
+		}
+	}
+
+	@media (max-width: 800px) {
+		nav.hidden {
+			transform: translateX(-100%);
+		}
+
+		.toggle {
+			visibility: visible;
+		}
 	}
 
 	#branding {
 		display: flex;
 		flex-direction: row;
-		align-items: center;
-		justify-content: space-between;
+		align-items: end;
+		gap: 10px;
 		padding: 20px;
 
 		#title {
@@ -143,8 +191,9 @@
 		}
 
 		#version {
-			font-size: 30px;
+			font-size: 25px;
 			color: #aaa;
+			margin-bottom: 3px;
 		}
 	}
 

@@ -56,9 +56,7 @@
 				currentChoice={view?.primary_tag_id}
 			/>
 		</div>
-		<div>
-			<button class:disabled={true}>Sub-group</button>
-		</div>
+		<button class:disabled={true}>Sub-group</button>
 		<button class:disabled={true}>Filter</button>
 		<button class:disabled={true}>Sort</button>
 		<button id="newButton" on:click={async () => cards.add(project.id, getEmptyTags())}>New</button>
@@ -67,27 +65,29 @@
 
 <style lang="less">
 	header {
+		margin: 0 50px;
 		padding: 20px 0;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		flex-wrap: wrap;
 		border-bottom: 2px solid #444;
 	}
 
 	h2 {
-		font-size: 40px;
+		font-size: 30px;
 	}
 
 	nav {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
+		gap: 7px;
 
 		button {
 			cursor: pointer;
 			color: #aaa;
 			padding: 5px 10px;
-			margin-left: 10px;
 			border-radius: 7px;
 			border: none;
 			background-color: transparent;
