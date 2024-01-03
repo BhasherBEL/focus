@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -14,8 +15,13 @@ import (
 
 func main() {
 	driver := "sqlite3"
-	connStr := "db.sqlite"
 	port := "3000"
+	connStr := os.Getenv("DB_PATH")
+	
+	if connStr == "" {
+		connStr = "db.sqlite"
+	}
+
 	origins := "*"
 
 	if err := db.InitDB(driver, connStr); err != nil {

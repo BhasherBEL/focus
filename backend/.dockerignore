@@ -1,0 +1,4 @@
+*.sqlite
+Dockerfile
+docker-compose.yaml
+.dockerignore
