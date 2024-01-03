@@ -16,15 +16,36 @@ export async function newCardApi(projectId: number, tags: TagValue[]): Promise<C
 
 	const id: number = response.data.id;
 
-	tags.forEach((tag) => (tag.card_id = id));
+	const consistant_tags = [];
+
+	for (const tag of tags) {
+		if ((tag.option_id === -1 && tag.value == '') || tag.tag_id === -1) continue;
+		await createCardTagApi(id, tag.tag_id, tag.option_id, tag.value);
+		consistant_tags.push({ ...tag, card_id: id });
+	}
 
 	return {
 		id: id,
 		project_id: projectId,
 		title: 'Untitled',
 		content: '',
-		tags: tags
+		tags: consistant_tags
 	};
+}
+
+export async function updateCardApi(card: Card): Promise<boolean> {
+	const response = await api.put(`/v1/cards/${card.id}`, {
+		project_id: card.project_id,
+		title: card.title,
+		content: card.content
+	});
+
+	if (response.status !== status.NoContent) {
+		processError(response, 'Failed to update card');
+		return false;
+	}
+
+	return true;
 }
 
 export async function deleteCardApi(cardID: number): Promise<void> {
@@ -34,6 +55,25 @@ export async function deleteCardApi(cardID: number): Promise<void> {
 		processError(response, 'Failed to delete card');
 		return Promise.reject();
 	}
+}
+
+export async function createCardTagApi(
+	cardId: number,
+	tagId: number,
+	optionId: number,
+	value: string
+): Promise<boolean> {
+	const response = await api.post(`/v1/cards/${cardId}/tags/${tagId}`, {
+		option_id: optionId,
+		value: value
+	});
+
+	if (response.status !== status.Created) {
+		processError(response, 'Failed to create card tag');
+		return false;
+	}
+
+	return true;
 }
 
 export async function updateCardTagApi(

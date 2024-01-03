@@ -68,12 +68,14 @@
 	async function addCard() {
 		const tags: TagValue[] = [];
 		for (let tag of Object.values(get(projectTags))) {
-			tags.push({
-				card_id: -1,
-				tag_id: tag.id,
-				option_id: tag.id === option.tag_id ? option.id : -1,
-				value: ''
-			});
+			if (tag.id === option.tag_id) {
+				tags.push({
+					card_id: -1,
+					tag_id: tag.id,
+					option_id: option.id,
+					value: ''
+				});
+			}
 		}
 
 		await cards.add(projectId, tags);

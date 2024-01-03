@@ -4,18 +4,25 @@
 	import { onMount } from 'svelte';
 	import api, { processError } from '../utils/api';
 	import SelectProject from '../components/projects/selectProject.svelte';
+	import { toastAlert } from '../utils/toasts';
 
 	let projects: Project[];
 
 	onMount(async () => {
-		const response = await api.get(`/v1/projects`);
+		try {
+			const response = await api.get(`/v1/projects`);
+			if (response.status !== 200) {
+				processError(response, 'Failed to fetch projects');
+				return;
+			}
 
-		if (response.status !== 200) {
-			processError(response, 'Failed to fetch projects');
-			return;
+			projects = response.data || [];
+		} catch (e: any) {
+			toastAlert('Failed to fetch projects', e);
+			setTimeout(() => {
+				window.location.reload();
+			}, 11000);
 		}
-
-		projects = response.data || [];
 	});
 
 	async function deleteProject(project: Project) {

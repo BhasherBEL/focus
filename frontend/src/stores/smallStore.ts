@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import { parseCards, type Card, type View, type TagValue } from './interfaces';
-import { deleteCardApi, newCardApi } from '../api/cards';
+import { deleteCardApi, newCardApi, updateCardApi } from '../api/cards';
 import { getProjectCardsAPI } from '../api/projects';
 import api, { processError } from '../utils/api';
 import status from '../utils/status';
@@ -51,6 +51,13 @@ export const cards = (() => {
 				update((cards) => cards.filter((c) => c.id !== card.id));
 				currentModalCard.set(-1);
 			});
+		},
+		edit: async (card: Card): Promise<boolean> => {
+			if (await updateCardApi(card)) {
+				update((cards) => cards.map((c) => (c.id === card.id ? card : c)));
+				return true;
+			}
+			return false;
 		},
 		reload: () => {
 			update((cards) => cards);

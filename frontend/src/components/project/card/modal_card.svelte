@@ -1,34 +1,28 @@
 <script lang="ts">
 	import type { Card } from '../../../stores/interfaces';
 	import { currentModalCard, cards } from '../../../stores/smallStore';
-	import api, { processError } from '../../../utils/api';
-	import status from '../../../utils/status';
 	import CloseIcon from '../../icons/closeIcon.svelte';
 	import TrashIcon from '../../icons/trashIcon.svelte';
 	import ModalTags from './modal_tags.svelte';
 
 	export let card: Card;
 
-	let tempCard: Card = { ...card };
+	let newTitle = card.title;
+	let newContent = card.content;
 
 	async function save(closeModal: boolean = true) {
-		if (
-			card.project_id != tempCard.project_id ||
-			card.title !== tempCard.title ||
-			card.content !== tempCard.content
-		) {
-			const response = await api.put(`/v1/cards/${card.id}`, {
-				project_id: tempCard.project_id,
-				title: tempCard.title,
-				content: tempCard.content
-			});
-
-			if (response.status !== status.NoContent) {
-				processError(response, 'Failed to update card');
-				return;
+		if (card.title !== newTitle || card.content !== newContent) {
+			console.log('saving');
+			if (
+				await cards.edit({
+					...card,
+					title: newTitle,
+					content: newContent
+				})
+			) {
+				card.title = newTitle;
+				card.content = newContent;
 			}
-
-			card = { ...tempCard };
 		}
 		if (closeModal) currentModalCard.set(-1);
 	}
@@ -40,7 +34,7 @@
 	<div class="modal" on:click={() => save(true)}>
 		<div class="content" on:click|stopPropagation>
 			<div class="header">
-				<input class="title" bind:value={tempCard.title} on:blur={() => save(false)} />
+				<input class="title" bind:value={newTitle} on:blur={() => save(false)} />
 				<div class="buttons">
 					<button on:click={() => cards.remove(card)}>
 						<TrashIcon />
@@ -55,7 +49,7 @@
 			</div>
 			<div class="body">
 				<textarea
-					bind:value={tempCard.content}
+					bind:value={newContent}
 					placeholder="Add a description"
 					on:blur={() => save(false)}
 				/>
