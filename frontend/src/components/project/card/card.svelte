@@ -7,7 +7,6 @@
 	export let card: Card;
 </script>
 
-<!-- on:dragend={() => currentDraggedCard.set(null)} -->
 <div
 	class="card"
 	tabindex="0"

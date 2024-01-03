@@ -69,7 +69,9 @@ export const views = (() => {
 			return false;
 		}
 
-		set(response.data);
+		if (response.data) {
+			set(response.data);
+		}
 
 		return true;
 	};

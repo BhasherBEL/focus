@@ -6,6 +6,7 @@
 	import ViewIcon from './icons/viewIcon.svelte';
 	import projectTags from '../stores/projectTags';
 	import EditIcon from './icons/editIcon.svelte';
+	import { get } from 'svelte/store';
 
 	export let project: Project;
 
@@ -15,10 +16,10 @@
 	onMount(async () => {
 		await views.init(project.id);
 
-		if ($views.length > 0) currentView.set($views[0]);
+		if ($views && $views.length > 0) currentView.set($views[0]);
 	});
 
-	async function newView() {
+	async function createView() {
 		if (!$views) return;
 
 		const primaryTagId =
@@ -35,7 +36,6 @@
 	}
 
 	async function saveView(view: View) {
-		await tick();
 		if (!view || !$views.includes(view)) return;
 		if (viewEditId === view.id && viewEditValue !== view.title) {
 			if (!(await views.edit(view))) return;
@@ -53,10 +53,10 @@
 			<span id="version">v0.0.1</span>
 		</div>
 		<div id="views">
+			<h2>{project.title}</h2>
 			{#if views}
-				<h2>{project.title}</h2>
 				<ul>
-					{#each $views as view}
+					{#each get(views) as view}
 						<!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
 						<li
 							on:click={() => currentView.set(view)}
@@ -79,7 +79,7 @@
 								id="viewTitle-{view.id}"
 								on:keydown={(e) => {
 									if (e.key === 'Enter') {
-										saveView(view);
+										e.currentTarget.blur();
 									}
 								}}
 							/>
@@ -106,12 +106,12 @@
 		<div class="separator"></div>
 		<div
 			id="newView"
-			on:click={newView}
+			on:click={createView}
 			role="button"
 			tabindex="0"
 			on:keydown={(e) => {
 				if (e.key === 'Enter') {
-					newView();
+					createView();
 				}
 			}}
 		>

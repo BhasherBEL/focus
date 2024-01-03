@@ -6,7 +6,7 @@
 	import GroupMenu from './groupMenu.svelte';
 
 	export let project: Project;
-	export let currentTagId: number;
+	export let view: View;
 	let groupMenuOpen = false;
 
 	function getEmptyTags(): TagValue[] {
@@ -44,7 +44,7 @@
 		<div>
 			<button
 				on:click={() => (groupMenuOpen = !groupMenuOpen)}
-				class:defined={$currentView?.primary_tag_id}>Group</button
+				class:defined={$currentView?.primary_tag_id !== -1}>Group</button
 			>
 			<GroupMenu
 				isOpen={groupMenuOpen}
@@ -53,7 +53,7 @@
 					if (!(await setGroup(id))) return;
 					groupMenuOpen = false;
 				}}
-				currentChoice={currentTagId}
+				currentChoice={view?.primary_tag_id}
 			/>
 		</div>
 		<div>

@@ -20,10 +20,12 @@ export default {
 
 		const tags: { [key: number]: MeTag } = {};
 
-		metags.forEach((tag: MeTag) => {
-			if (tag.options === null) tag.options = [];
-			tags[tag.id] = tag;
-		});
+		if (metags) {
+			metags.forEach((tag: MeTag) => {
+				if (tag.options === null) tag.options = [];
+				tags[tag.id] = tag;
+			});
+		}
 
 		set(tags);
 

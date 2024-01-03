@@ -25,29 +25,40 @@
 
 {#if project}
 	<section>
-		{#if view && $projectTags[view.primary_tag_id] && $cards}
-			<Header {project} currentTagId={view.primary_tag_id} />
-			<div class="grid">
-				{#each $projectTags[view.primary_tag_id].options as option}
+		{#if view}
+			<Header {project} {view} />
+			{#if cards}
+				<div class="grid">
+					{#if view.primary_tag_id !== -1}
+						{#each $projectTags[view.primary_tag_id].options as option}
+							<Column
+								{option}
+								columnCards={$cards.filter((c) =>
+									c.tags.map((t) => t.option_id).includes(option.id)
+								)}
+								projectId={project.id}
+							/>
+						{/each}
+					{/if}
 					<Column
-						{option}
-						columnCards={$cards.filter((c) => c.tags.map((t) => t.option_id).includes(option.id))}
+						option={{
+							id: -1,
+							tag_id: view.primary_tag_id,
+							value:
+								view.primary_tag_id !== -1
+									? `No ${$projectTags[view.primary_tag_id].title}`
+									: 'No groups'
+						}}
+						columnCards={view.primary_tag_id !== -1
+							? $cards.filter(
+									(c) => !c.tags.map((t) => t.tag_id).includes(view?.primary_tag_id || -2)
+								)
+							: $cards}
 						projectId={project.id}
+						editable={false}
 					/>
-				{/each}
-				<Column
-					option={{
-						id: -1,
-						tag_id: view.primary_tag_id,
-						value: `No ${$projectTags[view.primary_tag_id].title}`
-					}}
-					columnCards={$cards.filter(
-						(c) => !c.tags.map((t) => t.tag_id).includes(view?.primary_tag_id || -2)
-					)}
-					projectId={project.id}
-					editable={false}
-				/>
-			</div>
+				</div>
+			{/if}
 		{/if}
 	</section>
 {/if}
