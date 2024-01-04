@@ -3,9 +3,11 @@ package handlers
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"git.bhasher.com/bhasher/focus/backend/db"
 	"git.bhasher.com/bhasher/focus/backend/types"
+	"git.bhasher.com/bhasher/focus/backend/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -21,8 +23,16 @@ func projectsRouter(router fiber.Router) error {
 	return nil
 }
 
+var projectsLastEdit time.Time;
+
 func GetAllProjects(c *fiber.Ctx) error {
+	isCached, err := utils.Cache(c, projectsLastEdit);
+	if err == nil && isCached {
+		return nil;
+	}
+
 	projects, err := db.GetAllProjects()
+	currentTime := time.Now();
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Cannot retrieve projects",
@@ -30,7 +40,13 @@ func GetAllProjects(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(projects)
+	err = c.Status(fiber.StatusOK).JSON(projects)
+	if err != nil {
+		return err;
+	}
+
+	projectsLastEdit = currentTime;
+	return nil;
 }
 
 func GetProject(c *fiber.Ctx) error {
