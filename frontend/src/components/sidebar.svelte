@@ -26,7 +26,7 @@
 		if (!$views) return;
 
 		const primaryTagId =
-			$currentView?.primary_tag_id || Object.values($projectTags).find((t) => true)?.id || -1;
+			$currentView?.primary_tag_id || Object.values($projectTags).find((t) => true)?.id || null;
 
 		const newView = await views.add(project.id, 'New view', primaryTagId);
 
@@ -231,10 +231,6 @@
 			&.inEdit {
 				background-color: #fff5;
 			}
-		}
-
-		span {
-			padding-left: 10px;
 		}
 
 		button {

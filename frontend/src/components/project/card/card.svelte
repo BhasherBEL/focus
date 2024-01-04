@@ -24,7 +24,7 @@
 	{#if card.tags}
 		<div class="tags">
 			{#each card.tags as tag}
-				{#if tag.option_id && tag.option_id !== -1}
+				{#if tag.option_id}
 					{#if $projectTags[tag.tag_id]}
 						<span class="tag" style="border: 1px solid #333"
 							>{$projectTags[tag.tag_id]?.options.find((o) => o.id == tag.option_id)?.value}</span

@@ -24,7 +24,7 @@
 				card.content = newContent;
 			}
 		}
-		if (closeModal) currentModalCard.set(-1);
+		if (closeModal) currentModalCard.set(null);
 	}
 </script>
 
@@ -39,7 +39,7 @@
 					<button on:click={() => cards.remove(card)}>
 						<TrashIcon />
 					</button>
-					<button on:click={() => currentModalCard.set(-1)}>
+					<button on:click={() => currentModalCard.set(null)}>
 						<CloseIcon />
 					</button>
 				</div>

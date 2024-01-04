@@ -26,7 +26,7 @@ export const currentView = (() => {
 	};
 })();
 
-export const currentModalCard = writable(-1);
+export const currentModalCard = writable(null as number | null);
 
 export const currentDraggedCard = writable(null as Card | null);
 
@@ -49,7 +49,7 @@ export const cards = (() => {
 		remove: async (card: Card) => {
 			await deleteCardApi(card.id).then(() => {
 				update((cards) => cards.filter((c) => c.id !== card.id));
-				currentModalCard.set(-1);
+				currentModalCard.set(null);
 			});
 		},
 		edit: async (card: Card): Promise<boolean> => {
@@ -82,7 +82,7 @@ export const views = (() => {
 
 		return true;
 	};
-	const add = async (projectId: number, title: string, primaryTagId: number): Promise<View> => {
+	const add = async (projectId: number, title: string, primaryTagId: number | null): Promise<View> => {
 		const response = await api.post(`/v1/views`, {
 			title,
 			project_id: projectId,
@@ -99,7 +99,9 @@ export const views = (() => {
 			title: title,
 			project_id: projectId,
 			primary_tag_id: primaryTagId,
-			secondary_tag_id: 0
+			secondary_tag_id: null,
+			sort_tag_id: null,
+			sort_direction: null
 		};
 
 		update((views) => [...views, view]);

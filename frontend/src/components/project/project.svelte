@@ -29,10 +29,12 @@
 			<Header {project} {view} />
 			{#if cards}
 				<div class="grid">
-					{#if view.primary_tag_id !== -1}
+					{#if view.primary_tag_id}
 						{#each $projectTags[view.primary_tag_id].options as option}
 							<Column
-								{option}
+								optionId={option.id}
+								primary_tag_id={view.primary_tag_id}
+								title={option.value}
 								columnCards={$cards.filter((c) =>
 									c.tags.map((t) => t.option_id).includes(option.id)
 								)}
@@ -41,21 +43,16 @@
 						{/each}
 					{/if}
 					<Column
-						option={{
-							id: -1,
-							tag_id: view.primary_tag_id,
-							value:
-								view.primary_tag_id !== -1
-									? `No ${$projectTags[view.primary_tag_id].title}`
-									: 'No groups'
-						}}
-						columnCards={view.primary_tag_id !== -1
+						primary_tag_id={view.primary_tag_id}
+						title={view.primary_tag_id
+							? `No ${$projectTags[view.primary_tag_id].title}`
+							: 'No groups'}
+						columnCards={view.primary_tag_id
 							? $cards.filter(
 									(c) => !c.tags.map((t) => t.tag_id).includes(view?.primary_tag_id || -2)
 								)
 							: $cards}
 						projectId={project.id}
-						editable={false}
 					/>
 				</div>
 			{/if}

@@ -3,7 +3,7 @@ package db
 import "git.bhasher.com/bhasher/focus/backend/types"
 
 func CreateView(v types.View) (int, error) {
-	res, err := db.Exec("INSERT INTO views (project_id, primary_tag_id, secondary_tag_id, title) VALUES (?, ?, ?, ?)", v.ProjectID, v.PrimaryTagID, v.SecondaryTagID, v.Title)
+	res, err := db.Exec("INSERT INTO views (project_id, primary_tag_id, secondary_tag_id, title, sort_tag_id, sort_direction) VALUES (?, ?, ?, ?, ?, ?)", v.ProjectID, v.PrimaryTagID, v.SecondaryTagID, v.Title, v.SortTagID, v.SortDirection)
 	if err != nil {
 		return 0, err
 	}
@@ -26,7 +26,7 @@ func GetProjectViews(projectID int) ([]types.View, error) {
 	var views []types.View
 	for rows.Next() {
 		var v types.View
-		if err := rows.Scan(&v.ID, &v.ProjectID, &v.PrimaryTagID, &v.SecondaryTagID, &v.Title); err != nil {
+		if err := rows.Scan(&v.ID, &v.ProjectID, &v.PrimaryTagID, &v.SecondaryTagID, &v.Title, &v.SortTagID, &v.SortDirection); err != nil {
 			return nil, err
 		}
 
@@ -52,13 +52,13 @@ func GetView(id int) (*types.View, error) {
 	}
 
 	var v types.View
-	rows.Scan(&v.ID, &v.ProjectID, v.PrimaryTagID, v.SecondaryTagID, v.Title)
+	rows.Scan(&v.ID, &v.ProjectID, v.PrimaryTagID, v.SecondaryTagID, v.Title, v.SortTagID, v.SortDirection)
 
 	return &v, nil
 }
 
 func UpdateView(v types.View) (int64, error) {
-	res, err := db.Exec("UPDATE views SET project_id = ?, primary_tag_id = ?, secondary_tag_id = ?, title = ? WHERE id = ?", v.ProjectID, v.PrimaryTagID, v.SecondaryTagID, v.Title, v.ID)
+	res, err := db.Exec("UPDATE views SET project_id = ?, primary_tag_id = ?, secondary_tag_id = ?, title = ?, sort_tag_id = ?, sort_direction = ? WHERE id = ?", v.ProjectID, v.PrimaryTagID, v.SecondaryTagID, v.Title, v.SortTagID, v.SortDirection, v.ID)
 	if err != nil {
 		return 0, err
 	}

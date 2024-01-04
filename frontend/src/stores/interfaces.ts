@@ -14,8 +14,8 @@ export interface Card {
 export interface TagValue {
 	card_id: number;
 	tag_id: number;
-	option_id: number;
-	value: string;
+	option_id: number | null;
+	value: string | null;
 }
 
 export interface MeTag {
@@ -35,9 +35,11 @@ export interface TagOption {
 export interface View {
 	id: number;
 	project_id: number;
-	primary_tag_id: number;
-	secondary_tag_id: number;
+	primary_tag_id: number | null;
+	secondary_tag_id: number | null;
 	title: string;
+	sort_tag_id: number | null;
+	sort_direction: number | null;
 }
 
 export function parseCard(c: any) {

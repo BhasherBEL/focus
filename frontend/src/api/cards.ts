@@ -60,8 +60,8 @@ export async function deleteCardApi(cardID: number): Promise<void> {
 export async function createCardTagApi(
 	cardId: number,
 	tagId: number,
-	optionId: number,
-	value: string
+	optionId: number | null,
+	value: string | null
 ): Promise<boolean> {
 	const response = await api.post(`/v1/cards/${cardId}/tags/${tagId}`, {
 		option_id: optionId,
@@ -76,15 +76,24 @@ export async function createCardTagApi(
 	return true;
 }
 
+export async function deleteCardTagApi(cardID: number, tagID: number): Promise<void> {
+	const response = await api.delete(`/v1/cards/${cardID}/tags/${tagID}`);
+
+	if (response.status !== status.NoContent) {
+		processError(response, 'Failed to delete tag');
+		return Promise.reject();
+	}
+}
+
 export async function updateCardTagApi(
 	cardID: number,
 	tagID: number,
-	option_id: number,
-	value: string
+	option_id: number | null,
+	value: string | null
 ): Promise<void> {
 	const response = await api.put(`/v1/cards/${cardID}/tags/${tagID}`, {
-		option_id: option_id,
-		value: value
+		option_id: option_id == -1 ? null : option_id,
+		value: value == '' ? null : value
 	});
 
 	if (response.status !== status.NoContent) {

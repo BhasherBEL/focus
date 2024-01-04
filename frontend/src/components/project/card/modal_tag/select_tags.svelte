@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { updateCardTagApi } from '../../../../api/cards';
 	import type { Card, MeTag, TagOption, TagValue } from '../../../../stores/interfaces';
 	import projectTags from '../../../../stores/projectTags';
 	import { cards } from '../../../../stores/smallStore';
@@ -7,7 +8,7 @@
 	import TrashIcon from '../../../icons/trashIcon.svelte';
 	import Menu from '../../../tuils/menu.svelte';
 
-	export let multiple: boolean = false;
+	export const multiple: boolean = false;
 	export let card: Card;
 	export let projectTag: MeTag;
 	export let tagValue: TagValue | undefined;
@@ -19,21 +20,14 @@
 
 	let isOpen = false;
 
-	async function selectOption(option_id: number) {
+	async function selectOption(option_id: number | null) {
 		if (lastTagValue.option_id === option_id) {
 			isOpen = false;
 			return;
 		}
-		if (tagValue) {
-			const response = await api.put(`/v1/cards/${card.id}/tags/${projectTag.id}`, {
-				option_id,
-				value: ''
-			});
 
-			if (response.status !== status.NoContent) {
-				processError(response, 'Failed to update tag');
-				return;
-			}
+		if (tagValue) {
+			await updateCardTagApi(card.id, projectTag.id, option_id, tagValue.value);
 
 			card.tags = card.tags.map((t) => {
 				if (t.tag_id === projectTag.id) {
@@ -70,7 +64,7 @@
 		cards.reload();
 	}
 
-	async function deleteOption(_: number | undefined) {
+	async function deleteOption() {
 		const response = await api.delete(`/v1/cards/${card.id}/tags/${projectTag.id}`);
 
 		if (response.status !== status.NoContent) {
@@ -107,7 +101,7 @@
 		{#if tagValue}
 			<span class="tag">
 				{tagOption?.value}
-				<button class="real" on:click={() => deleteOption(tagValue?.option_id)}>✗</button>
+				<button class="real" on:click={() => deleteOption()}>✗</button>
 			</span>
 		{/if}
 	</div>

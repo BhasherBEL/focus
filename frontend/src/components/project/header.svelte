@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { get } from 'svelte/store';
 	import type { Project, TagValue, View } from '../../stores/interfaces';
 	import { cards, currentView, views } from '../../stores/smallStore';
 	import projectTags from '../../stores/projectTags';
@@ -8,19 +7,6 @@
 	export let project: Project;
 	export let view: View;
 	let groupMenuOpen = false;
-
-	function getEmptyTags(): TagValue[] {
-		const tags: TagValue[] = [];
-		for (let tag of Object.values(get(projectTags))) {
-			tags.push({
-				card_id: -1,
-				tag_id: tag.id,
-				option_id: -1,
-				value: ''
-			});
-		}
-		return tags;
-	}
 
 	async function setGroup(id: number): Promise<boolean> {
 		if ($currentView == null) return false;
@@ -44,7 +30,7 @@
 		<div>
 			<button
 				on:click={() => (groupMenuOpen = !groupMenuOpen)}
-				class:defined={$currentView?.primary_tag_id !== -1}>Group</button
+				class:defined={$currentView?.primary_tag_id}>Group</button
 			>
 			<GroupMenu
 				isOpen={groupMenuOpen}
@@ -59,7 +45,7 @@
 		<button class:disabled={true}>Sub-group</button>
 		<button class:disabled={true}>Filter</button>
 		<button class:disabled={true}>Sort</button>
-		<button id="newButton" on:click={async () => cards.add(project.id, getEmptyTags())}>New</button>
+		<button id="newButton" on:click={async () => cards.add(project.id, [])}>New</button>
 	</nav>
 </header>
 

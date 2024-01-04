@@ -4,7 +4,7 @@
 	export let isOpen = false;
 	export let choices: { id: number; value: string }[] = [];
 	export let onChoice = (id: number) => {};
-	export let currentChoice: number;
+	export let currentChoice: number | null;
 </script>
 
 <Menu {isOpen}>
