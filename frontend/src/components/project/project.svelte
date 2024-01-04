@@ -35,9 +35,23 @@
 								optionId={option.id}
 								primary_tag_id={view.primary_tag_id}
 								title={option.value}
-								columnCards={$cards.filter((c) =>
-									c.tags.map((t) => t.option_id).includes(option.id)
-								)}
+								columnCards={$cards
+									.filter((c) => c.tags.map((t) => t.option_id).includes(option.id))
+									.sort((a, b) => {
+										if (!view?.sort_tag_id) return 0;
+										const aTag = a.tags.find((t) => t.tag_id === view?.sort_tag_id);
+										const bTag = b.tags.find((t) => t.tag_id === view?.sort_tag_id);
+
+										if (!aTag) return -(view?.sort_direction || 1);
+										if (!bTag) return view?.sort_direction || 1;
+
+										const aValue = aTag.value || aTag.option_id || 0;
+										const bValue = bTag.value || bTag.option_id || 0;
+
+										return aValue < bValue
+											? view?.sort_direction || 1
+											: -(view?.sort_direction || 1);
+									})}
 								projectId={project.id}
 							/>
 						{/each}

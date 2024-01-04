@@ -1,13 +1,14 @@
 <script lang="ts">
-	import Menu from '../tuils/menu.svelte';
+	import Menu from '../../../../utils/menu.svelte';
 
 	export let isOpen = false;
 	export let choices: { id: number; value: string }[] = [];
 	export let onChoice = (id: number) => {};
 	export let currentChoice: number | null;
+	export let currentDirection: number | null;
 </script>
 
-<Menu {isOpen}>
+<Menu bind:isOpen>
 	{#each choices as choice}
 		<div
 			class="menu-item"
@@ -22,7 +23,13 @@
 		>
 			<span>{choice.value}</span>
 			{#if currentChoice === choice.id}
-				<span class="mark"> ✓ </span>
+				<span class="mark">
+					{#if currentDirection === 1}
+						↑
+					{:else}
+						↓
+					{/if}
+				</span>
 			{/if}
 		</div>
 	{/each}

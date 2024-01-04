@@ -68,7 +68,10 @@ func UpdateView(c *fiber.Ctx) error {
 
 	view := types.View{ID: id}
 	if err := c.BodyParser(&view); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse request"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Cannot parse request",
+			"trace": fmt.Sprint(err),
+		})
 	}
 
 	count, err := db.UpdateView(view)

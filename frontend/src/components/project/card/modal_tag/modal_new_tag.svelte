@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { tick } from 'svelte';
 	import AddIcon from '../../../icons/addIcon.svelte';
-	import Menu from '../../../tuils/menu.svelte';
+	import Menu from '../../../utils/menu.svelte';
 	import ModalTagTypes from './modal_tag_types.svelte';
 	import projectTags from '../../../../stores/projectTags';
 	import { toastAlert } from '../../../../utils/toasts';

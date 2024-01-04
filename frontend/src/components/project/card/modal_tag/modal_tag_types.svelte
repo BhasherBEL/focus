@@ -1,7 +1,6 @@
 <script lang="ts">
-	import projectTags from '../../../../stores/projectTags';
 	import { getTagTypeFromId, tagTypes } from '../../../../utils/tagTypes';
-	import Menu from '../../../tuils/menu.svelte';
+	import Menu from '../../../utils/menu.svelte';
 
 	export let type: number;
 	export let isTagMenuOpen: boolean = false;

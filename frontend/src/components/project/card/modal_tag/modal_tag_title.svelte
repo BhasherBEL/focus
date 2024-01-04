@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { tick } from 'svelte';
 	import type { MeTag } from '../../../../stores/interfaces';
-	import Menu from '../../../tuils/menu.svelte';
+	import Menu from '../../../utils/menu.svelte';
 	import projectTags from '../../../../stores/projectTags';
 	import { toastAlert } from '../../../../utils/toasts';
 	import ModalTagTypes from './modal_tag_types.svelte';

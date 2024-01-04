@@ -6,7 +6,7 @@
 	import api, { processError } from '../../../../utils/api';
 	import status from '../../../../utils/status';
 	import TrashIcon from '../../../icons/trashIcon.svelte';
-	import Menu from '../../../tuils/menu.svelte';
+	import Menu from '../../../utils/menu.svelte';
 
 	export const multiple: boolean = false;
 	export let card: Card;
