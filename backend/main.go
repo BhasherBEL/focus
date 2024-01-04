@@ -34,6 +34,7 @@ func main() {
 		AllowOrigins: origins,
 		AllowMethods: "GET,POST,PUT,DELETE",
 		AllowHeaders: "Origin, Content-Type, Accept, Cache-Control, Pragma,Expires, If-Modified-Since",
+		MaxAge: 	 3600,
 	}))
 
 	// app.Use(cache.New())
