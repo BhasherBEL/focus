@@ -19,9 +19,9 @@
 			projects = response.data || [];
 		} catch (e: any) {
 			toastAlert('Failed to fetch projects', e);
-			setTimeout(() => {
-				window.location.reload();
-			}, 11000);
+			// setTimeout(() => {
+			// 	window.location.reload();
+			// }, 11000);
 		}
 	});
 

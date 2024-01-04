@@ -23,29 +23,27 @@ func projectsRouter(router fiber.Router) error {
 	return nil
 }
 
-var projectsLastEdit time.Time;
+var projectsLastEdit time.Time = time.Now().Truncate(time.Second);
 
 func GetAllProjects(c *fiber.Ctx) error {
-	isCached, err := utils.Cache(c, projectsLastEdit);
+	isCached, err := utils.Cache(c, &projectsLastEdit);
 	if err == nil && isCached {
 		return nil;
 	}
 
 	projects, err := db.GetAllProjects()
-	currentTime := time.Now();
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Cannot retrieve projects",
 			"trace": fmt.Sprint(err),
 		})
 	}
-
+	
 	err = c.Status(fiber.StatusOK).JSON(projects)
 	if err != nil {
 		return err;
 	}
 
-	projectsLastEdit = currentTime;
 	return nil;
 }
 
@@ -83,6 +81,8 @@ func CreateProject(c *fiber.Ctx) error {
 		})
 	}
 
+	projectsLastEdit = time.Now().Truncate(time.Second);
+
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"id": id,
 	})
@@ -111,6 +111,8 @@ func UpdateProject(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 
+	projectsLastEdit = time.Now().Truncate(time.Second);
+
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
@@ -131,6 +133,8 @@ func DeleteProject(c *fiber.Ctx) error {
 	if count == 0 {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
+
+	projectsLastEdit = time.Now().Truncate(time.Second);
 
 	return c.SendStatus(fiber.StatusNoContent)
 }

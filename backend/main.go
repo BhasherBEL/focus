@@ -33,7 +33,7 @@ func main() {
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: origins,
 		AllowMethods: "GET,POST,PUT,DELETE",
-		AllowHeaders: "Origin, Content-Type, Accept",
+		AllowHeaders: "Origin, Content-Type, Accept, Cache-Control, Pragma,Expires, If-Modified-Since",
 	}))
 
 	// app.Use(cache.New())
