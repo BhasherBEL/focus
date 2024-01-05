@@ -45,7 +45,7 @@
 				</div>
 			</div>
 			<div class="tags">
-				<ModalTags bind:card />
+				<ModalTags {card} />
 			</div>
 			<div class="body">
 				<textarea

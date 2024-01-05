@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Project, TagValue, View } from '../../stores/interfaces';
 	import { cards, currentView, views } from '../../stores/smallStore';
-	import projectTags from '../../stores/projectTags';
+	import projectTags from '../../stores/project_tags';
 	import GroupMenu from './card/header/menus/group_menu.svelte';
 	import SortMenu from './card/header/menus/sort_menu.svelte';
 

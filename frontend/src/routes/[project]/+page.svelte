@@ -2,10 +2,10 @@
 	import { page } from '$app/stores';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';
-	import { getProjectAPI } from '../../api/projects';
-	import { type Project as P } from '../../stores/interfaces';
-	import Sidebar from '../../components/sidebar.svelte';
-	import Project from '../../components/project/project.svelte';
+	import { getProjectAPI } from '$lib/api/projects';
+	import { type Project as P } from '$lib/stores/interfaces';
+	import Sidebar from '$lib/components/sidebar.svelte';
+	import Project from '$lib/components/project/project.svelte';
 
 	let projectId: number = +$page.params.project;
 

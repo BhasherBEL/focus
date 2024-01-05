@@ -1,7 +1,7 @@
 import { get, writable } from 'svelte/store';
 import type { MeTag, TagOption } from './interfaces';
-import api, { processError } from '../utils/api';
-import status from '../utils/status';
+import api, { processError } from '$lib/utils/api';
+import status from '$lib/utils/status';
 import { cards } from './smallStore';
 
 const { subscribe, set, update } = writable({} as { [key: number]: MeTag });

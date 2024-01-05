@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { Card, MeTag, TagValue } from '../../../../stores/interfaces';
-	import { getTagTypeFromId } from '../../../../utils/tagTypes';
+	import type { MeTag, TagValue, Card } from '$lib/stores/interfaces';
+	import { getTagTypeFromId } from '$lib/utils/tagTypes';
 	import SelectTags from './select_tags.svelte';
 
 	export let projectTag: MeTag;
@@ -13,7 +13,7 @@
 {#if tagType}
 	<td>
 		{#if tagType?.hasOptions}
-			<SelectTags multiple={false} {projectTag} {card} bind:tagValue />
+			<SelectTags multiple={false} {projectTag} {card} {tagValue} />
 		{:else if !tagType?.hasOptions}
 			<input />
 		{/if}

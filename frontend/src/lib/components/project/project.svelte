@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import Column from './column.svelte';
-	import type { Project, View } from '../../stores/interfaces';
-	import projectTags from '../../stores/projectTags';
-	import { cards, currentView, views } from '../../stores/smallStore';
+	import type { Project, View } from '$lib/stores/interfaces';
+	import projectTags from '$lib/stores/project_tags';
+	import { cards, currentView } from '$lib/stores/smallStore';
 	import Header from './header.svelte';
 
 	export let project: Project;

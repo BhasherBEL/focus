@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import type { MeTag } from '../../../../stores/interfaces';
-	import Menu from '../../../utils/menu.svelte';
-	import projectTags from '../../../../stores/projectTags';
-	import { toastAlert } from '../../../../utils/toasts';
 	import ModalTagTypes from './modal_tag_types.svelte';
+	import type { MeTag } from '$lib/stores/interfaces';
+	import { toastAlert } from '$lib/utils/toasts';
+	import project_tags from '$lib/stores/project_tags';
+	import Menu from '$lib/components/utils/menu.svelte';
 
 	export let projectTag: MeTag;
 
@@ -28,7 +28,7 @@
 			return;
 		}
 
-		await projectTags.update(projectTag);
+		await project_tags.update(projectTag);
 
 		lastTitle = projectTag.title;
 	}
@@ -71,7 +71,7 @@
 				onChoice={async (id) => {
 					projectTag.type = id;
 
-					await projectTags.update(projectTag);
+					await project_tags.update(projectTag);
 				}}
 			/>
 			{#if askConfirm}
@@ -80,7 +80,7 @@
 					<div>
 						<button
 							on:click={() => {
-								projectTags.delete(projectTag.id);
+								project_tags.delete(projectTag.id);
 								isMenuOpen = false;
 							}}>✓</button
 						>

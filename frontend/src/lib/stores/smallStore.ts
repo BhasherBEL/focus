@@ -1,9 +1,9 @@
 import { writable } from 'svelte/store';
 import { parseCards, type Card, type View, type TagValue } from './interfaces';
-import { deleteCardApi, newCardApi, updateCardApi } from '../api/cards';
-import { getProjectCardsAPI } from '../api/projects';
-import api, { processError } from '../utils/api';
-import status from '../utils/status';
+import api, { processError } from '$lib/utils/api';
+import status from '$lib/utils/status';
+import { getProjectCardsAPI } from '$lib/api/projects';
+import { deleteCardApi, newCardApi, updateCardApi } from '$lib/api/cards';
 
 export const currentView = (() => {
 	const { subscribe, set, update } = writable(null as View | null);
@@ -82,7 +82,11 @@ export const views = (() => {
 
 		return true;
 	};
-	const add = async (projectId: number, title: string, primaryTagId: number | null): Promise<View> => {
+	const add = async (
+		projectId: number,
+		title: string,
+		primaryTagId: number | null
+	): Promise<View> => {
 		const response = await api.post(`/v1/views`, {
 			title,
 			project_id: projectId,

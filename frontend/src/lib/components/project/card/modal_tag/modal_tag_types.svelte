@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { getTagTypeFromId, tagTypes } from '../../../../utils/tagTypes';
-	import Menu from '../../../utils/menu.svelte';
+	import Menu from '$lib/components/utils/menu.svelte';
+	import { getTagTypeFromId, tagTypes } from '$lib/utils/tagTypes';
 
 	export let type: number;
 	export let isTagMenuOpen: boolean = false;

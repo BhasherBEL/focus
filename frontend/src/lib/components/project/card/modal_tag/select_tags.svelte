@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { updateCardTagApi } from '../../../../api/cards';
-	import type { Card, MeTag, TagOption, TagValue } from '../../../../stores/interfaces';
-	import projectTags from '../../../../stores/projectTags';
-	import { cards } from '../../../../stores/smallStore';
-	import api, { processError } from '../../../../utils/api';
-	import status from '../../../../utils/status';
-	import TrashIcon from '../../../icons/trashIcon.svelte';
-	import Menu from '../../../utils/menu.svelte';
+	import { updateCardTagApi } from '$lib/api/cards';
+	import TrashIcon from '$lib/components/icons/trashIcon.svelte';
+	import Menu from '$lib/components/utils/menu.svelte';
+	import type { Card, MeTag, TagValue } from '$lib/stores/interfaces';
+	import project_tags from '$lib/stores/project_tags';
+	import { cards } from '$lib/stores/smallStore';
+	import api, { processError } from '$lib/utils/api';
+	import status from '$lib/utils/status';
 
 	export const multiple: boolean = false;
 	export let card: Card;
@@ -81,7 +81,7 @@
 
 	function createOption() {
 		if (!newOption) return;
-		projectTags.addOption(projectTag.id, newOption);
+		project_tags.addOption(projectTag.id, newOption);
 		newOption = '';
 	}
 </script>
@@ -127,7 +127,7 @@
 			<span class="value">{option.value}</span>
 			<button
 				on:click|stopPropagation={() => {
-					projectTags.deleteOption(projectTag.id, option.id);
+					project_tags.deleteOption(projectTag.id, option.id);
 				}}><TrashIcon size={16} /></button
 			>
 		</div>

@@ -11,6 +11,6 @@
 {#if projectTag}
 	<tr>
 		<ModalTagTitle {projectTag} />
-		<ModalTagValue {projectTag} bind:tagValue {card} />
+		<ModalTagValue {projectTag} {tagValue} {card} />
 	</tr>
 {/if}

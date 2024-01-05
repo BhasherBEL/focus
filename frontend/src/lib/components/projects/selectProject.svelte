@@ -1,7 +1,7 @@
 <script lang="ts">
+	import api, { processError } from '$lib/utils/api';
+	import status from '$lib/utils/status';
 	import type { Project } from '../../stores/interfaces';
-	import api, { processError } from '../../utils/api';
-	import status from '../../utils/status';
 
 	export let project: Project;
 	export let deleteProject: (project: Project) => void;

@@ -1,13 +1,12 @@
 <script lang="ts">
-	import { onMount, tick } from 'svelte';
-	import api, { processError } from '../utils/api';
+	import { onMount } from 'svelte';
 	import type { Project, View } from '../stores/interfaces';
 	import { currentView, views } from '../stores/smallStore';
 	import ViewIcon from './icons/viewIcon.svelte';
-	import projectTags from '../stores/projectTags';
 	import EditIcon from './icons/editIcon.svelte';
 	import { get } from 'svelte/store';
 	import MenuOpener from './icons/menu_opener.svelte';
+	import projectTags from '../stores/project_tags';
 
 	export let project: Project;
 

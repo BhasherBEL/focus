@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { Card } from '../../../stores/interfaces';
-	import projectTags from '../../../stores/projectTags';
-	import { currentModalCard, currentDraggedCard } from '../../../stores/smallStore';
+	import type { Card } from '$lib/stores/interfaces';
+	import project_tags from '$lib/stores/project_tags';
+	import { currentDraggedCard, currentModalCard } from '$lib/stores/smallStore';
 	import ModalCard from './modal_card.svelte';
 
 	export let card: Card;
@@ -12,11 +12,11 @@
 	tabindex="0"
 	draggable={true}
 	on:dragstart={() => currentDraggedCard.set(card)}
-	on:click={() => ($currentModalCard = card.id)}
+	on:click={() => currentModalCard.set(card.id)}
 	role="button"
 	on:keydown={(e) => {
 		if (e.key === 'Enter') {
-			$currentModalCard = card.id;
+			currentModalCard.set(card.id);
 		}
 	}}
 >
@@ -25,9 +25,9 @@
 		<div class="tags">
 			{#each card.tags as tag}
 				{#if tag.option_id}
-					{#if $projectTags[tag.tag_id]}
+					{#if $project_tags[tag.tag_id]}
 						<span class="tag" style="border: 1px solid #333"
-							>{$projectTags[tag.tag_id]?.options.find((o) => o.id == tag.option_id)?.value}</span
+							>{$project_tags[tag.tag_id]?.options.find((o) => o.id == tag.option_id)?.value}</span
 						>
 					{/if}
 				{:else if tag.value}

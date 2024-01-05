@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import AddIcon from '../../../icons/addIcon.svelte';
-	import Menu from '../../../utils/menu.svelte';
 	import ModalTagTypes from './modal_tag_types.svelte';
-	import projectTags from '../../../../stores/projectTags';
-	import { toastAlert } from '../../../../utils/toasts';
+	import { toastAlert } from '$lib/utils/toasts';
+	import project_tags from '$lib/stores/project_tags';
+	import AddIcon from '$lib/components/icons/addIcon.svelte';
+	import Menu from '$lib/components/utils/menu.svelte';
 
 	export let projectId: number;
 
@@ -27,7 +27,7 @@
 			toastAlert('Failed to create tag', `ProjectId is ${projectId}`);
 			return;
 		}
-		await projectTags.add(projectId, title, typeId);
+		await project_tags.add(projectId, title, typeId);
 		isOpen = false;
 	}
 </script>

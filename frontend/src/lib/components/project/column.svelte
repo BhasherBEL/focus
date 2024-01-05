@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { Card, TagValue } from '../../stores/interfaces';
-	import { cards, currentDraggedCard } from '../../stores/smallStore';
 	import CardC from './card/card.svelte';
 	import AddIcon from '../icons/addIcon.svelte';
-	import projectTags from '../../stores/projectTags';
 	import { updateTagAPI as updateTagOptionAPI } from '../../api/tags';
 	import { get } from 'svelte/store';
 	import { createCardTagApi, deleteCardTagApi, updateCardTagApi } from '../../api/cards';
+	import type { Card, TagValue } from '../../stores/interfaces';
+	import projectTags from '../../stores/project_tags';
+	import { cards, currentDraggedCard } from '../../stores/smallStore';
 
 	export let projectId: number;
 	export let optionId: number | null = null;
