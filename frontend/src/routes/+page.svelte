@@ -1,9 +1,9 @@
 <script lang="ts">
+	import type Project from '$lib/types/Project';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
-	import type { Project } from '../lib/stores/interfaces';
 	import { onMount } from 'svelte';
-	import api, { processError } from '../lib/utils/api';
 	import SelectProject from '../lib/components/projects/selectProject.svelte';
+	import api, { processError } from '../lib/utils/api';
 	import { toastAlert } from '../lib/utils/toasts';
 
 	let projects: Project[];

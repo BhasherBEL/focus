@@ -1,7 +1,8 @@
 <script lang="ts">
-	import type { Project, TagValue, View } from '../../stores/interfaces';
-	import { cards, currentView, views } from '../../stores/smallStore';
+	import type Project from '$lib/types/Project';
+	import type View from '$lib/types/View';
 	import projectTags from '../../stores/project_tags';
+	import { cards, currentView, views } from '../../stores/smallStore';
 	import GroupMenu from './card/header/menus/group_menu.svelte';
 	import SortMenu from './card/header/menus/sort_menu.svelte';
 

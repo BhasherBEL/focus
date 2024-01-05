@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { Card } from '$lib/stores/interfaces';
+	import ProjectTags from '$lib/stores/project_tags';
+	import type Card from '$lib/types/Card';
 	import ModalTag from './modal_tag.svelte';
 	import ModalNewTag from './modal_tag/modal_new_tag.svelte';
-	import ProjectTags from '$lib/stores/project_tags';
 
 	export let card: Card;
 </script>

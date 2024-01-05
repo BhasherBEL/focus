@@ -1,6 +1,6 @@
-import type { MeTag, TagOption } from '../stores/interfaces';
-import api, { processError } from '../utils/api';
-import status from '../utils/status';
+import type TagOption from '$lib/types/TagOption';
+import api, { processError } from '$lib/utils/api';
+import status from '$lib/utils/status';
 
 export async function updateTagAPI(option: TagOption): Promise<boolean> {
 	const response =

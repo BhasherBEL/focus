@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { Card } from '$lib/stores/interfaces';
 	import project_tags from '$lib/stores/project_tags';
 	import { currentDraggedCard, currentModalCard } from '$lib/stores/smallStore';
+	import type Card from '$lib/types/Card';
 	import ModalCard from './modal_card.svelte';
 
 	export let card: Card;
@@ -26,8 +26,8 @@
 			{#each card.tags as tag}
 				{#if tag.option_id}
 					{#if $project_tags[tag.tag_id]}
-						<span class="tag" style="border: 1px solid #333"
-							>{$project_tags[tag.tag_id]?.options.find((o) => o.id == tag.option_id)?.value}</span
+						<span class="tag" style="border: 1px solid #333">
+							{$project_tags[tag.tag_id]?.options.find((o) => o.id == tag.option_id)?.value}</span
 						>
 					{/if}
 				{:else if tag.value}

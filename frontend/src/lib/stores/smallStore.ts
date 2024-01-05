@@ -1,9 +1,12 @@
-import { writable } from 'svelte/store';
-import { parseCards, type Card, type View, type TagValue } from './interfaces';
+import { deleteCardApi, newCardApi, updateCardApi } from '$lib/api/cards';
+import { getProjectCardsAPI } from '$lib/api/projects';
+import type Card from '$lib/types/Card';
+import type TagValue from '$lib/types/TagValue';
+import type View from '$lib/types/View';
 import api, { processError } from '$lib/utils/api';
 import status from '$lib/utils/status';
-import { getProjectCardsAPI } from '$lib/api/projects';
-import { deleteCardApi, newCardApi, updateCardApi } from '$lib/api/cards';
+import { writable } from 'svelte/store';
+import { parseCards } from '../utils/parser';
 
 export const currentView = (() => {
 	const { subscribe, set, update } = writable(null as View | null);

@@ -1,7 +1,7 @@
 import axios, { Axios, type AxiosResponse } from 'axios';
 import { toastAlert } from './toasts';
 import { setupCache } from 'axios-cache-interceptor';
-import { backend } from '$lib/stores/config';
+import { backend } from '$lib/config';
 
 export default setupCache(
 	new Axios({

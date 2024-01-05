@@ -1,6 +1,8 @@
-import { parseCards, type Card, type Project } from '../stores/interfaces';
-import api, { processError } from '../utils/api';
-import status from '../utils/status';
+import type Card from '$lib/types/Card';
+import type Project from '$lib/types/Project';
+import api, { processError } from '$lib/utils/api';
+import { parseCards } from '$lib/utils/parser';
+import status from '$lib/utils/status';
 
 export async function getProjectAPI(projectId: number): Promise<Project> {
 	const response = await api.get(`/v1/projects/${projectId}`);

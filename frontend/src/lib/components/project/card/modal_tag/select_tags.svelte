@@ -2,9 +2,11 @@
 	import { updateCardTagApi } from '$lib/api/cards';
 	import TrashIcon from '$lib/components/icons/trashIcon.svelte';
 	import Menu from '$lib/components/utils/menu.svelte';
-	import type { Card, MeTag, TagValue } from '$lib/stores/interfaces';
 	import project_tags from '$lib/stores/project_tags';
 	import { cards } from '$lib/stores/smallStore';
+	import type Card from '$lib/types/Card';
+	import type MeTag from '$lib/types/MeTag';
+	import type TagValue from '$lib/types/TagValue';
 	import api, { processError } from '$lib/utils/api';
 	import status from '$lib/utils/status';
 

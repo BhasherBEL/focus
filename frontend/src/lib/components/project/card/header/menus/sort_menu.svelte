@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Menu from '../../../../utils/menu.svelte';
+	import Menu from '$lib/components/utils/menu.svelte';
 
 	export let isOpen = false;
 	export let choices: { id: number; value: string }[] = [];

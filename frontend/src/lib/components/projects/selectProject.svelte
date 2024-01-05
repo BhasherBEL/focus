@@ -1,7 +1,7 @@
 <script lang="ts">
+	import type Project from '$lib/types/Project';
 	import api, { processError } from '$lib/utils/api';
 	import status from '$lib/utils/status';
-	import type { Project } from '../../stores/interfaces';
 
 	export let project: Project;
 	export let deleteProject: (project: Project) => void;

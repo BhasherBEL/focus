@@ -1,5 +1,7 @@
 <script lang="ts">
-	import type { Card, MeTag, TagValue } from '../../../stores/interfaces';
+	import type Card from '$lib/types/Card';
+	import type MeTag from '$lib/types/MeTag';
+	import type TagValue from '$lib/types/TagValue';
 	import ModalTagTitle from './modal_tag/modal_tag_title.svelte';
 	import ModalTagValue from './modal_tag/modal_tag_value.svelte';
 

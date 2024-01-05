@@ -1,4 +1,5 @@
-import type { Card, TagValue } from '../stores/interfaces';
+import type { TagValue } from "$lib/types/TagValue";
+import type { Card } from "$lib/types/Card";
 import api, { processError } from '../utils/api';
 import status from '../utils/status';
 

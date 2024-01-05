@@ -1,6 +1,7 @@
-import type { Card, TagValue } from '../stores/interfaces';
-import api, { processError } from '../utils/api';
-import status from '../utils/status';
+import type TagValue from '$lib/types/TagValue';
+import type Card from '$lib/types/Card';
+import api, { processError } from '$lib/utils/api';
+import status from '$lib/utils/status';
 
 export async function newCardApi(projectId: number, tags: TagValue[]): Promise<Card> {
 	const response = await api.post(`/v1/cards`, {

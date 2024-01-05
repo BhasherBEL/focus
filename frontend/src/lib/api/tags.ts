@@ -1,4 +1,5 @@
-import type { MeTag, TagOption } from '$lib/stores/interfaces';
+import type { TagOption } from "$lib/types/TagOption";
+import type { MeTag } from "$lib/types/MeTag";
 import api, { processError } from '$lib/utils/api';
 import status from '$lib/utils/status';
 

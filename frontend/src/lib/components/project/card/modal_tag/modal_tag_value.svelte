@@ -1,5 +1,7 @@
 <script lang="ts">
-	import type { MeTag, TagValue, Card } from '$lib/stores/interfaces';
+	import type Card from '$lib/types/Card';
+	import type MeTag from '$lib/types/MeTag';
+	import type TagValue from '$lib/types/TagValue';
 	import { getTagTypeFromId } from '$lib/utils/tagTypes';
 	import SelectTags from './select_tags.svelte';
 

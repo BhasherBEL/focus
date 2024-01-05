@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { getProjectAPI } from '$lib/api/projects';
+	import ProjectComponent from '$lib/components/project/project.svelte';
+	import Sidebar from '$lib/components/sidebar.svelte';
+	import type Project from '$lib/types/Project';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';
-	import { getProjectAPI } from '$lib/api/projects';
-	import { type Project as P } from '$lib/stores/interfaces';
-	import Sidebar from '$lib/components/sidebar.svelte';
-	import Project from '$lib/components/project/project.svelte';
 
 	let projectId: number = +$page.params.project;
 
-	let project: P;
+	let project: Project;
 
 	onMount(() => {
 		getProjectAPI(projectId).then((p) => {
@@ -21,7 +21,7 @@
 {#if project}
 	<div>
 		<Sidebar {project} />
-		<Project {project} />
+		<ProjectComponent {project} />
 	</div>
 	<SvelteToast />
 {/if}

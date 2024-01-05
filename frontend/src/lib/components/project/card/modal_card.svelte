@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { Card } from '../../../stores/interfaces';
-	import { currentModalCard, cards } from '../../../stores/smallStore';
+	import type Card from '$lib/types/Card';
+	import { cards, currentModalCard } from '../../../stores/smallStore';
 	import CloseIcon from '../../icons/closeIcon.svelte';
 	import TrashIcon from '../../icons/trashIcon.svelte';
 	import ModalTags from './modal_tags.svelte';
