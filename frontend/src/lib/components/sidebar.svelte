@@ -1,13 +1,15 @@
 <script lang="ts">
+	import currentView from '$lib/stores/currentView';
+	import views from '$lib/stores/views';
 	import type Project from '$lib/types/Project';
 	import type View from '$lib/types/View';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
-	import projectTags from '../stores/project_tags';
-	import { currentView, views } from '../stores/smallStore';
+	import projectTags from '../stores/projectTags';
 	import EditIcon from './icons/editIcon.svelte';
 	import MenuOpener from './icons/menu_opener.svelte';
 	import ViewIcon from './icons/viewIcon.svelte';
+
 	export let project: Project;
 
 	let viewEditId: number;

@@ -1,6 +1,7 @@
 <script lang="ts">
-	import project_tags from '$lib/stores/project_tags';
-	import { currentDraggedCard, currentModalCard } from '$lib/stores/smallStore';
+	import currentDraggedCard from '$lib/stores/currentDraggedCard';
+	import currentModalCard from '$lib/stores/currentModalCard';
+	import project_tags from '$lib/stores/projectTags';
 	import type Card from '$lib/types/Card';
 	import ModalCard from './modal_card.svelte';
 

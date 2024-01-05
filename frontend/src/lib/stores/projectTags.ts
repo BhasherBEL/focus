@@ -3,7 +3,7 @@ import type TagOption from '$lib/types/TagOption';
 import api, { processError } from '$lib/utils/api';
 import status from '$lib/utils/status';
 import { get, writable } from 'svelte/store';
-import { cards } from './smallStore';
+import cards from './cards';
 
 const { subscribe, set, update } = writable({} as { [key: number]: MeTag });
 

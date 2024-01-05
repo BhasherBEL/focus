@@ -1,13 +1,14 @@
 <script lang="ts">
+	import cards from '$lib/stores/cards';
+	import currentDraggedCard from '$lib/stores/currentDraggedCard';
 	import type Card from '$lib/types/Card';
 	import type TagValue from '$lib/types/TagValue';
 	import { get } from 'svelte/store';
 	import { createCardTagApi, deleteCardTagApi, updateCardTagApi } from '../../api/cards';
 	import { updateTagAPI as updateTagOptionAPI } from '../../api/tags';
-	import projectTags from '../../stores/project_tags';
-	import { cards, currentDraggedCard } from '../../stores/smallStore';
+	import projectTags from '../../stores/projectTags';
 	import AddIcon from '../icons/addIcon.svelte';
-	import CardC from './card/card.svelte';
+	import CardComponent from './card/card.svelte';
 
 	export let projectId: number;
 	export let optionId: number | null = null;
@@ -100,7 +101,7 @@
 	</header>
 	<ul>
 		{#each columnCards as card}
-			<CardC {card} />
+			<CardComponent {card} />
 		{/each}
 	</ul>
 	<div

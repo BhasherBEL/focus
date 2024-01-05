@@ -1,6 +1,7 @@
 <script lang="ts">
-	import projectTags from '$lib/stores/project_tags';
-	import { cards, currentView } from '$lib/stores/smallStore';
+	import cards from '$lib/stores/cards';
+	import currentView from '$lib/stores/currentView';
+	import projectTags from '$lib/stores/projectTags';
 	import type Project from '$lib/types/Project';
 	import type View from '$lib/types/View';
 	import { onMount } from 'svelte';

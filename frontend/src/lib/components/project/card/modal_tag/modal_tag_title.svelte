@@ -1,10 +1,10 @@
 <script lang="ts">
+	import Menu from '$lib/components/utils/menu.svelte';
+	import project_tags from '$lib/stores/projectTags';
+	import type MeTag from '$lib/types/MeTag';
+	import { toastAlert } from '$lib/utils/toasts';
 	import { tick } from 'svelte';
 	import ModalTagTypes from './modal_tag_types.svelte';
-	import { toastAlert } from '$lib/utils/toasts';
-	import project_tags from '$lib/stores/project_tags';
-	import Menu from '$lib/components/utils/menu.svelte';
-	import type MeTag from '$lib/types/MeTag';
 
 	export let projectTag: MeTag;
 

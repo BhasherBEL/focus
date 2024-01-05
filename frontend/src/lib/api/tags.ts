@@ -1,5 +1,4 @@
-import type { TagOption } from "$lib/types/TagOption";
-import type { MeTag } from "$lib/types/MeTag";
+import type TagOption from '$lib/types/TagOption';
 import api, { processError } from '$lib/utils/api';
 import status from '$lib/utils/status';
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ProjectTags from '$lib/stores/project_tags';
+	import ProjectTags from '$lib/stores/projectTags';
 	import type Card from '$lib/types/Card';
 	import ModalTag from './modal_tag.svelte';
 	import ModalNewTag from './modal_tag/modal_new_tag.svelte';

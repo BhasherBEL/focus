@@ -1,4 +1,4 @@
-import type { TagValue } from './TagValue';
+import type TagValue from './TagValue';
 
 export default interface Card {
 	id: number;

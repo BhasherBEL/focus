@@ -1,4 +1,4 @@
-import type { TagOption } from './TagOption';
+import type TagOption from './TagOption';
 
 export default interface MeTag {
 	id: number;

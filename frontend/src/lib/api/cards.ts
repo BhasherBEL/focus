@@ -1,5 +1,5 @@
-import type { TagValue } from "$lib/types/TagValue";
-import type { Card } from "$lib/types/Card";
+import type Card from '$lib/types/Card';
+import type TagValue from '$lib/types/TagValue';
 import api, { processError } from '../utils/api';
 import status from '../utils/status';
 

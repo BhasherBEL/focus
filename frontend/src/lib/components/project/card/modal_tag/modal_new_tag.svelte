@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { tick } from 'svelte';
-	import ModalTagTypes from './modal_tag_types.svelte';
-	import { toastAlert } from '$lib/utils/toasts';
-	import project_tags from '$lib/stores/project_tags';
 	import AddIcon from '$lib/components/icons/addIcon.svelte';
 	import Menu from '$lib/components/utils/menu.svelte';
+	import project_tags from '$lib/stores/projectTags';
+	import { toastAlert } from '$lib/utils/toasts';
+	import { tick } from 'svelte';
+	import ModalTagTypes from './modal_tag_types.svelte';
 
 	export let projectId: number;
 
