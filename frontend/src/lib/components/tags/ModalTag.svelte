@@ -2,8 +2,8 @@
 	import type Card from '$lib/types/Card';
 	import type MeTag from '$lib/types/MeTag';
 	import type TagValue from '$lib/types/TagValue';
-	import ModalTagTitle from './modal_tag/modal_tag_title.svelte';
-	import ModalTagValue from './modal_tag/modal_tag_value.svelte';
+	import ModalTagTitle from './ModalTagTitle.svelte';
+	import ModalTagValue from './ModalTagValue.svelte';
 
 	export let projectTag: MeTag;
 	export let tagValue: TagValue | undefined;

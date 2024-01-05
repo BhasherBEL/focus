@@ -5,10 +5,10 @@
 	import type View from '$lib/types/View';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
-	import projectTags from '../stores/projectTags';
-	import EditIcon from './icons/editIcon.svelte';
-	import MenuOpener from './icons/menu_opener.svelte';
-	import ViewIcon from './icons/viewIcon.svelte';
+	import projectTags from '../../stores/projectTags';
+	import EditIcon from '../icons/EditIcon.svelte';
+	import MenuOpener from '../icons/MenuOpener.svelte';
+	import ViewIcon from '../icons/ViewIcon.svelte';
 
 	export let project: Project;
 

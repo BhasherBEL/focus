@@ -3,7 +3,7 @@
 	import type MeTag from '$lib/types/MeTag';
 	import type TagValue from '$lib/types/TagValue';
 	import { getTagTypeFromId } from '$lib/utils/tagTypes';
-	import SelectTags from './select_tags.svelte';
+	import SelectTags from './SelectTags.svelte';
 
 	export let projectTag: MeTag;
 	export let tagValue: TagValue | undefined;

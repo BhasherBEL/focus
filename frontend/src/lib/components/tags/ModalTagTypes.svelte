@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Menu from '$lib/components/utils/menu.svelte';
+	import Menu from '$lib/components/menu/Menu.svelte';
 	import { getTagTypeFromId, tagTypes } from '$lib/utils/tagTypes';
 
 	export let type: number;

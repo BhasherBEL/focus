@@ -1,10 +1,10 @@
 <script lang="ts">
-	import CloseIcon from '$lib/components/icons/closeIcon.svelte';
+	import CloseIcon from '$lib/components/icons/CloseIcon.svelte';
+	import TrashIcon from '$lib/components/icons/TrashIcon.svelte';
+	import ModalTags from '$lib/components/tags/ModalTags.svelte';
 	import cards from '$lib/stores/cards';
 	import currentModalCard from '$lib/stores/currentModalCard';
 	import type Card from '$lib/types/Card';
-	import TrashIcon from '../../icons/trashIcon.svelte';
-	import ModalTags from './modal_tags.svelte';
 
 	export let card: Card;
 

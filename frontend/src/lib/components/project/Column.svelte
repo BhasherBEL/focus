@@ -7,8 +7,8 @@
 	import { createCardTagApi, deleteCardTagApi, updateCardTagApi } from '../../api/cards';
 	import { updateTagAPI as updateTagOptionAPI } from '../../api/tags';
 	import projectTags from '../../stores/projectTags';
-	import AddIcon from '../icons/addIcon.svelte';
-	import CardComponent from './card/card.svelte';
+	import CardComponent from '../card/Card.svelte';
+	import AddIcon from '../icons/AddIcon.svelte';
 
 	export let projectId: number;
 	export let optionId: number | null = null;

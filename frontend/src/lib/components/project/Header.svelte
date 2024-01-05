@@ -1,12 +1,12 @@
 <script lang="ts">
+	import GroupMenu from '$lib/components/menu/GroupMenu.svelte';
+	import SortMenu from '$lib/components/menu/SortMenu.svelte';
 	import cards from '$lib/stores/cards';
 	import currentView from '$lib/stores/currentView';
+	import projectTags from '$lib/stores/projectTags';
 	import views from '$lib/stores/views';
 	import type Project from '$lib/types/Project';
 	import type View from '$lib/types/View';
-	import projectTags from '../../stores/projectTags';
-	import GroupMenu from './card/header/menus/group_menu.svelte';
-	import SortMenu from './card/header/menus/sort_menu.svelte';
 
 	export let project: Project;
 	export let view: View;

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { updateCardTagApi } from '$lib/api/cards';
-	import TrashIcon from '$lib/components/icons/trashIcon.svelte';
-	import Menu from '$lib/components/utils/menu.svelte';
+	import TrashIcon from '$lib/components/icons/TrashIcon.svelte';
+	import Menu from '$lib/components/menu/Menu.svelte';
 	import cards from '$lib/stores/cards';
 	import project_tags from '$lib/stores/projectTags';
 	import type Card from '$lib/types/Card';

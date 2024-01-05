@@ -5,8 +5,8 @@
 	import type Project from '$lib/types/Project';
 	import type View from '$lib/types/View';
 	import { onMount } from 'svelte';
-	import Column from './column.svelte';
-	import Header from './header.svelte';
+	import Column from './Column.svelte';
+	import Header from './Header.svelte';
 
 	export let project: Project;
 

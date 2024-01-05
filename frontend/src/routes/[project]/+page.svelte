@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { getProjectAPI } from '$lib/api/projects';
-	import ProjectComponent from '$lib/components/project/project.svelte';
-	import Sidebar from '$lib/components/sidebar.svelte';
+	import ProjectComponent from '$lib/components/project/Project.svelte';
+	import Sidebar from '$lib/components/project/Sidebar.svelte';
 	import type Project from '$lib/types/Project';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';

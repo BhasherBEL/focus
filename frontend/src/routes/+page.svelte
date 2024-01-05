@@ -2,7 +2,7 @@
 	import type Project from '$lib/types/Project';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';
-	import SelectProject from '../lib/components/projects/selectProject.svelte';
+	import SelectProject from '../lib/components/projects/SelectProject.svelte';
 	import api, { processError } from '../lib/utils/api';
 	import { toastAlert } from '../lib/utils/toasts';
 

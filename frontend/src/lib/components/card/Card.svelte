@@ -3,7 +3,7 @@
 	import currentModalCard from '$lib/stores/currentModalCard';
 	import project_tags from '$lib/stores/projectTags';
 	import type Card from '$lib/types/Card';
-	import ModalCard from './modal_card.svelte';
+	import ModalCard from './ModalCard.svelte';
 
 	export let card: Card;
 </script>
