@@ -1,10 +1,7 @@
 <script lang="ts">
 	import type Project from '$lib/types/Project';
-	import api, { processError } from '$lib/utils/api';
-	import status from '$lib/utils/status';
 
 	export let project: Project;
-	export let deleteProject: (project: Project) => void;
 
 	let edit = false;
 	let newTitle = project.title;
@@ -19,14 +16,7 @@
 			return;
 		}
 
-		const response = await api.put(`/v1/projects/${project.id}`, { title: newTitle });
-
-		if (response.status !== status.NoContent) {
-			processError(response, 'Failed to update project');
-			return;
-		}
-
-		project.title = newTitle;
+		if (!(await project.setTitle(newTitle))) return;
 
 		edit = false;
 	}
@@ -83,12 +73,12 @@
 			src="/img/delete-icon.svg"
 			alt="Delete"
 			class="button"
-			on:click={() => deleteProject(project)}
+			on:click={() => project.delete()}
 			role="button"
 			tabindex="0"
 			on:keydown={(e) => {
 				if (e.key === 'Enter') {
-					deleteProject(project);
+					project.delete();
 				}
 			}}
 		/>

@@ -4,11 +4,10 @@
 	import type Card from '$lib/types/Card';
 	import type TagValue from '$lib/types/TagValue';
 	import { get } from 'svelte/store';
-	import { createCardTagApi, deleteCardTagApi, updateCardTagApi } from '../../api/cards';
-	import { updateTagAPI as updateTagOptionAPI } from '../../api/tags';
 	import projectTags from '../../stores/projectTags';
 	import CardComponent from '../card/Card.svelte';
 	import AddIcon from '../icons/AddIcon.svelte';
+	import { import } from { createCardTagApi, deleteCardTagApi, updateCardTagApi };
 
 	export let projectId: number;
 	export let optionId: number | null = null;

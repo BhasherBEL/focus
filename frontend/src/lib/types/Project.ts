@@ -1,6 +1,7 @@
+import projectsApi from '$lib/api/projectsApi';
 import { get, writable } from 'svelte/store';
 
-const projects = writable([] as Project[]);
+export const projects = writable([] as Project[]);
 
 export default class Project {
 	private _id: number;
@@ -19,10 +20,6 @@ export default class Project {
 		return this._title;
 	}
 
-	static getAll(): Project[] {
-		return get(projects);
-	}
-
 	static fromId(id: number): Project | null {
 		for (const project of get(projects)) {
 			if (project.id === id) {
@@ -33,10 +30,42 @@ export default class Project {
 		return null;
 	}
 
+	static async create(): Promise<Project | null> {
+		const id = await projectsApi.create('untitled');
+
+		if (!id) return null;
+
+		const project = new Project(id, 'untitled');
+
+		projects.update((projects) => [...projects, project]);
+
+		return project;
+	}
+
+	async setTitle(title: string): Promise<boolean> {
+		if (!(await projectsApi.update(this._id, title))) return false;
+
+		this._title = title;
+
+		return true;
+	}
+
+	async delete(): Promise<boolean> {
+		if (!(await projectsApi.delete(this._id))) return false;
+
+		projects.update((projects) => projects.filter((project) => project.id !== this._id));
+
+		return true;
+	}
+
 	static parse(json: any): Project | null {
 		if (!json) return null;
 
-		return new Project(json.id, json.title);
+		const project = new Project(json.id, json.title);
+
+		projects.update((projects) => [...projects, project]);
+
+		return project;
 	}
 
 	static parseAll(json: any): Project[] {

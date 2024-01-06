@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { updateCardTagApi } from '$lib/api/cards';
-	import TrashIcon from '$lib/components/icons/TrashIcon.svelte';
 	import Menu from '$lib/components/menu/Menu.svelte';
 	import cards from '$lib/stores/cards';
 	import project_tags from '$lib/stores/projectTags';
@@ -9,6 +7,7 @@
 	import type TagValue from '$lib/types/TagValue';
 	import api, { processError } from '$lib/utils/api';
 	import status from '$lib/utils/status';
+	import { updatimport } from { updateCardTagApi };
 
 	export const multiple: boolean = false;
 	export let card: Card;

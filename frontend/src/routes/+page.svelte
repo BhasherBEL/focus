@@ -1,64 +1,21 @@
 <script lang="ts">
-	import type Project from '$lib/types/Project';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';
 	import SelectProject from '../lib/components/projects/SelectProject.svelte';
-	import api, { processError } from '../lib/utils/api';
-	import { toastAlert } from '../lib/utils/toasts';
-
-	let projects: Project[];
+	import Project, { projects } from '$lib/types/Project';
+	import projectsApi from '$lib/api/projectsApi';
 
 	onMount(async () => {
-		try {
-			const response = await api.get(`/v1/projects`);
-			if (response.status !== 200) {
-				processError(response, 'Failed to fetch projects');
-				return;
-			}
-
-			projects = response.data || [];
-		} catch (e: any) {
-			toastAlert('Failed to fetch projects', e);
-			// setTimeout(() => {
-			// 	window.location.reload();
-			// }, 11000);
-		}
+		await projectsApi.getAll();
 	});
-
-	async function deleteProject(project: Project) {
-		if (!confirm(`Are you sure you want to delete ${project.title}?`)) {
-			return;
-		}
-		const response = await api.delete(`/v1/projects/${project.id}`);
-
-		if (response.status !== 204) {
-			processError(response, 'Failed to delete project');
-			return;
-		}
-
-		projects = projects.filter((p) => p.id !== project.id);
-	}
-
-	async function createProject() {
-		const response = await api.post(`/v1/projects`, {
-			title: 'New Project'
-		});
-
-		if (response.status !== 201) {
-			processError(response, 'Failed to create project');
-			return;
-		}
-
-		projects = [...projects, response.data];
-	}
 </script>
 
 <section>
 	<h2>Projects</h2>
 	<ul>
-		{#if projects}
-			{#each projects as project}
-				<SelectProject {project} {deleteProject} />
+		{#if $projects}
+			{#each $projects as project}
+				<SelectProject {project} />
 			{/each}
 		{/if}
 	</ul>
@@ -66,10 +23,10 @@
 		id="add"
 		tabindex="0"
 		role="button"
-		on:click={createProject}
+		on:click={Project.create}
 		on:keydown={(e) => {
 			if (e.key === 'Enter') {
-				createProject();
+				Project.create();
 			}
 		}}
 	>
