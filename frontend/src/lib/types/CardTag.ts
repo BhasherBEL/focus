@@ -45,6 +45,10 @@ export default class CardTag {
 		return new CardTag(card, tag, option, value);
 	}
 
+	async delete() {
+		return cardsTagsApi.delete(this._card.id, this._tag.id);
+	}
+
 	static parse(json: any): CardTag | null;
 	static parse(json: any, card: Card | null | undefined): CardTag | null;
 

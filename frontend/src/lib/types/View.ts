@@ -1,15 +1,9 @@
-// export default interface View {
-// 	id: number;
-// 	projectId: number;
-// 	primaryTagId: number | null;
-// 	secondaryTagId: number | null;
-// 	title: string;
-// 	sortTagId: number | null;
-// 	sortDirection: number | null;
-// }
-
+import { writable } from 'svelte/store';
 import Project from './Project';
 import ProjectTag from './ProjectTag';
+import viewsApi from '$lib/api/viewsApi';
+
+const views = writable([] as View[]);
 
 export default class View {
 	private _id: number;
@@ -66,6 +60,26 @@ export default class View {
 		return this._sortDirection;
 	}
 
+	static async create(project: Project) {
+		const id = await viewsApi.create(project);
+
+		if (!id) return null;
+
+		const view = new View(id, project, null, null, 'New view', null, null);
+
+		views.update((views) => [...views, view]);
+
+		return view;
+	}
+
+	async delete(): Promise<boolean> {
+		if (!(await viewsApi.delete(this.id))) return false;
+
+		views.update((views) => views.filter((view) => view.id !== this.id));
+
+		return true;
+	}
+
 	static parse(json: any): View | null;
 	static parse(json: any, project: Project | null | undefined): View | null;
 
@@ -84,7 +98,7 @@ export default class View {
 		const sortTag = ProjectTag.fromId(json.sort_tag_id);
 		if (!sortTag) return null;
 
-		return new View(
+		const view = new View(
 			json.id,
 			project,
 			primaryTag,
@@ -93,5 +107,9 @@ export default class View {
 			sortTag,
 			json.sort_direction
 		);
+
+		views.update((views) => [...views, view]);
+
+		return view;
 	}
 }
