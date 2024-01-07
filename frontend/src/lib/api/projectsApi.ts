@@ -1,6 +1,7 @@
 import type Card from '$lib/types/Card';
 import Project from '$lib/types/Project';
 import ProjectTag from '$lib/types/ProjectTag';
+import View from '$lib/types/View';
 import api, { processError } from '$lib/utils/api';
 import { parseCards } from '$lib/utils/parser';
 import status from '$lib/utils/status';
@@ -29,7 +30,7 @@ async function create(title: string): Promise<number | null> {
 	return response.data.id;
 }
 
-async function get(projectId: number): Promise<number | null> {
+async function get(projectId: number): Promise<Project | null> {
 	const response = await api.get(`/v1/projects/${projectId}`);
 
 	if (response.status !== status.OK) {
@@ -37,7 +38,7 @@ async function get(projectId: number): Promise<number | null> {
 		return null;
 	}
 
-	return response.data;
+	return Project.parse(response.data);
 }
 
 async function update(projectId: number, title: string): Promise<boolean> {
@@ -83,9 +84,20 @@ async function getTags(project: Project): Promise<ProjectTag[]> {
 		return [];
 	}
 
-	const projectTags: ProjectTag[] = ProjectTag.parseAll(response.data, project);
+	return ProjectTag.parseAll(response.data, project);
+}
 
-	return projectTags;
+async function getViews(project: Project): Promise<View[]> {
+	const response = await api.get(`/v1/projects/${project.id}/views`);
+
+	if (response.status !== status.OK) {
+		processError(response, 'Failed to fetch views');
+		return [];
+	}
+
+	const views: View[] = View.parseAll(response.data, project);
+
+	return views;
 }
 
 export default {
@@ -95,5 +107,6 @@ export default {
 	delete: delete_,
 	getAll,
 	getCards,
-	getTags
+	getTags,
+	getViews
 };

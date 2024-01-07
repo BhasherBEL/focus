@@ -63,7 +63,11 @@ export default class Project {
 
 		const project = new Project(json.id, json.title);
 
-		projects.update((projects) => [...projects, project]);
+		projects.update((projects) => {
+			if (!projects.find((p) => p.id === project.id)) return [...projects, project];
+
+			return projects.map((p) => (p.id === project.id ? project : p));
+		});
 
 		return project;
 	}

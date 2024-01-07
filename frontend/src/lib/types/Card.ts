@@ -90,7 +90,13 @@ export default class Card {
 
 		card._tags = CardTag.parseAll(json.tags, card);
 
-		cards.update((cards) => [...cards, card]);
+		cards.update((cards) => {
+			if (!cards.find((c) => c.id === card.id)) {
+				return [...cards, card];
+			}
+
+			return cards.map((c) => (c.id === card.id ? card : c));
+		});
 
 		return card;
 	}

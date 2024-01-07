@@ -2,8 +2,9 @@ import { writable } from 'svelte/store';
 import Project from './Project';
 import ProjectTag from './ProjectTag';
 import viewsApi from '$lib/api/viewsApi';
+import { toastAlert } from '$lib/utils/toasts';
 
-const views = writable([] as View[]);
+export const views = writable([] as View[]);
 
 export default class View {
 	private _id: number;
@@ -80,23 +81,43 @@ export default class View {
 		return true;
 	}
 
+	async setTitle(title: string): Promise<boolean> {
+		if (
+			!(await viewsApi.update(
+				this.id,
+				this.project.id,
+				this.primaryTag?.id || null,
+				this.secondaryTag?.id || null,
+				title,
+				this.sortTag?.id || null,
+				this.sortDirection || null
+			))
+		)
+			return false;
+
+		this._title = title;
+
+		return true;
+	}
+
 	static parse(json: any): View | null;
 	static parse(json: any, project: Project | null | undefined): View | null;
 
 	static parse(json: any, project?: Project | null | undefined): View | null {
-		if (!json) return null;
+		if (!json) {
+			toastAlert('Failed to parse view');
+			return null;
+		}
 
 		if (!project) project = Project.fromId(json.project_id);
-		if (!project) return null;
+		if (!project) {
+			toastAlert('Failed to find project');
+			return null;
+		}
 
 		const primaryTag = ProjectTag.fromId(json.primary_tag_id);
-		if (!primaryTag) return null;
-
 		const secondaryTag = ProjectTag.fromId(json.secondary_tag_id);
-		if (!secondaryTag) return null;
-
 		const sortTag = ProjectTag.fromId(json.sort_tag_id);
-		if (!sortTag) return null;
 
 		const view = new View(
 			json.id,
@@ -108,8 +129,40 @@ export default class View {
 			json.sort_direction
 		);
 
-		views.update((views) => [...views, view]);
+		views.update((views) => {
+			if (!views.find((view) => view.id === json.id)) {
+				return [...views, view];
+			}
+
+			return views.map((v) => (v.id === json.id ? view : v));
+		});
 
 		return view;
+	}
+
+	static parseAll(json: any): View[];
+	static parseAll(json: any, project: Project | null | undefined): View[];
+
+	static parseAll(json: any, project?: Project | null | undefined): View[] {
+		if (!json) {
+			toastAlert('Failed to parse views');
+			return [];
+		}
+
+		if (!project) project = Project.fromId(json.project_id);
+		if (!project) {
+			toastAlert('Failed to find project');
+			return [];
+		}
+
+		const views: View[] = [];
+
+		for (const viewJson of json) {
+			const view = View.parse(viewJson, project);
+
+			if (view) views.push(view);
+		}
+
+		return views;
 	}
 }

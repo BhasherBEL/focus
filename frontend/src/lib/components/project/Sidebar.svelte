@@ -1,52 +1,44 @@
 <script lang="ts">
 	import currentView from '$lib/stores/currentView';
-	import views from '$lib/stores/views';
-	import type Project from '$lib/types/Project';
-	import type View from '$lib/types/View';
+	import Project from '$lib/types/Project';
+	import View, { views } from '$lib/types/View';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
-	import projectTags from '../../stores/projectTags';
 	import EditIcon from '../icons/EditIcon.svelte';
 	import MenuOpener from '../icons/MenuOpener.svelte';
 	import ViewIcon from '../icons/ViewIcon.svelte';
 
 	export let project: Project;
 
-	let viewEditId: number;
-	let viewEditValue: string;
+	let viewEdit: View | null;
+	let newTitle: string;
 
 	let isVisible = false;
 
-	onMount(async () => {
-		await views.init(project.id);
-
-		if ($views && $views.length > 0) currentView.set($views[0]);
+	onMount(() => {
+		if (views && $views.length > 0) currentView.set($views[0]);
 	});
 
 	async function createView() {
 		if (!$views) return;
 
-		const primaryTagId =
-			$currentView?.primary_tag_id || Object.values($projectTags).find((t) => true)?.id || null;
-
-		const newView = await views.add(project.id, 'New view', primaryTagId);
+		const newView = await View.create(project);
 
 		if (!newView) return;
 
 		currentView.set(newView);
-		viewEditId = newView.id;
-		viewEditValue = newView.title;
+		viewEdit = newView;
 		document.getElementById(`viewTitle-${newView.id}`)?.focus();
 	}
 
-	async function saveView(view: View) {
-		if (!view || !$views.includes(view)) return;
-		if (viewEditId === view.id && viewEditValue !== view.title) {
-			if (!(await views.edit(view))) return;
+	async function saveView() {
+		if (!viewEdit) return;
+		if (!newTitle) return;
+		if (newTitle != viewEdit.title) {
+			await viewEdit.setTitle(newTitle);
 		}
 
-		viewEditId = -1;
-		viewEditValue = '';
+		viewEdit = null;
 	}
 </script>
 
@@ -60,7 +52,7 @@
 			<h2>{project.title}</h2>
 			{#if views}
 				<ul>
-					{#each get(views) as view}
+					{#each $views as view}
 						<!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
 						<li
 							on:click={() => currentView.set(view)}
@@ -74,26 +66,29 @@
 							class:active={$currentView === view}
 						>
 							<ViewIcon />
-							<input
-								type="text"
-								readonly={viewEditId !== view.id}
-								bind:value={view.title}
-								class:inEdit={viewEditId === view.id}
-								on:blur={() => saveView(view)}
-								id="viewTitle-{view.id}"
-								on:keydown={(e) => {
-									if (e.key === 'Enter') {
-										e.currentTarget.blur();
-									}
-								}}
-							/>
+							{#if viewEdit && viewEdit === view}
+								<input
+									type="text"
+									bind:value={newTitle}
+									on:blur={saveView}
+									id="viewTitle-{view.id}"
+									class="inEdit"
+									on:keydown={(e) => {
+										if (e.key === 'Enter') {
+											e.currentTarget.blur();
+										}
+									}}
+								/>
+							{:else}
+								<span class="title">{view.title}</span>
+							{/if}
 							<button
 								on:click={() => {
-									if (viewEditId === view.id) {
-										saveView(view);
+									if (viewEdit && viewEdit.id === view.id) {
+										saveView();
 									} else {
-										viewEditId = view.id;
-										viewEditValue = view.title;
+										viewEdit = view;
+										newTitle = view.title;
 										document.getElementById(`viewTitle-${view.id}`)?.focus();
 									}
 								}}
@@ -213,9 +208,16 @@
 		li {
 			cursor: pointer;
 			padding: 0 10px;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			gap: 5px;
 		}
 
+		span.title,
 		input {
+			display: inline-block;
 			cursor: pointer;
 			padding: 10px;
 			border-radius: 5px;
@@ -239,8 +241,6 @@
 			border: none;
 			color: inherit;
 			font-size: 17px;
-			padding: 5px 0;
-			float: right;
 			cursor: pointer;
 		}
 

@@ -4,7 +4,7 @@ import { get, writable } from 'svelte/store';
 import TagOption from './TagOption';
 import Project from './Project';
 
-const projectTags = writable([] as ProjectTag[]);
+export const projectTags = writable([] as ProjectTag[]);
 
 export default class ProjectTag {
 	private _id: number;
@@ -47,11 +47,8 @@ export default class ProjectTag {
 		return this._options;
 	}
 
-	static getAll(): ProjectTag[] {
-		return get(projectTags);
-	}
-
-	static fromId(id: number): ProjectTag | null {
+	static fromId(id: number | null | undefined): ProjectTag | null {
+		if (!id) return null;
 		for (const projectTag of get(projectTags)) {
 			if (projectTag.id === id) {
 				return projectTag;
@@ -76,7 +73,13 @@ export default class ProjectTag {
 
 		projectTag._options = options;
 
-		projectTags.update((projectTags) => [...projectTags, projectTag]);
+		projectTags.update((projectTags) => {
+			if (!projectTags.find((projectTag) => projectTag.id === json.id)) {
+				return [...projectTags, projectTag];
+			}
+
+			return projectTags.map((pt) => (pt.id === json.id ? projectTag : pt));
+		});
 
 		return projectTag;
 	}
