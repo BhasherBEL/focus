@@ -1,49 +1,35 @@
 <script lang="ts">
 	import GroupMenu from '$lib/components/menu/GroupMenu.svelte';
 	import SortMenu from '$lib/components/menu/SortMenu.svelte';
-	import cards from '$lib/stores/cards';
 	import currentView from '$lib/stores/currentView';
-	import projectTags from '$lib/stores/projectTags';
-	import views from '$lib/stores/views';
+	import Card from '$lib/types/Card';
 	import type Project from '$lib/types/Project';
-	import type View from '$lib/types/View';
+	import type ProjectTag from '$lib/types/ProjectTag';
+	import { projectTags } from '$lib/types/ProjectTag';
+	import { get } from 'svelte/store';
 
 	export let project: Project;
-	export let view: View;
 	let groupMenuOpen = false;
 	let sortMenuOpen = false;
 
-	async function setGroup(id: number): Promise<boolean> {
-		if ($currentView == null) return false;
+	async function setGroup(projectTag: ProjectTag): Promise<boolean> {
+		const view = get(currentView);
+		if (!view) return false;
 
-		const view = {
-			...$currentView,
-			primary_tag_id: id
-		};
+		const res = await view.setPrimaryTag(projectTag);
 
-		const res = await views.edit(view);
-
-		if (res) currentView.set(view);
+		if (res) currentView.reload();
 
 		return res;
 	}
 
-	async function setSort(id: number): Promise<boolean> {
-		if ($currentView == null) return false;
+	async function setSort(projectTag: ProjectTag): Promise<boolean> {
+		const view = get(currentView);
+		if (!view) return false;
 
-		const view = {
-			...$currentView,
-			sort_tag_id: id,
-			sort_direction: $currentView.sort_direction
-				? $currentView.sort_tag_id === id
-					? -$currentView.sort_direction
-					: 1
-				: 1
-		};
+		const res = await view.setSortTag(projectTag, view.sortDirection ? -view.sortDirection : 1);
 
-		const res = await views.edit(view);
-
-		if (res) currentView.set(view);
+		if (res) currentView.reload();
 
 		return res;
 	}
@@ -55,39 +41,36 @@
 		<div>
 			<button
 				on:click={() => (groupMenuOpen = !groupMenuOpen)}
-				class:defined={$currentView?.primary_tag_id}>Group</button
+				class:defined={$currentView?.primaryTag}>Group</button
 			>
 			<GroupMenu
 				bind:isOpen={groupMenuOpen}
-				choices={Object.values($projectTags).map((tag) => ({ id: tag.id, value: tag.title }))}
-				onChoice={async (id) => {
-					if (!(await setGroup(id))) return;
+				choices={$projectTags}
+				onChoice={async (projectTag) => {
+					if (!(await setGroup(projectTag))) return;
 					groupMenuOpen = false;
 				}}
-				currentChoice={view?.primary_tag_id}
+				currentChoice={$currentView?.primaryTag || null}
 			/>
 		</div>
 		<button class:disabled={true}>Sub-group</button>
 		<button class:disabled={true}>Filter</button>
 		<div>
-			<button
-				on:click={() => (sortMenuOpen = !sortMenuOpen)}
-				class:defined={$currentView?.sort_tag_id}>Sort</button
-			>
+			<button on:click={() => (sortMenuOpen = !sortMenuOpen)} class:defined={$currentView?.sortTag}>
+				Sort
+			</button>
 			<SortMenu
 				bind:isOpen={sortMenuOpen}
-				choices={Object.values($projectTags)
-					.filter((tag) => tag.id !== view?.primary_tag_id)
-					.map((tag) => ({ id: tag.id, value: tag.title }))}
-				onChoice={async (id) => {
-					if (!(await setSort(id))) return;
+				choices={$projectTags}
+				onChoice={async (projectTag) => {
+					if (!(await setSort(projectTag))) return;
 					sortMenuOpen = false;
 				}}
-				currentChoice={view?.sort_tag_id}
-				currentDirection={view?.sort_direction}
+				currentChoice={$currentView?.sortTag || null}
+				currentDirection={$currentView?.sortDirection || null}
 			/>
 		</div>
-		<button id="newButton" on:click={async () => cards.add(project.id, [])}>New</button>
+		<button id="newButton" on:click={async () => Card.create(project)}>New</button>
 	</nav>
 </header>
 

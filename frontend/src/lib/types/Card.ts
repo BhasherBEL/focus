@@ -1,25 +1,27 @@
 import cardsApi from '$lib/api/cardsApi';
 import { get, writable } from 'svelte/store';
 import CardTag from './CardTag';
+import Project from './Project';
+import { toastAlert } from '$lib/utils/toasts';
 
-const cards = writable([] as Card[]);
+export const cards = writable([] as Card[]);
 
 export default class Card {
 	private _id: number;
-	private _project_id: number;
+	private _project: Project;
 	private _title: string;
 	private _content: string;
 	private _tags: CardTag[];
 
 	private constructor(
 		id: number,
-		project_id: number,
+		project: Project,
 		title: string,
 		content: string,
 		tags: CardTag[]
 	) {
 		this._id = id;
-		this._project_id = project_id;
+		this._project = project;
 		this._title = title;
 		this._content = content;
 		this._tags = tags;
@@ -29,8 +31,8 @@ export default class Card {
 		return this._id;
 	}
 
-	get project_id(): number {
-		return this._project_id;
+	get project(): Project {
+		return this._project;
 	}
 
 	get title(): string {
@@ -45,10 +47,6 @@ export default class Card {
 		return this._tags;
 	}
 
-	static getAll(): Card[] {
-		return get(cards);
-	}
-
 	static fromId(id: number): Card | null {
 		for (const card of get(cards)) {
 			if (card.id === id) {
@@ -59,12 +57,12 @@ export default class Card {
 		return null;
 	}
 
-	static async create(project_id: number): Promise<Card | null> {
-		const id = await cardsApi.create(project_id);
+	static async create(project: Project): Promise<Card | null> {
+		const id = await cardsApi.create(project.id);
 
 		if (!id) return null;
 
-		const card = new Card(id, project_id, 'Untilted', '', []);
+		const card = new Card(id, project, 'Untilted', '', []);
 
 		cards.update((cards) => [...cards, card]);
 
@@ -81,12 +79,21 @@ export default class Card {
 		return true;
 	}
 
-	static parse(json: any): Card | null {
+	static parse(json: any): Card | null;
+	static parse(json: any, project: Project | null | undefined): Card | null;
+
+	static parse(json: any, project?: Project | null | undefined): Card | null {
 		if (json === null) {
 			return null;
 		}
 
-		const card = new Card(json.id, json.project_id, json.title, json.content, []);
+		if (!project) project = Project.fromId(json.project_id);
+		if (!project) {
+			toastAlert('Failed to parse card: project not found');
+			return null;
+		}
+
+		const card = new Card(json.id, project, json.title, json.content, []);
 
 		card._tags = CardTag.parseAll(json.tags, card);
 
@@ -101,7 +108,10 @@ export default class Card {
 		return card;
 	}
 
-	static parseAll(json: any): Card[] {
+	static parseAll(json: any): Card[];
+	static parseAll(json: any, project: Project | null): Card[];
+
+	static parseAll(json: any, project?: Project | null): Card[] {
 		if (json === null) {
 			return [];
 		}
@@ -109,7 +119,7 @@ export default class Card {
 		const cards: Card[] = [];
 
 		for (const jsonCard of json) {
-			const card = this.parse(jsonCard);
+			const card = this.parse(jsonCard, project);
 			if (!card) continue;
 			cards.push(card);
 		}

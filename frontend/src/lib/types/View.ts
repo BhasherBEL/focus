@@ -61,6 +61,43 @@ export default class View {
 		return this._sortDirection;
 	}
 
+	async setPrimaryTag(projectTag: ProjectTag): Promise<boolean> {
+		const response = await viewsApi.update(
+			this.id,
+			this.project.id,
+			projectTag.id,
+			this.secondaryTag?.id || null,
+			this.title,
+			this.sortTag?.id || null,
+			this.sortDirection || null
+		);
+
+		if (!response) return false;
+
+		this._pimaryTag = projectTag;
+
+		return true;
+	}
+
+	async setSortTag(projectTag: ProjectTag, direction: number): Promise<boolean> {
+		const response = await viewsApi.update(
+			this.id,
+			this.project.id,
+			this.primaryTag?.id || null,
+			this.secondaryTag?.id || null,
+			this.title,
+			projectTag.id,
+			direction
+		);
+
+		if (!response) return false;
+
+		this._sortTag = projectTag;
+		this._sortDirection = direction;
+
+		return true;
+	}
+
 	static async create(project: Project) {
 		const id = await viewsApi.create(project);
 

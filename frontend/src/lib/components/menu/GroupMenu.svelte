@@ -1,27 +1,28 @@
 <script lang="ts">
 	import Menu from '$lib/components/menu/Menu.svelte';
+	import type ProjectTag from '$lib/types/ProjectTag';
 
 	export let isOpen = false;
-	export let choices: { id: number; value: string }[] = [];
-	export let onChoice = (id: number) => {};
-	export let currentChoice: number | null;
+	export let choices: ProjectTag[] = [];
+	export let onChoice = (projectTag: ProjectTag) => {};
+	export let currentChoice: ProjectTag | null;
 </script>
 
 <Menu bind:isOpen>
 	{#each choices as choice}
 		<div
 			class="menu-item"
-			on:click={() => onChoice(choice.id)}
+			on:click={() => onChoice(choice)}
 			role="button"
 			tabindex="0"
 			on:keypress={(e) => {
 				if (e.key === 'Enter') {
-					onChoice(choice.id);
+					onChoice(choice);
 				}
 			}}
 		>
-			<span>{choice.value}</span>
-			{#if currentChoice === choice.id}
+			<span>{choice.title}</span>
+			{#if currentChoice === choice}
 				<span class="mark"> ✓ </span>
 			{/if}
 		</div>

@@ -5,5 +5,6 @@ const { subscribe, set, update } = writable(null as View | null);
 
 export default {
 	subscribe,
-	set
+	set,
+	reload: () => update((v) => v)
 };

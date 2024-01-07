@@ -1,4 +1,4 @@
-import type Card from '$lib/types/Card';
+import Card from '$lib/types/Card';
 import Project from '$lib/types/Project';
 import ProjectTag from '$lib/types/ProjectTag';
 import View from '$lib/types/View';
@@ -65,15 +65,15 @@ async function delete_(projectId: number): Promise<boolean> {
 	return true;
 }
 
-async function getCards(projectId: number): Promise<Card[]> {
-	const response = await api.get(`/v1/projects/${projectId}/cards`);
+async function getCards(project: Project): Promise<Card[]> {
+	const response = await api.get(`/v1/projects/${project.id}/cards`);
 
 	if (response.status !== status.OK) {
 		processError(response, 'Failed to fetch cards');
-		return Promise.reject();
+		return [];
 	}
 
-	return parseCards(response.data);
+	return Card.parseAll(response.data, project);
 }
 
 async function getTags(project: Project): Promise<ProjectTag[]> {
@@ -95,9 +95,7 @@ async function getViews(project: Project): Promise<View[]> {
 		return [];
 	}
 
-	const views: View[] = View.parseAll(response.data, project);
-
-	return views;
+	return View.parseAll(response.data, project);
 }
 
 export default {

@@ -1,35 +1,16 @@
 <script lang="ts">
-	import cards from '$lib/stores/cards';
 	import currentView from '$lib/stores/currentView';
-	import projectTags from '$lib/stores/projectTags';
 	import type Project from '$lib/types/Project';
-	import type View from '$lib/types/View';
-	import { onMount } from 'svelte';
-	import Column from './Column.svelte';
 	import Header from './Header.svelte';
 
 	export let project: Project;
-
-	let view: View | null = null;
-
-	onMount(async () => {
-		await cards.init(project.id);
-
-		if (!(await projectTags.init(project.id))) {
-			return;
-		}
-
-		currentView.subscribe((v) => {
-			view = v;
-		});
-	});
 </script>
 
 {#if project}
 	<section>
-		{#if view}
-			<Header {project} {view} />
-			{#if cards}
+		{#if $currentView}
+			<Header {project} />
+			{#if $cards}
 				<div class="grid">
 					{#if view.primary_tag_id}
 						{#each $projectTags[view.primary_tag_id].options as option}

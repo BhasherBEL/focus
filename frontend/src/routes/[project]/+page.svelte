@@ -5,6 +5,7 @@
 	import type Project from '$lib/types/Project';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';
+	import ProjectComponent from '$lib/components/project/Project.svelte';
 
 	let projectId: number = +$page.params.project;
 
@@ -19,13 +20,14 @@
 
 		await projectsApi.getTags(project);
 		await projectsApi.getViews(project);
+		await projectsApi.getCards(project);
 	});
 </script>
 
 {#if project}
 	<div>
 		<Sidebar {project} />
-		<!-- <ProjectComponent {project} /> -->
+		<ProjectComponent {project} />
 	</div>
 	<SvelteToast />
 {/if}
