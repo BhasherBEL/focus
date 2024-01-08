@@ -1,6 +1,8 @@
 <script lang="ts">
 	import currentView from '$lib/stores/currentView';
+	import { cards } from '$lib/types/Card';
 	import type Project from '$lib/types/Project';
+	import Column from './Column.svelte';
 	import Header from './Header.svelte';
 
 	export let project: Project;
@@ -12,44 +14,45 @@
 			<Header {project} />
 			{#if $cards}
 				<div class="grid">
-					{#if view.primary_tag_id}
-						{#each $projectTags[view.primary_tag_id].options as option}
+					{#if $currentView.primaryTag}
+						{#each $currentView.primaryTag.options as option}
 							<Column
-								optionId={option.id}
-								primary_tag_id={view.primary_tag_id}
+								{option}
+								primaryTag={$currentView.primaryTag}
 								title={option.value}
 								columnCards={$cards
-									.filter((c) => c.tags.map((t) => t.option_id).includes(option.id))
+									.filter((c) => c.cardTags.map((t) => t.option).includes(option))
 									.sort((a, b) => {
-										if (!view?.sort_tag_id) return 0;
-										const aTag = a.tags.find((t) => t.tag_id === view?.sort_tag_id);
-										const bTag = b.tags.find((t) => t.tag_id === view?.sort_tag_id);
+										if (!$currentView?.sortTag) return 0;
+										const aTag = a.cardTags.find((t) => t.projectTag === $currentView?.sortTag);
+										const bTag = b.cardTags.find((t) => t.projectTag === $currentView?.sortTag);
 
-										if (!aTag) return -(view?.sort_direction || 1);
-										if (!bTag) return view?.sort_direction || 1;
+										if (!aTag) return -($currentView?.sortDirection || 1);
+										if (!bTag) return $currentView?.sortDirection || 1;
 
-										const aValue = aTag.value || aTag.option_id || 0;
-										const bValue = bTag.value || bTag.option_id || 0;
+										const aValue = aTag.value || aTag.option?.value || '';
+										const bValue = bTag.value || bTag.option?.value || '';
 
 										return aValue < bValue
-											? view?.sort_direction || 1
-											: -(view?.sort_direction || 1);
+											? $currentView?.sortDirection || 1
+											: -($currentView?.sortDirection || 1);
 									})}
-								projectId={project.id}
+								{project}
 							/>
 						{/each}
 					{/if}
 					<Column
-						primary_tag_id={view.primary_tag_id}
-						title={view.primary_tag_id
-							? `No ${$projectTags[view.primary_tag_id].title}`
-							: 'No groups'}
-						columnCards={view.primary_tag_id
-							? $cards.filter(
-									(c) => !c.tags.map((t) => t.tag_id).includes(view?.primary_tag_id || -2)
-								)
+						primaryTag={$currentView.primaryTag}
+						title={$currentView.primaryTag ? `No ${$currentView.title}` : 'No groups'}
+						columnCards={$currentView.primaryTag != null
+							? (() => {
+									const primaryTag = $currentView.primaryTag;
+									return $cards.filter(
+										(c) => !c.cardTags.map((t) => t.projectTag).includes(primaryTag)
+									);
+								})()
 							: $cards}
-						projectId={project.id}
+						{project}
 					/>
 				</div>
 			{/if}

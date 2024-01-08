@@ -3,6 +3,8 @@ import { get, writable } from 'svelte/store';
 import CardTag from './CardTag';
 import Project from './Project';
 import { toastAlert } from '$lib/utils/toasts';
+import type TagOption from './TagOption';
+import type ProjectTag from './ProjectTag';
 
 export const cards = writable([] as Card[]);
 
@@ -11,20 +13,20 @@ export default class Card {
 	private _project: Project;
 	private _title: string;
 	private _content: string;
-	private _tags: CardTag[];
+	private _cardTags: CardTag[];
 
 	private constructor(
 		id: number,
 		project: Project,
 		title: string,
 		content: string,
-		tags: CardTag[]
+		cardTags: CardTag[]
 	) {
 		this._id = id;
 		this._project = project;
 		this._title = title;
 		this._content = content;
-		this._tags = tags;
+		this._cardTags = cardTags;
 	}
 
 	get id(): number {
@@ -43,8 +45,8 @@ export default class Card {
 		return this._content;
 	}
 
-	get tags(): CardTag[] {
-		return this._tags;
+	get cardTags(): CardTag[] {
+		return this._cardTags;
 	}
 
 	static fromId(id: number): Card | null {
@@ -79,6 +81,20 @@ export default class Card {
 		return true;
 	}
 
+	async addTag(
+		projectTag: ProjectTag,
+		tagOption: TagOption | null,
+		value: string | null
+	): Promise<boolean> {
+		const cardTag = await CardTag.create(this, projectTag, tagOption, value);
+
+		if (!cardTag) return false;
+
+		this._cardTags.push(cardTag);
+
+		return true;
+	}
+
 	static parse(json: any): Card | null;
 	static parse(json: any, project: Project | null | undefined): Card | null;
 
@@ -95,7 +111,7 @@ export default class Card {
 
 		const card = new Card(json.id, project, json.title, json.content, []);
 
-		card._tags = CardTag.parseAll(json.tags, card);
+		card._cardTags = CardTag.parseAll(json.tags, card);
 
 		cards.update((cards) => {
 			if (!cards.find((c) => c.id === card.id)) {

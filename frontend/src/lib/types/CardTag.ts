@@ -5,13 +5,18 @@ import TagOption from './TagOption';
 
 export default class CardTag {
 	private _card: Card;
-	private _tag: ProjectTag;
+	private _projectTag: ProjectTag;
 	private _option: TagOption | null;
 	private _value: string | null;
 
-	private constructor(card: Card, tag: ProjectTag, option: TagOption | null, value: string | null) {
+	private constructor(
+		card: Card,
+		projectTag: ProjectTag,
+		option: TagOption | null,
+		value: string | null
+	) {
 		this._card = card;
-		this._tag = tag;
+		this._projectTag = projectTag;
 		this._option = option;
 		this._value = value;
 	}
@@ -20,11 +25,11 @@ export default class CardTag {
 		return this.card;
 	}
 
-	get tag(): number {
-		return this.tag;
+	get projectTag(): ProjectTag {
+		return this.projectTag;
 	}
 
-	get option(): number | null {
+	get option(): TagOption | null {
 		return this.option;
 	}
 
@@ -46,7 +51,7 @@ export default class CardTag {
 	}
 
 	async delete() {
-		return cardsTagsApi.delete(this._card.id, this._tag.id);
+		return cardsTagsApi.delete(this._card.id, this._projectTag.id);
 	}
 
 	static parse(json: any): CardTag | null;

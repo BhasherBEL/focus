@@ -15,7 +15,7 @@ export default class TagOption {
 		return this._id;
 	}
 
-	get tagId(): ProjectTag {
+	get projectTag(): ProjectTag {
 		return this._projectTag;
 	}
 
