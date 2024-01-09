@@ -102,7 +102,7 @@ export default class Card {
 		return true;
 	}
 
-	async removeTag(cardTag: CardTag): Promise<boolean> {
+	async deleteTag(cardTag: CardTag): Promise<boolean> {
 		const res = await cardTag.delete();
 
 		if (!res) return false;

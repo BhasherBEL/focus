@@ -28,7 +28,7 @@
 			await $currentDraggedCard.addTag(primaryTag, option, null);
 		} else if (currentOption && !option) {
 			if (!currentCardTag) return;
-			await $currentDraggedCard.removeTag(currentCardTag);
+			await $currentDraggedCard.deleteTag(currentCardTag);
 		} else if (currentOption && option) {
 			if (!currentCardTag) return;
 			await $currentDraggedCard.updateTag(currentCardTag, option, null);

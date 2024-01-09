@@ -5,8 +5,6 @@
 	import CardTag from '$lib/types/CardTag';
 	import type ProjectTag from '$lib/types/ProjectTag';
 	import type TagOption from '$lib/types/TagOption';
-	import api, { processError } from '$lib/utils/api';
-	import status from '$lib/utils/status';
 	import TrashIcon from '../icons/TrashIcon.svelte';
 
 	export const multiple: boolean = false;
@@ -25,12 +23,11 @@
 
 		if (cardTag) {
 			if (option) await cardTag.update(option, null);
-			else await cardTag.delete();
+			else await card.deleteTag(cardTag);
 		} else {
-			if (option) await CardTag.create(card, projectTag, option, null);
+			if (option) await card.addTag(projectTag, option, null);
 		}
 		isOpen = false;
-
 		cards.reload();
 	}
 
@@ -55,7 +52,7 @@
 	<div class="tags">
 		{#if cardTag}
 			<span class="tag">
-				{cardTag.value}
+				{cardTag.option?.value}
 				<button class="real" on:click={() => selectOption(null)}>✗</button>
 			</span>
 		{/if}

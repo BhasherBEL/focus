@@ -20,13 +20,11 @@
 		}
 	}}
 >
-	<div class="title">{card.id} - {card.title}</div>
+	<div class="title">{card.title}</div>
 	<div class="tags">
 		{#each card.cardTags as tag}
 			{#if tag.option}
-				<span class="tag" style="border: 1px solid #333"
-					>{tag.projectTag.id}: {tag.option.id} ({tag.option.value})</span
-				>
+				<span class="tag" style="border: 1px solid #333">{tag.option.value}</span>
 			{:else if tag.value}
 				<span class="tag" style="border: 1px solid #333">{tag.value}</span>
 			{/if}
