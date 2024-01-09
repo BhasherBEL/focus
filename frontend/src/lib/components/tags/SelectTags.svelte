@@ -1,88 +1,42 @@
 <script lang="ts">
 	import Menu from '$lib/components/menu/Menu.svelte';
-	import cards from '$lib/stores/cards';
-	import project_tags from '$lib/stores/projectTags';
 	import type Card from '$lib/types/Card';
-	import type MeTag from '$lib/types/MeTag';
-	import type TagValue from '$lib/types/TagValue';
+	import { cards } from '$lib/types/Card';
+	import CardTag from '$lib/types/CardTag';
+	import type ProjectTag from '$lib/types/ProjectTag';
+	import type TagOption from '$lib/types/TagOption';
 	import api, { processError } from '$lib/utils/api';
 	import status from '$lib/utils/status';
-	import { updatimport } from { updateCardTagApi };
+	import TrashIcon from '../icons/TrashIcon.svelte';
 
 	export const multiple: boolean = false;
 	export let card: Card;
-	export let projectTag: MeTag;
-	export let tagValue: TagValue | undefined;
+	export let projectTag: ProjectTag;
+	export let cardTag: CardTag | undefined;
 
-	let lastTagValue = { ...tagValue };
 	let newOption: string = '';
-
-	$: tagOption = projectTag.options.find((o) => o.id === tagValue?.option_id);
-
 	let isOpen = false;
 
-	async function selectOption(option_id: number | null) {
-		if (lastTagValue.option_id === option_id) {
+	async function selectOption(option: TagOption | null) {
+		if (cardTag?.option === option) {
 			isOpen = false;
 			return;
 		}
 
-		if (tagValue) {
-			await updateCardTagApi(card.id, projectTag.id, option_id, tagValue.value);
-
-			card.tags = card.tags.map((t) => {
-				if (t.tag_id === projectTag.id) {
-					t.option_id = option_id;
-				}
-				return t;
-			});
-
-			tagValue = { ...tagValue, option_id };
+		if (cardTag) {
+			if (option) await cardTag.update(option, null);
+			else await cardTag.delete();
 		} else {
-			const response = await api.post(`/v1/cards/${card.id}/tags/${projectTag.id}`, {
-				option_id,
-				value: ''
-			});
-
-			if (response.status !== status.Created) {
-				processError(response, 'Failed to create tag');
-				return;
-			}
-
-			tagValue = {
-				card_id: card.id,
-				tag_id: projectTag.id,
-				option_id,
-				value: ''
-			};
-
-			card.tags.push(tagValue);
+			if (option) await CardTag.create(card, projectTag, option, null);
 		}
-		lastTagValue = { ...tagValue };
-
 		isOpen = false;
 
 		cards.reload();
 	}
 
-	async function deleteOption() {
-		const response = await api.delete(`/v1/cards/${card.id}/tags/${projectTag.id}`);
-
-		if (response.status !== status.NoContent) {
-			processError(response, 'Failed to delete tag');
-			return;
-		}
-
-		tagValue = undefined;
-
-		card.tags = card.tags.filter((t) => t.tag_id !== projectTag.id);
-
-		cards.reload();
-	}
-
-	function createOption() {
+	async function createOption() {
 		if (!newOption) return;
-		project_tags.addOption(projectTag.id, newOption);
+		if (!(await projectTag.addOption(newOption))) return;
 		newOption = '';
 	}
 </script>
@@ -99,10 +53,10 @@
 	}}
 >
 	<div class="tags">
-		{#if tagValue}
+		{#if cardTag}
 			<span class="tag">
-				{tagOption?.value}
-				<button class="real" on:click={() => deleteOption()}>✗</button>
+				{cardTag.value}
+				<button class="real" on:click={() => selectOption(null)}>✗</button>
 			</span>
 		{/if}
 	</div>
@@ -116,19 +70,19 @@
 	{#each projectTag.options as option}
 		<div
 			class="option"
-			on:click={() => selectOption(option.id)}
+			on:click={() => selectOption(option)}
 			tabindex="0"
 			role="button"
 			on:keydown={(e) => {
 				if (e.key === 'Enter') {
-					selectOption(option.id);
+					selectOption(option);
 				}
 			}}
 		>
 			<span class="value">{option.value}</span>
 			<button
 				on:click|stopPropagation={() => {
-					project_tags.deleteOption(projectTag.id, option.id);
+					projectTag.deleteOption(option);
 				}}><TrashIcon size={16} /></button
 			>
 		</div>

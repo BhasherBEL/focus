@@ -1,6 +1,6 @@
 <script lang="ts">
-	import ProjectTags from '$lib/stores/projectTags';
 	import type Card from '$lib/types/Card';
+	import { projectTags } from '$lib/types/ProjectTag';
 	import ModalNewTag from './ModalNewTag.svelte';
 	import ModalTag from './ModalTag.svelte';
 
@@ -8,10 +8,12 @@
 </script>
 
 <table>
-	{#if card.tags}
-		{#each Object.values($ProjectTags) as projectTag}
-			<ModalTag tagValue={card.tags.find((t) => t.tag_id === projectTag.id)} {projectTag} {card} />
-		{/each}
-	{/if}
-	<ModalNewTag projectId={card.project_id} />
+	{#each $projectTags as projectTag}
+		<ModalTag
+			cardTag={card.cardTags.find((t) => t.projectTag === projectTag)}
+			{projectTag}
+			{card}
+		/>
+	{/each}
+	<ModalNewTag project={card.project} />
 </table>

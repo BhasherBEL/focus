@@ -120,6 +120,37 @@ export default class Card {
 		return await cardTag.update(tagOption, value);
 	}
 
+	async updateTitle(title: string): Promise<boolean> {
+		const res = await cardsApi.update(this.id, this.project.id, title, this.content);
+
+		if (!res) return false;
+
+		this._title = title;
+
+		return true;
+	}
+
+	async updateContent(content: string): Promise<boolean> {
+		const res = await cardsApi.update(this.id, this.project.id, this.title, content);
+
+		if (!res) return false;
+
+		this._content = content;
+
+		return true;
+	}
+
+	async update(title: string, content: string): Promise<boolean> {
+		const res = await cardsApi.update(this.id, this.project.id, title, content);
+
+		if (!res) return false;
+
+		this._title = title;
+		this._content = content;
+
+		return true;
+	}
+
 	static parse(json: any): Card | null;
 	static parse(json: any, project: Project | null | undefined): Card | null;
 

@@ -3,8 +3,11 @@
 import { get, writable } from 'svelte/store';
 import TagOption from './TagOption';
 import Project from './Project';
+import projectTagsApi from '$lib/api/projectTagsApi';
 
 export const projectTags = writable([] as ProjectTag[]);
+
+export const ProjectTagTypes = {};
 
 export default class ProjectTag {
 	private _id: number;
@@ -56,6 +59,46 @@ export default class ProjectTag {
 		}
 
 		return null;
+	}
+
+	static async create(project: Project, title: string, type: number): Promise<ProjectTag | null> {
+		const response = await projectTagsApi.create(project.id, title, type);
+
+		if (!response) return null;
+
+		const projectTag = new ProjectTag(0, project, title, type, []);
+
+		projectTags.update((projectTags) => [...projectTags, projectTag]);
+
+		return projectTag;
+	}
+
+	async delete(): Promise<boolean> {
+		return await projectTagsApi.delete(this.id);
+	}
+
+	async update(title: string, type: number): Promise<boolean> {
+		return await projectTagsApi.update(this.id, title, type);
+	}
+
+	async addOption(title: string): Promise<TagOption | null> {
+		const option = await TagOption.create(this, title);
+
+		if (!option) return null;
+
+		this._options = [...this._options, option];
+
+		return option;
+	}
+
+	async deleteOption(option: TagOption): Promise<boolean> {
+		const success = await option.delete();
+
+		if (!success) return false;
+
+		this._options = this._options.filter((o) => o.id !== option.id);
+
+		return true;
 	}
 
 	static parse(json: any): ProjectTag | null;

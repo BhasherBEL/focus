@@ -1,18 +1,16 @@
 <script lang="ts">
 	import type Card from '$lib/types/Card';
-	import type MeTag from '$lib/types/MeTag';
-	import type TagValue from '$lib/types/TagValue';
+	import type CardTag from '$lib/types/CardTag';
+	import type ProjectTag from '$lib/types/ProjectTag';
 	import ModalTagTitle from './ModalTagTitle.svelte';
 	import ModalTagValue from './ModalTagValue.svelte';
 
-	export let projectTag: MeTag;
-	export let tagValue: TagValue | undefined;
+	export let projectTag: ProjectTag;
+	export let cardTag: CardTag | undefined;
 	export let card: Card;
 </script>
 
-{#if projectTag}
-	<tr>
-		<ModalTagTitle {projectTag} />
-		<ModalTagValue {projectTag} {tagValue} {card} />
-	</tr>
-{/if}
+<tr>
+	<ModalTagTitle {projectTag} />
+	<ModalTagValue {projectTag} {cardTag} {card} />
+</tr>

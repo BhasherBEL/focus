@@ -1,12 +1,12 @@
 <script lang="ts">
 	import AddIcon from '$lib/components/icons/AddIcon.svelte';
 	import Menu from '$lib/components/menu/Menu.svelte';
-	import project_tags from '$lib/stores/projectTags';
-	import { toastAlert } from '$lib/utils/toasts';
 	import { tick } from 'svelte';
 	import ModalTagTypes from './ModalTagTypes.svelte';
+	import type Project from '$lib/types/Project';
+	import ProjectTag from '$lib/types/ProjectTag';
 
-	export let projectId: number;
+	export let project: Project;
 
 	let isOpen = false;
 
@@ -23,11 +23,10 @@
 
 	async function createTag() {
 		if (title == '') return;
-		if (!projectId) {
-			toastAlert('Failed to create tag', `ProjectId is ${projectId}`);
-			return;
-		}
-		await project_tags.add(projectId, title, typeId);
+		const res = await ProjectTag.create(project, title, typeId);
+
+		if (!res) return;
+
 		isOpen = false;
 	}
 </script>

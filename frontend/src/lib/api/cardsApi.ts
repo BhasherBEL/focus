@@ -17,11 +17,16 @@ async function create(projectId: number): Promise<number | null> {
 	return response.data.id;
 }
 
-async function update(card: Card): Promise<boolean> {
-	const response = await api.put(`/v1/cards/${card.id}`, {
-		project_id: card.project_id,
-		title: card.title,
-		content: card.content
+async function update(
+	cardId: number,
+	projectId: number,
+	title: string,
+	content: string
+): Promise<boolean> {
+	const response = await api.put(`/v1/cards/${cardId}`, {
+		project_id: projectId,
+		title: title,
+		content: content
 	});
 
 	if (response.status !== status.NoContent) {

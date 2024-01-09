@@ -2,9 +2,9 @@
 	import CloseIcon from '$lib/components/icons/CloseIcon.svelte';
 	import TrashIcon from '$lib/components/icons/TrashIcon.svelte';
 	import ModalTags from '$lib/components/tags/ModalTags.svelte';
-	import cards from '$lib/stores/cards';
 	import currentModalCard from '$lib/stores/currentModalCard';
 	import type Card from '$lib/types/Card';
+	import { cards } from '$lib/types/Card';
 
 	export let card: Card;
 
@@ -13,19 +13,11 @@
 
 	async function save(closeModal: boolean = true) {
 		if (card.title !== newTitle || card.content !== newContent) {
-			console.log('saving');
-			if (
-				await cards.edit({
-					...card,
-					title: newTitle,
-					content: newContent
-				})
-			) {
-				card.title = newTitle;
-				card.content = newContent;
-			}
+			if (!(await card.update(newTitle, newContent))) return;
 		}
 		if (closeModal) currentModalCard.set(null);
+
+		cards.reload();
 	}
 </script>
 
@@ -37,7 +29,7 @@
 			<div class="header">
 				<input class="title" bind:value={newTitle} on:blur={() => save(false)} />
 				<div class="buttons">
-					<button on:click={() => cards.remove(card)}>
+					<button on:click={() => card.delete()}>
 						<TrashIcon />
 					</button>
 					<button on:click={() => currentModalCard.set(null)}>

@@ -2,7 +2,7 @@
 	import currentDraggedCard from '$lib/stores/currentDraggedCard';
 	import currentModalCard from '$lib/stores/currentModalCard';
 	import type Card from '$lib/types/Card';
-	// import ModalCard from './ModalCard.svelte';
+	import ModalCard from './ModalCard.svelte';
 
 	export let card: Card;
 </script>
@@ -34,7 +34,7 @@
 	</div>
 </div>
 
-<!-- <ModalCard bind:card /> -->
+<ModalCard {card} />
 
 <style lang="less">
 	.card {

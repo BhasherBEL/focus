@@ -1,18 +1,18 @@
 <script lang="ts">
 	import Menu from '$lib/components/menu/Menu.svelte';
-	import project_tags from '$lib/stores/projectTags';
-	import type MeTag from '$lib/types/MeTag';
 	import { toastAlert } from '$lib/utils/toasts';
 	import { tick } from 'svelte';
 	import ModalTagTypes from './ModalTagTypes.svelte';
+	import type ProjectTag from '$lib/types/ProjectTag';
 
-	export let projectTag: MeTag;
+	export let projectTag: ProjectTag;
 
 	let askConfirm: boolean = false;
 
 	let titleInput: HTMLInputElement;
 	let isMenuOpen: boolean = false;
-	let lastTitle: string = projectTag.title;
+	let newTitle: string = projectTag.title;
+	let newType: number = projectTag.type;
 
 	async function openMenu() {
 		isMenuOpen = !isMenuOpen;
@@ -21,16 +21,14 @@
 	}
 
 	async function saveProjectTag() {
-		if (projectTag.title === lastTitle) return;
+		if (newTitle === projectTag.title) return;
 
-		if (projectTag.title === '') {
+		if (newTitle === '') {
 			toastAlert('Tag title cannot be empty');
 			return;
 		}
 
-		await project_tags.update(projectTag);
-
-		lastTitle = projectTag.title;
+		return await projectTag.update(newTitle, newType);
 	}
 </script>
 
@@ -48,17 +46,11 @@
 	>
 		{projectTag.title}
 	</div>
-	<Menu
-		bind:isOpen={isMenuOpen}
-		onLeave={() => {
-			askConfirm = false;
-			projectTag.title = lastTitle;
-		}}
-	>
+	<Menu bind:isOpen={isMenuOpen} onLeave={() => (askConfirm = false)}>
 		<div class="menu-items">
 			<input
 				bind:this={titleInput}
-				bind:value={projectTag.title}
+				bind:value={newTitle}
 				on:blur={saveProjectTag}
 				on:keydown={(e) => {
 					if (e.key === 'Enter') {
@@ -67,11 +59,9 @@
 				}}
 			/>
 			<ModalTagTypes
-				type={projectTag.type}
+				type={newType}
 				onChoice={async (id) => {
-					projectTag.type = id;
-
-					await project_tags.update(projectTag);
+					saveProjectTag();
 				}}
 			/>
 			{#if askConfirm}
@@ -79,8 +69,8 @@
 					<span>Confirm?</span>
 					<div>
 						<button
-							on:click={() => {
-								project_tags.delete(projectTag.id);
+							on:click={async () => {
+								if (!(await projectTag.delete())) return;
 								isMenuOpen = false;
 							}}>✓</button
 						>

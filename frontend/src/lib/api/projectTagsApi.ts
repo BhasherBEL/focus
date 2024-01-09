@@ -4,9 +4,9 @@ import TagOption from '$lib/types/TagOption';
 import api, { processError } from '$lib/utils/api';
 import status from '$lib/utils/status';
 
-async function create(project: Project, title: string, type: number): Promise<number | null> {
+async function create(projectId: number, title: string, type: number): Promise<number | null> {
 	const response = await api.post(`/v1/tags/`, {
-		project_id: project.id,
+		project_id: projectId,
 		title,
 		type
 	});
@@ -19,8 +19,11 @@ async function create(project: Project, title: string, type: number): Promise<nu
 	return response.data.id;
 }
 
-async function update(tag: ProjectTag): Promise<boolean> {
-	const response = await api.put(`/v1/tags/${tag.id}`, tag);
+async function update(tagId: number, title: string, type: number): Promise<boolean> {
+	const response = await api.put(`/v1/tags/${tagId}`, {
+		title,
+		type
+	});
 
 	if (response.status !== status.NoContent) {
 		processError(response, 'Failed to update tag');

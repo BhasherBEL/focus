@@ -24,6 +24,18 @@ export default class TagOption {
 		return this._value;
 	}
 
+	static async create(projectTag: ProjectTag, value: string): Promise<TagOption | null> {
+		const id = await tagsOptions.create(projectTag.id, value);
+
+		if (!id) return null;
+
+		return new TagOption(id, projectTag, value);
+	}
+
+	async delete(): Promise<boolean> {
+		return await tagsOptions.delete(this._id, this.projectTag.id);
+	}
+
 	async setValue(value: string): Promise<boolean> {
 		const res = await tagsOptions.update(this._id, this.projectTag.id, value);
 
