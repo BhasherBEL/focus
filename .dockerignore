@@ -1,0 +1,12 @@
+node_modules
+.eslint*
+.prettier*
+.git*
+Dockerfile
+docker-compose.yaml
+public
+.svelte-kot
+build
+.dockerignore
+*.sqlite
+*.md

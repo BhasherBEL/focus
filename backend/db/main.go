@@ -6,7 +6,7 @@ import (
 
 var db *sql.DB
 
-const DB_VERSION = 1
+const DB_VERSION = 2
 
 func InitDB(driver string, connStr string) error {
 	var err error
