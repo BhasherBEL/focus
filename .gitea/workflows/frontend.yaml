@@ -2,6 +2,8 @@ name: Frontend docker image
 run-name: ${{ gitea.actor }} is runs ci pipeline
 on:
   push:
+    branches:
+      - master
     tags:
       - "v*"
 
