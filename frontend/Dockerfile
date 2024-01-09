@@ -9,7 +9,6 @@ RUN npm run build
 
 FROM node:20-alpine
 
-# COPY --from=frontend-builder /app/public /usr/share/nginx/html
 COPY --from=frontend-builder /app .
 
 EXPOSE 4173

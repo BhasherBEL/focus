@@ -1,7 +1,9 @@
 import axios, { Axios, type AxiosResponse } from 'axios';
 import { toastAlert } from './toasts';
 import { setupCache } from 'axios-cache-interceptor';
-import { backend } from '$lib/config';
+import { env } from '$env/dynamic/public';
+
+const backend = env.PUBLIC_BACKEND_URL || 'http://localhost:3000';
 
 export default setupCache(
 	new Axios({
