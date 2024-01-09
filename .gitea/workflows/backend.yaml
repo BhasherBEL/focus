@@ -1,4 +1,4 @@
-name: Frontend docker image
+name: Backend docker image
 run-name: ${{ gitea.actor }} is runs ci pipeline
 on:
   push:
@@ -38,12 +38,12 @@ jobs:
       - name: Build and push frontend
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend
-          file: ./frontend/Dockerfile
+          context: ./backend
+          file: ./backend/Dockerfile
           push: true
           platforms: |
             linux/amd64
             linux/arm64
           tags: |
-            git.bhasher.com/bhasher/focus-frontend:latest
-            git.bhasher.com/bhasher/focus-frontend:${{ steps.tagName.outputs.tag }}
+            git.bhasher.com/bhasher/focus-backend:latest
+            git.bhasher.com/bhasher/focus-backend:${{ steps.tagName.outputs.tag }}
