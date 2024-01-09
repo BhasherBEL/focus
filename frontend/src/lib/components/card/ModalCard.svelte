@@ -2,11 +2,11 @@
 	import CloseIcon from '$lib/components/icons/CloseIcon.svelte';
 	import TrashIcon from '$lib/components/icons/TrashIcon.svelte';
 	import ModalTags from '$lib/components/tags/ModalTags.svelte';
-	import currentModalCard from '$lib/stores/currentModalCard';
 	import type Card from '$lib/types/Card';
 	import { cards } from '$lib/types/Card';
 
 	export let card: Card;
+	export let showModal: boolean;
 
 	let newTitle = card.title;
 	let newContent = card.content;
@@ -15,41 +15,44 @@
 		if (card.title !== newTitle || card.content !== newContent) {
 			if (!(await card.update(newTitle, newContent))) return;
 		}
-		if (closeModal) currentModalCard.set(null);
+		if (closeModal) showModal = false;
 
 		cards.reload();
 	}
 </script>
 
-{#if $currentModalCard == card.id}
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<div class="modal" on:click={() => save(true)}>
-		<div class="content" on:click|stopPropagation>
-			<div class="header">
-				<input class="title" bind:value={newTitle} on:blur={() => save(false)} />
-				<div class="buttons">
-					<button on:click={() => card.delete()}>
-						<TrashIcon />
-					</button>
-					<button on:click={() => currentModalCard.set(null)}>
-						<CloseIcon />
-					</button>
-				</div>
-			</div>
-			<div class="tags">
-				<ModalTags {card} />
-			</div>
-			<div class="body">
-				<textarea
-					bind:value={newContent}
-					placeholder="Add a description"
-					on:blur={() => save(false)}
-				/>
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<div class="modal" on:click={() => save(true)}>
+	<div class="content" on:click|stopPropagation>
+		<div class="header">
+			<input class="title" bind:value={newTitle} on:blur={() => save(false)} />
+			<div class="buttons">
+				<button
+					on:click={async () => {
+						await card.delete();
+						showModal = false;
+					}}
+				>
+					<TrashIcon />
+				</button>
+				<button on:click={() => (showModal = false)}>
+					<CloseIcon />
+				</button>
 			</div>
 		</div>
+		<div class="tags">
+			<ModalTags {card} />
+		</div>
+		<div class="body">
+			<textarea
+				bind:value={newContent}
+				placeholder="Add a description"
+				on:blur={() => save(false)}
+			/>
+		</div>
 	</div>
-{/if}
+</div>
 
 <style lang="less">
 	.modal {

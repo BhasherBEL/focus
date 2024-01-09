@@ -45,8 +45,10 @@
 <nav class:hidden={!isVisible}>
 	<div>
 		<div id="branding">
-			<span id="title">Focus.</span>
-			<span id="version">v0.0.1</span>
+			<a href="/">
+				<span id="title">Focus.</span>
+				<span id="version">v0.0.1</span>
+			</a>
 		</div>
 		<div id="views">
 			<h2>{project.title}</h2>

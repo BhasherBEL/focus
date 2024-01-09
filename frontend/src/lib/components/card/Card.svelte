@@ -1,10 +1,11 @@
 <script lang="ts">
 	import currentDraggedCard from '$lib/stores/currentDraggedCard';
-	import currentModalCard from '$lib/stores/currentModalCard';
 	import type Card from '$lib/types/Card';
 	import ModalCard from './ModalCard.svelte';
 
 	export let card: Card;
+
+	let showModal = false;
 </script>
 
 <div
@@ -12,15 +13,13 @@
 	tabindex="0"
 	draggable={true}
 	on:dragstart={() => currentDraggedCard.set(card)}
-	on:click={() => currentModalCard.set(card.id)}
+	on:click={() => (showModal = true)}
 	role="button"
 	on:keydown={(e) => {
-		if (e.key === 'Enter') {
-			currentModalCard.set(card.id);
-		}
+		if (e.key === 'Enter') showModal = true;
 	}}
 >
-	<div class="title">{card.title}</div>
+	<div class="title">{card.id} - {card.title}</div>
 	<div class="tags">
 		{#each card.cardTags as tag}
 			{#if tag.option}
@@ -32,7 +31,9 @@
 	</div>
 </div>
 
-<ModalCard {card} />
+{#if showModal}
+	<ModalCard {card} bind:showModal />
+{/if}
 
 <style lang="less">
 	.card {
