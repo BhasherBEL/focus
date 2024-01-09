@@ -6,21 +6,22 @@
 	import Header from './Header.svelte';
 
 	export let project: Project;
+
+	$: allCards = $cards;
 </script>
 
 {#if project}
 	<section>
 		{#if $currentView}
 			<Header {project} />
-			{#if $cards}
+			{#if $cards && allCards}
 				<div class="grid">
 					{#if $currentView.primaryTag}
 						{#each $currentView.primaryTag.options as option}
 							<Column
 								{option}
 								primaryTag={$currentView.primaryTag}
-								title={option.value}
-								columnCards={$cards
+								columnCards={allCards
 									.filter((c) => c.cardTags.map((t) => t.option).includes(option))
 									.sort((a, b) => {
 										if (!$currentView?.sortTag) return 0;
@@ -43,15 +44,14 @@
 					{/if}
 					<Column
 						primaryTag={$currentView.primaryTag}
-						title={$currentView.primaryTag ? `No ${$currentView.title}` : 'No groups'}
 						columnCards={$currentView.primaryTag != null
 							? (() => {
 									const primaryTag = $currentView.primaryTag;
-									return $cards.filter(
+									return allCards.filter(
 										(c) => !c.cardTags.map((t) => t.projectTag).includes(primaryTag)
 									);
 								})()
-							: $cards}
+							: allCards}
 						{project}
 					/>
 				</div>

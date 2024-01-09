@@ -1,3 +1,4 @@
+import tagsOptions from '$lib/api/tagsOptions';
 import ProjectTag from './ProjectTag';
 
 export default class TagOption {
@@ -21,6 +22,16 @@ export default class TagOption {
 
 	get value(): string {
 		return this._value;
+	}
+
+	async setValue(value: string): Promise<boolean> {
+		const res = await tagsOptions.update(this._id, this.projectTag.id, value);
+
+		if (!res) return false;
+
+		this._value = value;
+
+		return res;
 	}
 
 	static parse(json: any): TagOption | null;

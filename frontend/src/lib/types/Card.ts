@@ -6,7 +6,14 @@ import { toastAlert } from '$lib/utils/toasts';
 import type TagOption from './TagOption';
 import type ProjectTag from './ProjectTag';
 
-export const cards = writable([] as Card[]);
+const { subscribe, set, update } = writable([] as Card[]);
+
+export const cards = {
+	subscribe,
+	set,
+	update,
+	reload: () => update((cards) => cards)
+};
 
 export default class Card {
 	private _id: number;
@@ -90,9 +97,27 @@ export default class Card {
 
 		if (!cardTag) return false;
 
-		this._cardTags.push(cardTag);
+		this._cardTags = [...this._cardTags, cardTag];
 
 		return true;
+	}
+
+	async removeTag(cardTag: CardTag): Promise<boolean> {
+		const res = await cardTag.delete();
+
+		if (!res) return false;
+
+		this._cardTags = this._cardTags.filter((ct) => ct !== cardTag);
+
+		return true;
+	}
+
+	async updateTag(
+		cardTag: CardTag,
+		tagOption: TagOption | null,
+		value: string | null
+	): Promise<boolean> {
+		return await cardTag.update(tagOption, value);
 	}
 
 	static parse(json: any): Card | null;
@@ -100,6 +125,7 @@ export default class Card {
 
 	static parse(json: any, project?: Project | null | undefined): Card | null {
 		if (json === null) {
+			toastAlert('Failed to parse card: json is null');
 			return null;
 		}
 

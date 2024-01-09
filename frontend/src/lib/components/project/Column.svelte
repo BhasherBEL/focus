@@ -1,39 +1,43 @@
 <script lang="ts">
-	import Card from '$lib/types/Card';
+	import Card, { cards } from '$lib/types/Card';
 	import CardComponent from '../card/Card.svelte';
 	import AddIcon from '../icons/AddIcon.svelte';
 	import type TagOption from '$lib/types/TagOption';
 	import type ProjectTag from '$lib/types/ProjectTag';
 	import type Project from '$lib/types/Project';
+	import currentDraggedCard from '$lib/stores/currentDraggedCard';
 
 	export let project: Project;
 	export let option: TagOption | null = null;
 	export let primaryTag: ProjectTag | null = null;
-	export let title: string;
 	export let columnCards: Card[] = [];
 
-	let lastTitle = title;
+	let newOptionValue = option?.value || `No ${primaryTag?.title}`;
 
-	// async function onDrop(e: DragEvent) {
-	// 	e.preventDefault();
-	// 	if (!$currentDraggedCard || !$currentDraggedCard.cardTags) return;
+	async function onDrop(e: DragEvent) {
+		e.preventDefault();
+		if (!primaryTag || !$currentDraggedCard || !$currentDraggedCard.cardTags) return;
 
-	// 	$currentDraggedCard;
+		const currentCardTag =
+			$currentDraggedCard.cardTags.find((tag) => tag.projectTag === primaryTag) || null;
+		const currentOption = currentCardTag?.option || null;
 
-	// 	for (let tag of $currentDraggedCard.cardTags) {
-	// 		if (tag.projectTag !== primaryTag) continue;
-	// 		if (tag.option == option) return;
+		if (currentOption === option) return;
 
-	// 		if (!tag.option && !tag.value) await tag.delete();
-	// 		else if (tag.option && optionId)
-	// 			await createCardTagApi(tag.card_id, tag.tag_id, tag.option_id, tag.value);
-	// 		else await updateCardTagApi(tag.card_id, tag.tag_id, optionId, tag.value);
+		if (!currentOption && option) {
+			await $currentDraggedCard.addTag(primaryTag, option, null);
+		} else if (currentOption && !option) {
+			if (!currentCardTag) return;
+			await $currentDraggedCard.removeTag(currentCardTag);
+		} else if (currentOption && option) {
+			if (!currentCardTag) return;
+			await $currentDraggedCard.updateTag(currentCardTag, option, null);
+		}
 
-	// 		tag.option_id = optionId;
-	// 		cards.reload();
-	// 	}
-	// 	currentDraggedCard.set(null);
-	// }
+		currentDraggedCard.set(null);
+
+		cards.reload();
+	}
 
 	async function addCard() {
 		const card = await Card.create(project);
@@ -43,33 +47,30 @@
 		if (!option) return;
 
 		await card.addTag(primaryTag, option, null);
+
+		cards.reload();
 	}
 </script>
 
-<!-- on:drop={onDrop} -->
 <div
 	class="column"
 	role="listbox"
 	tabindex="-1"
+	on:drop={onDrop}
 	on:dragover={(e) => {
 		e.preventDefault();
 	}}
 >
 	<header>
 		<input
-			bind:value={title}
+			bind:value={newOptionValue}
 			type="text"
 			on:blur={async () => {
-				if (lastTitle === title) return;
 				if (!option || !primaryTag) return;
-				// option;
-				// await updateTagOptionAPI({
-				// 	id: optionId,
-				// 	tag_id: primary_tag_id,
-				// 	value: title
-				// });
-				// lastTitle = title;
-				// cards.reload();
+				if (newOptionValue === option.value) return;
+
+				await option.setValue(newOptionValue);
+				newOptionValue = option.value;
 			}}
 			disabled={option === null}
 		/>

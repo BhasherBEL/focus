@@ -1,9 +1,8 @@
 <script lang="ts">
 	import currentDraggedCard from '$lib/stores/currentDraggedCard';
 	import currentModalCard from '$lib/stores/currentModalCard';
-	import project_tags from '$lib/stores/projectTags';
 	import type Card from '$lib/types/Card';
-	import ModalCard from './ModalCard.svelte';
+	// import ModalCard from './ModalCard.svelte';
 
 	export let card: Card;
 </script>
@@ -21,25 +20,21 @@
 		}
 	}}
 >
-	<div class="title">{card.title}</div>
-	{#if card.tags}
-		<div class="tags">
-			{#each card.tags as tag}
-				{#if tag.option_id}
-					{#if $project_tags[tag.tag_id]}
-						<span class="tag" style="border: 1px solid #333">
-							{$project_tags[tag.tag_id]?.options.find((o) => o.id == tag.option_id)?.value}</span
-						>
-					{/if}
-				{:else if tag.value}
-					<span class="tag" style="border: 1px solid #333">{tag.value}</span>
-				{/if}
-			{/each}
-		</div>
-	{/if}
+	<div class="title">{card.id} - {card.title}</div>
+	<div class="tags">
+		{#each card.cardTags as tag}
+			{#if tag.option}
+				<span class="tag" style="border: 1px solid #333"
+					>{tag.projectTag.id}: {tag.option.id} ({tag.option.value})</span
+				>
+			{:else if tag.value}
+				<span class="tag" style="border: 1px solid #333">{tag.value}</span>
+			{/if}
+		{/each}
+	</div>
 </div>
 
-<ModalCard bind:card />
+<!-- <ModalCard bind:card /> -->
 
 <style lang="less">
 	.card {
