@@ -3,9 +3,10 @@
 	import CardComponent from '../card/Card.svelte';
 	import AddIcon from '../icons/AddIcon.svelte';
 	import type TagOption from '$lib/types/TagOption';
-	import type ProjectTag from '$lib/types/ProjectTag';
+	import ProjectTag, { projectTags } from '$lib/types/ProjectTag';
 	import type Project from '$lib/types/Project';
 	import currentDraggedCard from '$lib/stores/currentDraggedCard';
+	import currentView from '$lib/stores/currentView';
 
 	export let project: Project;
 	export let option: TagOption | null = null;
@@ -43,10 +44,22 @@
 		const card = await Card.create(project);
 
 		if (!card) return;
-		if (!primaryTag) return;
-		if (!option) return;
 
-		await card.addTag(primaryTag, option, null);
+		if ($currentView?.filters && $currentView.filters.length > 0) {
+			for (const projectTag of $projectTags) {
+				for (const filter of $currentView.filters) {
+					if (projectTag !== filter.projectTag) continue;
+					if (!filter.tagOption) continue;
+					if (filter.filterType !== 0) continue;
+
+					if (await card.addTag(projectTag, filter.tagOption, null)) break;
+				}
+			}
+		}
+
+		if (primaryTag && option) {
+			await card.addTag(primaryTag, option, null);
+		}
 
 		cards.reload();
 	}

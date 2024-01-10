@@ -2,7 +2,7 @@
 	import GroupMenu from '$lib/components/menu/GroupMenu.svelte';
 	import SortMenu from '$lib/components/menu/SortMenu.svelte';
 	import currentView from '$lib/stores/currentView';
-	import Card from '$lib/types/Card';
+	import Card, { cards } from '$lib/types/Card';
 	import type Project from '$lib/types/Project';
 	import type ProjectTag from '$lib/types/ProjectTag';
 	import { projectTags } from '$lib/types/ProjectTag';
@@ -34,6 +34,26 @@
 		if (res) currentView.reload();
 
 		return res;
+	}
+
+	async function addCard() {
+		const card = await Card.create(project);
+
+		if (!card) return;
+
+		if ($currentView?.filters && $currentView.filters.length > 0) {
+			for (const projectTag of $projectTags) {
+				for (const filter of $currentView.filters) {
+					if (projectTag !== filter.projectTag) continue;
+					if (!filter.tagOption) continue;
+					if (filter.filterType !== 0) continue;
+
+					if (await card.addTag(projectTag, filter.tagOption, null)) break;
+				}
+			}
+		}
+
+		cards.reload();
 	}
 </script>
 
@@ -80,7 +100,7 @@
 				currentDirection={$currentView?.sortDirection || null}
 			/>
 		</div>
-		<button id="newButton" on:click={async () => Card.create(project)}>New</button>
+		<button id="newButton" on:click={addCard}>New</button>
 	</nav>
 </header>
 
