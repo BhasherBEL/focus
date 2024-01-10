@@ -74,3 +74,13 @@ func DeleteView(id int) (int64, error) {
 
 	return res.RowsAffected()
 }
+
+func ExistView(id int) (bool, error) {
+	var count int
+	err := db.QueryRow("SELECT COUNT(*) FROM views WHERE id = ?", id).Scan(&count)
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
+}

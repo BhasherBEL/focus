@@ -11,6 +11,7 @@ func v1Router(router fiber.Router) error {
 	cardsRouter(router.Group("/cards"))
 	tagsRouter(router.Group("/tags"))
 	viewsRouter(router.Group("/views"))
+	filtersRouter(router.Group("/filters"))
 	return nil
 }
 

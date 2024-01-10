@@ -67,6 +67,17 @@ func InitDB(driver string, connStr string) error {
 			FOREIGN KEY(secondary_tag_id) REFERENCES tags(id)
 		);
 
+		CREATE TABLE IF NOT EXISTS filters (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			view_id INTEGER NOT NULL,
+			tag_id INTEGER NOT NULL,
+			filter_type INTEGER NOT NULL,
+			option_id INTEGER,
+			FOREIGN KEY(view_id) REFERENCES views(id),
+			FOREIGN KEY(tag_id) REFERENCES tags(id),
+			FOREIGN KEY(option_id) REFERENCES tagsoptions(id)
+		);
+
 		INSERT INTO schema_version (version)
 		SELECT ? WHERE NOT EXISTS (SELECT 1 FROM schema_version);
     `, DB_VERSION)

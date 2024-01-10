@@ -14,7 +14,7 @@ func viewsRouter(router fiber.Router) error {
 	router.Get("/:id", GetView)
 	router.Put("/:id", UpdateView)
 	router.Delete("/:id", DeleteView)
-
+	router.Get("/:id/filters", GetView)
 	return nil
 }
 
@@ -107,4 +107,21 @@ func DeleteView(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
+}
+
+func GetViewFilters(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid view ID"})
+	}
+
+	filters, err := db.GetViewFilters(id)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Cannot retrieve view filters",
+			"trace": fmt.Sprint(err),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(filters)
 }
