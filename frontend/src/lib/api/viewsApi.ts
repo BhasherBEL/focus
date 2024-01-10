@@ -1,5 +1,5 @@
+import Filter from '$lib/types/Filter';
 import type Project from '$lib/types/Project';
-import type View from '$lib/types/View';
 import api, { processError } from '$lib/utils/api';
 import status from '$lib/utils/status';
 
@@ -53,8 +53,20 @@ async function delete_(viewId: number): Promise<boolean> {
 	return true;
 }
 
+async function getFilters(viewId: number): Promise<Filter[]> {
+	const response = await api.get(`/v1/views/${viewId}/filters`);
+
+	if (response.status !== status.OK) {
+		processError(response, 'Failed to get view filters');
+		return [];
+	}
+
+	return Filter.parseAll(response.data);
+}
+
 export default {
 	create,
 	update,
-	delete: delete_
+	delete: delete_,
+	getFilters
 };

@@ -1,8 +1,10 @@
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import Project from './Project';
 import ProjectTag from './ProjectTag';
 import viewsApi from '$lib/api/viewsApi';
 import { toastAlert } from '$lib/utils/toasts';
+import Filter from './Filter';
+import type TagOption from './TagOption';
 
 export const views = writable([] as View[]);
 
@@ -14,6 +16,7 @@ export default class View {
 	private _title: string;
 	private _sortTag: ProjectTag | null;
 	private _sortDirection: number | null;
+	private _filters: Filter[];
 
 	private constructor(
 		id: number,
@@ -22,7 +25,8 @@ export default class View {
 		secondaryTag: ProjectTag | null,
 		title: string,
 		sortTag: ProjectTag | null,
-		sortDirection: number | null
+		sortDirection: number | null,
+		filters: Filter[]
 	) {
 		this._id = id;
 		this._project = project;
@@ -31,6 +35,7 @@ export default class View {
 		this._title = title;
 		this._sortTag = sortTag;
 		this._sortDirection = sortDirection;
+		this._filters = filters;
 	}
 
 	get id(): number {
@@ -59,6 +64,16 @@ export default class View {
 
 	get sortDirection(): number | null {
 		return this._sortDirection;
+	}
+
+	static fromId(id: number): View | null {
+		for (const view of get(views)) {
+			if (view.id === id) {
+				return view;
+			}
+		}
+
+		return null;
 	}
 
 	async setPrimaryTag(projectTag: ProjectTag): Promise<boolean> {
@@ -103,7 +118,7 @@ export default class View {
 
 		if (!id) return null;
 
-		const view = new View(id, project, null, null, 'New view', null, null);
+		const view = new View(id, project, null, null, 'New view', null, null, []);
 
 		views.update((views) => [...views, view]);
 
@@ -137,6 +152,23 @@ export default class View {
 		return true;
 	}
 
+	async addFilter(projectTag: ProjectTag, filterType: number, option: TagOption): Promise<boolean> {
+		const filter = await Filter.create(this, projectTag, filterType, option);
+		if (!filter) return false;
+
+		this._filters = [...this._filters, filter];
+
+		return true;
+	}
+
+	async removeFilter(filter: Filter): Promise<boolean> {
+		if (!(await filter.delete())) return false;
+
+		this._filters = this._filters.filter((f) => f.id !== filter.id);
+
+		return true;
+	}
+
 	static parse(json: any): View | null;
 	static parse(json: any, project: Project | null | undefined): View | null;
 
@@ -163,8 +195,11 @@ export default class View {
 			secondaryTag,
 			json.title,
 			sortTag,
-			json.sort_direction
+			json.sort_direction,
+			[]
 		);
+
+		view._filters = Filter.parseAll(json.filters, view);
 
 		views.update((views) => {
 			if (!views.find((view) => view.id === json.id)) {
