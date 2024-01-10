@@ -57,8 +57,13 @@
 		</div>
 		<button class:disabled={true}>Sub-group</button>
 		<div>
-			<button on:click={() => (filterMenuOpen = !filterMenuOpen)}>Filter</button>
-			<FilterMenu bind:isOpen={filterMenuOpen} filters={$currentView?.filters} />
+			<button
+				on:click={() => (filterMenuOpen = !filterMenuOpen)}
+				class:defined={$currentView?.filters && $currentView?.filters.length > 0}
+			>
+				Filter
+			</button>
+			<FilterMenu bind:isOpen={filterMenuOpen} />
 		</div>
 		<div>
 			<button on:click={() => (sortMenuOpen = !sortMenuOpen)} class:defined={$currentView?.sortTag}>

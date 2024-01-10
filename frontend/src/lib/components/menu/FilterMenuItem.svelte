@@ -3,6 +3,7 @@
 	import Filter from '$lib/types/Filter';
 	import ProjectTag, { projectTags } from '$lib/types/ProjectTag';
 	import type TagOption from '$lib/types/TagOption';
+	import TrashIcon from '../icons/TrashIcon.svelte';
 	import Menu from './Menu.svelte';
 
 	export let filter: Filter | null = null;
@@ -14,7 +15,8 @@
 	async function selectProjectTag(projectTag: ProjectTag) {
 		if (!$currentView) return;
 		if (!filter) {
-			filter = await $currentView?.addFilter(projectTag, 0, null);
+			await $currentView?.addFilter(projectTag, 0, null);
+			currentView.reload();
 			return;
 		}
 
@@ -46,6 +48,14 @@
 			currentView.reload();
 		}
 		isOptionOpen = false;
+	}
+
+	async function deleteFilter() {
+		if (!filter) return;
+
+		const res = await $currentView?.removeFilter(filter);
+		if (!res) return;
+		currentView.reload();
 	}
 </script>
 
@@ -83,7 +93,11 @@
 			role="button"
 		>
 			{#if filter}
-				{filter.filterType}
+				{#if filter.filterType === 0}
+					is
+				{:else if filter.filterType === 1}
+					is not
+				{/if}
 			{/if}
 		</div>
 		{#if filter}
@@ -124,6 +138,19 @@
 			</Menu>
 		{/if}
 	</div>
+	{#if filter}
+		<div
+			class="delete"
+			tabindex="0"
+			role="button"
+			on:click={() => deleteFilter()}
+			on:keydown={(e) => {
+				if (e.key === 'Enter') deleteFilter();
+			}}
+		>
+			<TrashIcon size={20} />
+		</div>
+	{/if}
 </div>
 
 <style lang="less">
@@ -134,16 +161,24 @@
 
 	.part {
 		min-width: 50px;
+	}
+
+	.part,
+	.delete {
 		height: 30px;
 		margin: 5px;
 		text-align: center;
 		line-height: 30px;
-		padding: 0 5px;
+		padding: 0 2px;
 
 		&:hover {
 			background-color: #fff2;
 			border-radius: 5px;
 		}
+	}
+
+	.delete {
+		line-height: 35px;
 	}
 
 	button {
