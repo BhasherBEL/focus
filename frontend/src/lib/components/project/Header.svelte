@@ -7,10 +7,12 @@
 	import type ProjectTag from '$lib/types/ProjectTag';
 	import { projectTags } from '$lib/types/ProjectTag';
 	import { get } from 'svelte/store';
+	import FilterMenu from '../menu/FilterMenu.svelte';
 
 	export let project: Project;
 	let groupMenuOpen = false;
 	let sortMenuOpen = false;
+	let filterMenuOpen = false;
 
 	async function setGroup(projectTag: ProjectTag): Promise<boolean> {
 		const view = get(currentView);
@@ -54,7 +56,10 @@
 			/>
 		</div>
 		<button class:disabled={true}>Sub-group</button>
-		<button class:disabled={true}>Filter</button>
+		<div>
+			<button on:click={() => (filterMenuOpen = !filterMenuOpen)}>Filter</button>
+			<FilterMenu bind:isOpen={filterMenuOpen} filters={$currentView?.filters} />
+		</div>
 		<div>
 			<button on:click={() => (sortMenuOpen = !sortMenuOpen)} class:defined={$currentView?.sortTag}>
 				Sort

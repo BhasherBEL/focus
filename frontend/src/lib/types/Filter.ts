@@ -10,14 +10,14 @@ export default class Filter {
 	private _view: View;
 	private _projectTag: ProjectTag;
 	private _filterType: number;
-	private _tagOption: TagOption;
+	private _tagOption: TagOption | null;
 
 	private constructor(
 		id: number,
 		view: View,
 		projectTag: ProjectTag,
 		filterType: number,
-		tagOption: TagOption
+		tagOption: TagOption | null
 	) {
 		this._id = id;
 		this._view = view;
@@ -42,7 +42,7 @@ export default class Filter {
 		return this._filterType;
 	}
 
-	get tagOption(): TagOption {
+	get tagOption(): TagOption | null {
 		return this._tagOption;
 	}
 
@@ -50,9 +50,9 @@ export default class Filter {
 		view: View,
 		projectTag: ProjectTag,
 		filterType: number,
-		tagOption: TagOption
+		tagOption: TagOption | null
 	): Promise<Filter | null> {
-		const id = await filtersApi.create(view.id, projectTag.id, filterType, tagOption.id);
+		const id = await filtersApi.create(view.id, projectTag.id, filterType, tagOption?.id || null);
 		if (!id) return null;
 
 		return new Filter(id, view, projectTag, filterType, tagOption);
@@ -60,6 +60,54 @@ export default class Filter {
 
 	async delete(): Promise<boolean> {
 		return await filtersApi.delete(this.id);
+	}
+
+	async setProjectTag(projectTag: ProjectTag): Promise<boolean> {
+		const res = await filtersApi.update(
+			this.id,
+			this.view.id,
+			projectTag.id,
+			this.filterType,
+			this.tagOption?.id || null
+		);
+
+		if (!res) return false;
+
+		this._projectTag = projectTag;
+
+		return true;
+	}
+
+	async setFilterType(filterType: number): Promise<boolean> {
+		const res = await filtersApi.update(
+			this.id,
+			this.view.id,
+			this.projectTag.id,
+			filterType,
+			this.tagOption?.id || null
+		);
+
+		if (!res) return false;
+
+		this._filterType = filterType;
+
+		return true;
+	}
+
+	async setTagOption(tagOption: TagOption | null): Promise<boolean> {
+		const res = await filtersApi.update(
+			this.id,
+			this.view.id,
+			this.projectTag.id,
+			this.filterType,
+			tagOption?.id || null
+		);
+
+		if (!res) return false;
+
+		this._tagOption = tagOption;
+
+		return true;
 	}
 
 	static parseAll(json: any): Filter[];
@@ -100,11 +148,7 @@ export default class Filter {
 		}
 
 		const tagOption = projectTag.options.find((option) => option.id === json.option_id);
-		if (!tagOption) {
-			toastAlert('Failed to parse filter: tagOption not found');
-			return null;
-		}
 
-		return new Filter(json.id, view, projectTag, json.filter_type, tagOption);
+		return new Filter(json.id, view, projectTag, json.filter_type, tagOption || null);
 	}
 }

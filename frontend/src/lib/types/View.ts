@@ -66,6 +66,10 @@ export default class View {
 		return this._sortDirection;
 	}
 
+	get filters(): Filter[] {
+		return this._filters;
+	}
+
 	static fromId(id: number): View | null {
 		for (const view of get(views)) {
 			if (view.id === id) {
@@ -152,13 +156,17 @@ export default class View {
 		return true;
 	}
 
-	async addFilter(projectTag: ProjectTag, filterType: number, option: TagOption): Promise<boolean> {
+	async addFilter(
+		projectTag: ProjectTag,
+		filterType: number,
+		option: TagOption | null
+	): Promise<Filter | null> {
 		const filter = await Filter.create(this, projectTag, filterType, option);
-		if (!filter) return false;
+		if (!filter) return null;
 
 		this._filters = [...this._filters, filter];
 
-		return true;
+		return filter;
 	}
 
 	async removeFilter(filter: Filter): Promise<boolean> {

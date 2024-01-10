@@ -5,7 +5,7 @@ async function create(
 	viewId: number,
 	projectTagId: number,
 	filterType: number,
-	tagOptionId: number
+	tagOptionId: number | null
 ): Promise<number | null> {
 	const response = await api.post(`/v1/filters`, {
 		view_id: viewId,
@@ -27,7 +27,7 @@ async function update(
 	viewId: number,
 	projectTagId: number,
 	filterType: number,
-	tagOptionId: number
+	tagOptionId: number | null
 ): Promise<boolean> {
 	const response = await api.put(`/v1/filters/${filterId}`, {
 		view_id: viewId,
