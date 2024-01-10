@@ -16,19 +16,25 @@ func CreateView(v types.View) (int, error) {
 	return int(id), nil
 }
 
-func GetProjectViews(projectID int) ([]types.View, error) {
+func GetProjectViews(projectID int) ([]types.FullView, error) {
 	rows, err := db.Query("SELECT * FROM views WHERE project_id = ?", projectID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var views []types.View
+	var views []types.FullView
 	for rows.Next() {
-		var v types.View
+		var v types.FullView
 		if err := rows.Scan(&v.ID, &v.ProjectID, &v.PrimaryTagID, &v.SecondaryTagID, &v.Title, &v.SortTagID, &v.SortDirection); err != nil {
 			return nil, err
 		}
+
+		filters, err := GetViewFilters(v.ID)
+		if err != nil {
+			return nil, err
+		}
+		v.Filters = filters
 
 		views = append(views, v)
 	}
@@ -40,7 +46,7 @@ func GetProjectViews(projectID int) ([]types.View, error) {
 	return views, nil
 }
 
-func GetView(id int) (*types.View, error) {
+func GetView(id int) (*types.FullView, error) {
 	rows, err := db.Query("SELECT * FROM views WHERE id = ?", id)
 	if err != nil {
 		return nil, err
@@ -51,8 +57,14 @@ func GetView(id int) (*types.View, error) {
 		return nil, nil
 	}
 
-	var v types.View
+	var v types.FullView
 	rows.Scan(&v.ID, &v.ProjectID, v.PrimaryTagID, v.SecondaryTagID, v.Title, v.SortTagID, v.SortDirection)
+
+	filters, err := GetViewFilters(id)
+	if(err != nil) {
+		return nil, err
+	}
+	v.Filters = filters
 
 	return &v, nil
 }
