@@ -1,12 +1,12 @@
 <script lang="ts">
-	import Card, { cards } from '$lib/types/Card';
-	import CardComponent from '../card/Card.svelte';
-	import AddIcon from '../icons/AddIcon.svelte';
-	import type TagOption from '$lib/types/TagOption';
-	import ProjectTag, { projectTags } from '$lib/types/ProjectTag';
-	import type Project from '$lib/types/Project';
 	import currentDraggedCard from '$lib/stores/currentDraggedCard';
 	import currentView from '$lib/stores/currentView';
+	import Card, { cards } from '$lib/types/Card';
+	import type Project from '$lib/types/Project';
+	import ProjectTag, { projectTags } from '$lib/types/ProjectTag';
+	import type TagOption from '$lib/types/TagOption';
+	import CardComponent from '../card/Card.svelte';
+	import AddIcon from '../icons/AddIcon.svelte';
 
 	export let project: Project;
 	export let option: TagOption | null = null;
@@ -44,6 +44,8 @@
 		const card = await Card.create(project);
 
 		if (!card) return;
+
+		await card.updateTitle(`untitled ${card.id}`);
 
 		if ($currentView?.filters && $currentView.filters.length > 0) {
 			for (const projectTag of $projectTags) {
@@ -105,7 +107,7 @@
 		</span>
 	</header>
 	<ul>
-		{#each columnCards as card}
+		{#each columnCards as card (card.id)}
 			<CardComponent {card} />
 		{/each}
 	</ul>

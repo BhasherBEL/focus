@@ -15,7 +15,8 @@
 {#if tagType}
 	<td>
 		{#if tagType?.hasOptions}
-			<SelectTags multiple={false} {projectTag} {card} {cardTag} />
+			<!-- multiple={false} -->
+			<SelectTags {projectTag} {card} {cardTag} />
 		{:else if !tagType?.hasOptions}
 			<input />
 		{/if}

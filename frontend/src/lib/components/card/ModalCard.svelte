@@ -8,8 +8,8 @@
 	export let card: Card;
 	export let showModal: boolean;
 
-	let newTitle = card.title;
-	let newContent = card.content;
+	let newTitle: string = card.title;
+	let newContent: string = card.content;
 
 	async function save(closeModal: boolean = true) {
 		if (card.title !== newTitle || card.content !== newContent) {
@@ -21,22 +21,28 @@
 	}
 </script>
 
+<svelte:window
+	on:keydown|once={(e) => {
+		if (e.key === 'Escape') return save(true);
+	}}
+/>
+
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="modal" on:click={() => save(true)}>
+<div class="modal" on:click|self|preventDefault={() => save(true)}>
 	<div class="content" on:click|stopPropagation>
 		<div class="header">
 			<input class="title" bind:value={newTitle} on:blur={() => save(false)} />
 			<div class="buttons">
 				<button
-					on:click={async () => {
+					on:click|once={async () => {
 						await card.delete();
 						showModal = false;
 					}}
 				>
 					<TrashIcon />
 				</button>
-				<button on:click={() => (showModal = false)}>
+				<button on:click|once={() => (showModal = false)}>
 					<CloseIcon />
 				</button>
 			</div>
