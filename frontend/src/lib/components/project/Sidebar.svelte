@@ -3,7 +3,6 @@
 	import Project from '$lib/types/Project';
 	import View, { views } from '$lib/types/View';
 	import { onMount } from 'svelte';
-	import { get } from 'svelte/store';
 	import EditIcon from '../icons/EditIcon.svelte';
 	import MenuOpener from '../icons/MenuOpener.svelte';
 	import ViewIcon from '../icons/ViewIcon.svelte';
@@ -232,10 +231,10 @@
 			&:focus {
 				outline: 0;
 			}
+		}
 
-			&.inEdit {
-				background-color: #fff5;
-			}
+		input.inEdit {
+			background-color: #fff5;
 		}
 
 		button {

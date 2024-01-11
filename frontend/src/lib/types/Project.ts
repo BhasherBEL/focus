@@ -31,7 +31,7 @@ export default class Project {
 	}
 
 	static async create(): Promise<Project | null> {
-		const id = await projectsApi.create('untitled');
+		const id = await projectsApi.create('New project');
 
 		if (!id) return null;
 

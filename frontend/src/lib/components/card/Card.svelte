@@ -4,8 +4,7 @@
 	import ModalCard from './ModalCard.svelte';
 
 	export let card: Card;
-
-	let showModal = false;
+	export let showModal = false;
 </script>
 
 <div

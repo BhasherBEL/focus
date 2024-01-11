@@ -86,7 +86,7 @@
 			{#if $cards}
 				<div class="grid">
 					{#if $currentView.primaryTag}
-						{#each $currentView.primaryTag.options as option}
+						{#each $currentView.primaryTag.options as option (option.id)}
 							<Column
 								{option}
 								primaryTag={$currentView.primaryTag}
@@ -111,7 +111,6 @@
 		display: flex;
 		flex-direction: column;
 		height: 100vh;
-		transition: all 0.3s ease-in-out;
 		width: 100vw;
 
 		@media (min-width: 800px) {

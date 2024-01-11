@@ -1,9 +1,9 @@
 <script lang="ts">
+	import projectsApi from '$lib/api/projectsApi';
+	import Project, { projects } from '$lib/types/Project';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';
 	import SelectProject from '../lib/components/projects/SelectProject.svelte';
-	import Project, { projects } from '$lib/types/Project';
-	import projectsApi from '$lib/api/projectsApi';
 
 	onMount(async () => {
 		await projectsApi.getAll();
@@ -14,7 +14,7 @@
 	<h2>Projects</h2>
 	<ul>
 		{#if $projects}
-			{#each $projects as project}
+			{#each $projects as project (project.id)}
 				<SelectProject {project} />
 			{/each}
 		{/if}

@@ -29,8 +29,8 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="modal" on:click|self|preventDefault={() => save(true)}>
-	<div class="content" on:click|stopPropagation>
+<div class="modal" on:click|self={() => save(true)}>
+	<div class="content">
 		<div class="header">
 			<input class="title" bind:value={newTitle} on:blur={() => save(false)} />
 			<div class="buttons">

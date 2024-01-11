@@ -40,12 +40,12 @@
 		cards.reload();
 	}
 
+	let openModalCard: Card | null = null;
+
 	async function addCard() {
 		const card = await Card.create(project);
 
 		if (!card) return;
-
-		await card.updateTitle(`untitled ${card.id}`);
 
 		if ($currentView?.filters && $currentView.filters.length > 0) {
 			for (const projectTag of $projectTags) {
