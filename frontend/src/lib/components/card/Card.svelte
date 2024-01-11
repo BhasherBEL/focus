@@ -19,7 +19,10 @@
 		if (e.key === 'Enter') showModal = true;
 	}}
 >
-	<div class="title">{card.id} - {card.title}</div>
+	<div class="header">
+		<div class="title">{card.title}</div>
+		<div class="id">#{card.id}</div>
+	</div>
 	<div class="tags">
 		{#each card.cardTags as tag}
 			{#if tag.option}
@@ -43,27 +46,38 @@
 		font-family: 'Open Sans', sans-serif;
 		font-size: 14px;
 		margin-bottom: 10px;
+
+		&:hover {
+			background-color: #303030;
+			cursor: pointer;
+		}
 	}
 
-	.card:hover {
-		background-color: #303030;
-		cursor: pointer;
-	}
-
-	.card .title {
+	.title {
 		font-weight: normal;
 	}
 
-	.card .tags {
+	.tags {
 		padding-top: 10px;
 		font-weight: lighter;
 	}
 
-	.card .tag {
+	.tag {
 		padding: 2px 8px;
 		margin: 4px 4px 0 0;
 		text-transform: uppercase;
 		border-radius: 3px;
 		font-size: 90%;
+	}
+
+	.header {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+
+		.id {
+			font-size: 80%;
+			color: #fff5;
+		}
 	}
 </style>
