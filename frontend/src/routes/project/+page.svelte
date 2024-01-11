@@ -1,17 +1,16 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import projectsApi from '$lib/api/projectsApi';
 	import Sidebar from '$lib/components/project/Sidebar.svelte';
 	import type Project from '$lib/types/Project';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';
 	import ProjectComponent from '$lib/components/project/Project.svelte';
-
-	let projectId: number = +$page.params.project;
+	import { page } from '$app/stores';
 
 	let project: Project;
 
 	onMount(async () => {
+		const projectId = parseInt($page.url.searchParams.get('id') || '0');
 		const res = await projectsApi.get(projectId);
 
 		if (!res) return;

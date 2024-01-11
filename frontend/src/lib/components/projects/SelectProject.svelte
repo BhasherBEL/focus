@@ -40,10 +40,10 @@
 	{:else}
 		<div
 			class="title"
-			on:click={() => (location.href = `/project/${project.id}`)}
+			on:click={() => (location.href = `/project.html?id=${project.id}`)}
 			on:keydown={(e) => {
 				if (e.key === 'Enter') {
-					location.href = `/project/${project.id}`;
+					location.href = `/project?id=${project.id}`;
 				}
 			}}
 			tabindex="0"

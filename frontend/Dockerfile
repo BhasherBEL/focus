@@ -2,17 +2,21 @@ FROM node:20 as frontend-builder
 
 WORKDIR /app
 
-COPY . .
-
+COPY package.json .
+COPY package-lock.json .
 RUN npm install
+
+COPY . .
 RUN npm run build
 
-FROM node:20-alpine
+FROM nginx:alpine
 
-COPY --from=frontend-builder /app .
+COPY --from=frontend-builder /app/build /usr/share/nginx/html
+COPY run.sh .
+RUN chmod +x run.sh
 
-EXPOSE 4173
+EXPOSE 80
 
 ENV PUBLIC_BACKEND_URL=http://localhost:3000
 
-CMD ["npm", "run", "preview", "--", "--port", "4173", "--host", "0.0.0.0"]
+CMD ["./run.sh"]
