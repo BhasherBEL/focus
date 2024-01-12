@@ -6,6 +6,7 @@
 	import currentView from '$lib/stores/currentView';
 	import type Project from '$lib/types/Project';
 	import { views } from '$lib/types/View';
+	import { checkTauriUrl } from '$lib/utils/api';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
@@ -13,6 +14,7 @@
 	let project: Project;
 
 	onMount(async () => {
+		await checkTauriUrl(window);
 		const projectId = parseInt($page.url.searchParams.get('id') || '0');
 		const res = await projectsApi.get(projectId);
 

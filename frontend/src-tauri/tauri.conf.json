@@ -4,7 +4,8 @@
 		"beforeBuildCommand": "npm run build",
 		"beforeDevCommand": "npm run dev",
 		"devPath": "http://localhost:5173",
-		"distDir": "../build"
+		"distDir": "../build",
+		"withGlobalTauri": true
 	},
 	"package": {
 		"productName": "Focus",
@@ -56,10 +57,10 @@
 		"windows": [
 			{
 				"fullscreen": false,
-				"height": 600,
+				"height": 800,
 				"resizable": true,
 				"title": "Focus",
-				"width": 800
+				"width": 1000
 			}
 		]
 	}

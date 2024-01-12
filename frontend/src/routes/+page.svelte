@@ -1,6 +1,7 @@
 <script lang="ts">
 	import projectsApi from '$lib/api/projectsApi';
 	import Project, { projects } from '$lib/types/Project';
+	import { checkTauriUrl } from '$lib/utils/api';
 	import WebSocketManager from '$lib/utils/webSocketManager';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';
@@ -9,6 +10,7 @@
 	const wsManager = new WebSocketManager();
 
 	onMount(async () => {
+		await checkTauriUrl(window);
 		await projectsApi.getAll();
 		wsManager.connect();
 	});

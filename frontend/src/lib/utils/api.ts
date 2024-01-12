@@ -4,7 +4,29 @@ import { toastAlert } from './toasts';
 // import { env } from '$env/dynamic/public';
 
 // const backend = env.PUBLIC_BACKEND_URL || 'http://localhost:3000';
-const backendUrl = 'http://localhost:3000';
+let backendUrl = 'http://localhost:3000';
+let backendWsUrl = 'ws://localhost:3000';
+
+export function getBackendWsUrl() {
+	return backendWsUrl;
+}
+
+export async function checkTauriUrl(window: any) {
+	if (window.__TAURI__) {
+		console.log('Running in Tauri');
+		await window.__TAURI__
+			.invoke('get_backend_url')
+			.then((url: string) => {
+				if (url && url !== '') {
+					backendUrl = url;
+					backendWsUrl = url.replace('http', 'ws');
+					axiosInstance.defaults.baseURL = backendUrl + '/api';
+					console.log('Backend URL:', backendUrl);
+				}
+			})
+			.catch(console.error);
+	}
+}
 
 let pendingRequests = 0;
 

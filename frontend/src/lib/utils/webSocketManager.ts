@@ -1,5 +1,5 @@
 import Project, { projects } from '$lib/types/Project';
-import { hasPendingRequests } from '$lib/utils/api';
+import { getBackendWsUrl, hasPendingRequests } from '$lib/utils/api';
 import { toastAlert, toastWarning } from '$lib/utils/toasts';
 import { get } from 'svelte/store';
 
@@ -27,7 +27,7 @@ export default class WebSocketManager {
 			return;
 		}
 
-		this._socket = new WebSocket('ws://localhost:3000/api/v1/ws');
+		this._socket = new WebSocket(getBackendWsUrl() + '/api/v1/ws');
 
 		this._socket.onopen = () => {
 			this._reconnectAttempts = 0;
