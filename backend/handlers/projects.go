@@ -83,9 +83,22 @@ func CreateProject(c *fiber.Ctx) error {
 
 	projectsLastEdit = time.Now().Truncate(time.Second);
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+	if err = c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"id": id,
+	}); err != nil {
+		return err;
+	}
+
+	p.ID = id;
+
+	publish(fiber.Map{
+		"object": "project",
+		"action": "create",
+		"id": id,
+		"value": p,
 	})
+
+	return nil;
 }
 
 func UpdateProject(c *fiber.Ctx) error {
@@ -113,7 +126,18 @@ func UpdateProject(c *fiber.Ctx) error {
 
 	projectsLastEdit = time.Now().Truncate(time.Second);
 
-	return c.SendStatus(fiber.StatusNoContent)
+	if err = c.SendStatus(fiber.StatusNoContent); err != nil {
+		return err;
+	}
+
+	publish(fiber.Map{
+		"object": "project",
+		"action": "update",
+		"id": id,
+		"value": p,
+})
+
+	return nil;
 }
 
 func DeleteProject(c *fiber.Ctx) error {
@@ -136,7 +160,17 @@ func DeleteProject(c *fiber.Ctx) error {
 
 	projectsLastEdit = time.Now().Truncate(time.Second);
 
-	return c.SendStatus(fiber.StatusNoContent)
+	if err = c.SendStatus(fiber.StatusNoContent); err != nil {
+		return err;
+	}
+
+	publish(fiber.Map{
+		"object": "project",
+		"action": "delete",
+		"id": id,
+	})
+
+	return nil;
 }
 
 func GetProjectCards(c *fiber.Ctx) error {

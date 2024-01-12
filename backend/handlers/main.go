@@ -12,6 +12,7 @@ func v1Router(router fiber.Router) error {
 	tagsRouter(router.Group("/tags"))
 	viewsRouter(router.Group("/views"))
 	filtersRouter(router.Group("/filters"))
+	wsRouter(router.Group("/ws"))
 	return nil
 }
 

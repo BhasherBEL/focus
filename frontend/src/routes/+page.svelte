@@ -1,5 +1,6 @@
 <script lang="ts">
 	import projectsApi from '$lib/api/projectsApi';
+	import { connectWebSocket } from '$lib/api/websocket';
 	import Project, { projects } from '$lib/types/Project';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';
@@ -8,6 +9,8 @@
 	onMount(async () => {
 		await projectsApi.getAll();
 	});
+
+	connectWebSocket();
 </script>
 
 <section>
