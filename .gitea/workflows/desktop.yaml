@@ -49,6 +49,7 @@ jobs:
         uses: akkuman/gitea-release-action@v1
         with:
           name: Focus ${{ steps.tagName.outputs.tag }}
+          prerelease: true
           files: |-
             frontend/src-tauri/target/release/focus
             frontend/src-tauri/target/release/bundle/deb/*.deb

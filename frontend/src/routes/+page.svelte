@@ -1,16 +1,17 @@
 <script lang="ts">
 	import projectsApi from '$lib/api/projectsApi';
-	import { connectWebSocket } from '$lib/api/websocket';
 	import Project, { projects } from '$lib/types/Project';
+	import WebSocketManager from '$lib/utils/webSocketManager';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';
 	import SelectProject from '../lib/components/projects/SelectProject.svelte';
 
+	const wsManager = new WebSocketManager();
+
 	onMount(async () => {
 		await projectsApi.getAll();
+		wsManager.connect();
 	});
-
-	connectWebSocket();
 </script>
 
 <section>
