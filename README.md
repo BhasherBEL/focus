@@ -61,11 +61,14 @@ For other platforms, you can build the desktop app yourself using `npm run tauri
 PUBLIC_BACKEND_URL=http://localhost:3000 ./focus
 ```
 
-#### AUR
+### AUR
 
 ```sh
-yay -S focus-desktop-bin
+yay -S focus-desktop-bin  # Desktop app
+yay -S focus-server-git   # Server
 ```
+
+The server can then be started with `focus-server` or `systemctl start focus-server.service`.
 
 ### Debug Mode
 
