@@ -1,0 +1,12 @@
+[Unit]
+Description=Start focus server
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/focus-server
+Environment=DB_PATH=/var/lib/focus-server/db.sqlite
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

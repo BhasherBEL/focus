@@ -2,3 +2,5 @@
 Dockerfile
 docker-compose.yaml
 .dockerignore
+PKGBUILD
+focus-server.service
