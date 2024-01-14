@@ -19,7 +19,7 @@ jobs:
             dockerfile: ./frontend/Dockerfile
             image: focus-frontend
           - context: .
-            image: focu
+            image: focus
     env:
       RUNNER_TOOL_CACHE: /toolcaches
     steps:
@@ -107,6 +107,81 @@ jobs:
           name: Focus ${{ steps.tagName.outputs.tag }}
           prerelease: true
           files: |-
-            frontend/src-tauri/target/release/focus
+            frontend/src-tauri/target/release/focus-desktop
             frontend/src-tauri/target/release/bundle/deb/*.deb
             frontend/src-tauri/target/release/bundle/appimage/*.AppImage
+
+      - name: Generate sha256sum
+        run: |
+          mkdir -p ./ci/pkgbuild/desktop-bin
+          sha256sum frontend/src-tauri/target/release/bundle/deb/*.deb | cut -d" " -f 1 > ./ci/pkgbuild/desktop-bin/sha256sum
+
+      - name: Generate PKGBUILD
+        env:
+          RELEASE_TAG: ${{ steps.tagName.outputs.tag }}
+        run: ./ci/generate-pkgbuild-desktop.py
+
+      - name: Publish AUR package
+        uses: KSXGitHub/github-actions-deploy-aur@v2.7.0
+        with:
+          pkgname: focus-desktop-bin
+          pkgbuild: ./ci/pkgbuild/desktop-bin/PKGBUILD
+          commit_username: ${{ secrets.AUR_USERNAME }}
+          commit_email: ${{ secrets.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_KEY }}
+          commit_message: Update focus-desktop-bin to ${{ steps.tagName.outputs.tag }}
+
+  build-server:
+    runs-on: ubuntu-latest
+    container:
+      image: catthehacker/ubuntu:act-latest
+    env:
+      RUNNER_TOOL_CACHE: /toolcache
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract tag
+        uses: olegtarasov/get-tag@v2.1.2
+        id: tagName
+        with:
+          tagRegex: "v(.*)"
+
+      - name: Set up go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.21.5
+
+      - name: Build server
+        run: |
+          cd backend
+          go build -o focus-server .
+          cd ..
+
+      - name: Publish server
+        uses: akkuman/gitea-release-action@v1
+        with:
+          name: Focus ${{ steps.tagName.outputs.tag }}
+          prerelease: true
+          files: |-
+            backend/focus-server
+
+      - name: Generate sha256sum
+        run: |
+          mkdir -p ./ci/pkgbuild/server-bin
+          sha256sum backend/focus-server | cut -d" " -f 1 > ./ci/pkgbuild/server-bin/sha256sum
+
+      - name: Generate PKGBUILD
+        env:
+          RELEASE_TAG: ${{ steps.tagName.outputs.tag }}
+        run: ./ci/generate-pkgbuild-server.py
+
+      - name: Publish AUR package
+        uses: KSXGitHub/github-actions-deploy-aur@v2.7.0
+        with:
+          pkgname: focus-server-bin
+          pkgbuild: ./ci/pkgbuild/server-bin/PKGBUILD
+          commit_username: ${{ secrets.AUR_USERNAME }}
+          commit_email: ${{ secrets.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_KEY }}
+          commit_message: Update focus-server-bin to ${{ steps.tagName.outputs.tag }}

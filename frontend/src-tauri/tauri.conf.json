@@ -8,8 +8,8 @@
 		"withGlobalTauri": true
 	},
 	"package": {
-		"productName": "Focus",
-		"version": "0.3.2"
+		"productName": "Focus-Desktop",
+		"version": "0.3.3"
 	},
 	"tauri": {
 		"allowlist": {

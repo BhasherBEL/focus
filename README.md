@@ -68,7 +68,7 @@ yay -S focus-desktop-bin  # Desktop app
 yay -S focus-server-git   # Server
 ```
 
-The server can then be started with `focus-server` or `systemctl start focus-server.service`.
+The server can then be started with `focus-server` or `systemctl start focus-server.service` and the client with `focus`.
 
 ### Debug Mode
 
