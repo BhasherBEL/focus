@@ -8,3 +8,4 @@ public
 .svelte-kot
 build
 .dockerignore
+src-tauri
