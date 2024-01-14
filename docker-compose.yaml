@@ -1,0 +1,16 @@
+services:
+  focus-backend:
+    container_name: focus-backend
+    image: git.bhasher.com/bhasher/focus-backend:latest
+    ports:
+      - 3000:3000
+    volumes:
+      - ./data:/data
+
+  focus-frontend:
+    container_name: focus-frontend
+    image: git.bhasher.com/bhasher/focus-frontend:latest
+    ports:
+      - 8080:80
+    environment:
+      - PUBLIC_BACKEND_URL=http://127.0.0.1:3000
