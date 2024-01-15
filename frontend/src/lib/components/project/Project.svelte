@@ -106,7 +106,7 @@
 	</section>
 {/if}
 
-<style>
+<style lang="less">
 	section {
 		display: flex;
 		flex-direction: column;
@@ -125,5 +125,6 @@
 		flex: 1;
 		overflow: scroll;
 		padding: 0 40px;
+		scroll-snap-type: x mandatory;
 	}
 </style>

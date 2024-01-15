@@ -130,6 +130,10 @@
 	.column {
 		margin: 20px 10px;
 		width: 250px;
+
+		@media (max-width: 480px) {
+			scroll-snap-align: center;
+		}
 	}
 
 	header {
