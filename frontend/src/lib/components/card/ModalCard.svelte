@@ -95,7 +95,7 @@
 	}
 
 	.modal .title {
-		font-size: 24px;
+		font-size: 2rem;
 		font-weight: bold;
 		width: 100%;
 	}

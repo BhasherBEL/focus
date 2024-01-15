@@ -134,7 +134,7 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
-		font-size: 22px;
+		font-size: 2rem;
 		transition: transform 0.3s ease-in-out;
 	}
 
@@ -184,11 +184,10 @@
 		padding: 20px;
 
 		#title {
-			font-size: 40px;
+			font-size: 3rem;
 		}
 
 		#version {
-			font-size: 25px;
 			color: #aaa;
 			margin-bottom: 3px;
 		}
@@ -197,12 +196,11 @@
 	#views {
 		h2 {
 			font-weight: normal;
-			font-size: 25px;
+			font-size: 2.5rem;
 			padding: 20px 10px;
 		}
 
 		ul {
-			font-size: 22px;
 			padding: 10px;
 		}
 
@@ -225,7 +223,7 @@
 			background-color: transparent;
 			border: none;
 			color: inherit;
-			font-size: 17px;
+			font-size: 1.6rem;
 			width: 60%;
 
 			&:focus {
@@ -241,7 +239,6 @@
 			background-color: transparent;
 			border: none;
 			color: inherit;
-			font-size: 17px;
 			cursor: pointer;
 		}
 

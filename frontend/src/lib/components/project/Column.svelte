@@ -177,7 +177,7 @@
 		cursor: pointer;
 		border-radius: 4px;
 		height: 40px;
-		font-size: 150%;
+		font-size: 2rem;
 		display: flex;
 		justify-content: center;
 		align-items: center;

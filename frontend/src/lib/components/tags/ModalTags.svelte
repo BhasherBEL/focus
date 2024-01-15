@@ -17,3 +17,9 @@
 	{/each}
 	<ModalNewTag project={card.project} />
 </table>
+
+<style lang="less">
+	table {
+		font-size: 1.3rem;
+	}
+</style>

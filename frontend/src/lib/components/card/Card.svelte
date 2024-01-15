@@ -43,7 +43,7 @@
 		border-radius: 6px;
 		border: 1px solid #555;
 		font-family: 'Open Sans', sans-serif;
-		font-size: 14px;
+		font-size: 1.3rem;
 		margin-bottom: 10px;
 
 		&:hover {
@@ -66,7 +66,7 @@
 		margin: 4px 4px 0 0;
 		text-transform: uppercase;
 		border-radius: 3px;
-		font-size: 90%;
+		font-size: 80%;
 	}
 
 	.header {

@@ -116,7 +116,7 @@
 	}
 
 	h2 {
-		font-size: 30px;
+		font-size: 3rem;
 	}
 
 	nav {
@@ -132,7 +132,7 @@
 			border-radius: 7px;
 			border: none;
 			background-color: transparent;
-			font-size: inherit;
+			font-size: 1.5rem;
 
 			&.defined {
 				color: #6481cc;

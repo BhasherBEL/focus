@@ -81,7 +81,6 @@
 			color: inherit;
 			border: 1px solid #666;
 			padding: 3px 5px;
-			font-size: inherit;
 			border-radius: 5px;
 		}
 
