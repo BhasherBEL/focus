@@ -15,6 +15,10 @@
 
 	let newOptionValue = option?.value || `No ${primaryTag?.title}`;
 
+	$: if (!option) {
+		newOptionValue = `No ${primaryTag?.title}`;
+	}
+
 	async function onDrop(e: DragEvent) {
 		e.preventDefault();
 		if (!primaryTag || !$currentDraggedCard || !$currentDraggedCard.cardTags) return;
