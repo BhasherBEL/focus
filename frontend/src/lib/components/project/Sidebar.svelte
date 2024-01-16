@@ -46,7 +46,7 @@
 		<div id="branding">
 			<a href="/">
 				<span id="title">Focus.</span>
-				<span id="version">v0.3.2</span>
+				<span id="version">v0.3.4</span>
 			</a>
 		</div>
 		<div id="views">
@@ -124,18 +124,19 @@
 </button>
 
 <style lang="less">
+	@import '../../styles/breakpoints.less';
+
 	nav {
-		position: fixed;
+		position: sticky;
 		top: 0;
-		left: 0;
-		bottom: 0;
-		width: 250px;
+		flex-shrink: 0;
+		width: clamp(200px, 20vw, 300px);
+		height: 100vh;
 		background-color: #273049;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
 		font-size: 2rem;
-		transition: transform 0.3s ease-in-out;
 	}
 
 	.toggle {
@@ -147,9 +148,6 @@
 		width: 50px;
 		height: 50px;
 		transform: scale(1);
-		transition-property: left, transform;
-		transition-duration: 0.3s;
-		transition-timing-function: ease-in-out;
 
 		&:hover {
 			cursor: pointer;
@@ -161,20 +159,26 @@
 		}
 
 		&.open {
-			left: 195px;
+			left: auto;
+			right: 5px;
 			transform: scaleX(-1);
 		}
 	}
 
-	@media (max-width: 800px) {
-		nav.hidden {
-			transform: translateX(-100%);
+	.nosidebar({
+		nav {
+			width: 100vw;
+			
+			&.hidden {
+				width: 0;
+				display: none;
+			}
 		}
 
 		.toggle {
 			visibility: visible;
 		}
-	}
+	});
 
 	#branding {
 		display: flex;

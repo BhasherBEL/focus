@@ -1,0 +1,21 @@
+@one-column: 480px;
+
+.one-column(@rules) {
+	@media (max-width: @one-column) {
+		@rules();
+	}
+}
+
+@sidebar: 800px;
+
+.sidebar(@rules) {
+	@media (min-width: @sidebar) {
+		@rules();
+	}
+}
+
+.nosidebar(@rules) {
+	@media (max-width: @sidebar) {
+		@rules();
+	}
+}

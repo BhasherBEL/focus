@@ -40,7 +40,7 @@
 	<SvelteToast />
 {/if}
 
-<style>
+<style lang="less">
 	div {
 		display: flex;
 	}

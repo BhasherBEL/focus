@@ -127,13 +127,15 @@
 </div>
 
 <style lang="less">
+	@import '../../styles/breakpoints.less';
+
 	.column {
 		margin: 20px 10px;
 		width: 250px;
 
-		@media (max-width: 480px) {
+		.one-column({
 			scroll-snap-align: center;
-		}
+		});
 	}
 
 	header {

@@ -49,12 +49,14 @@
 	h2 {
 		text-align: center;
 		margin-bottom: 40px;
+		font-size: 3rem;
 	}
 
 	ul {
 		list-style: none;
 		padding: 0;
 		margin: 0;
+		font-size: 1.5rem;
 	}
 	#add {
 		width: 100%;

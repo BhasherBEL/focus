@@ -107,16 +107,14 @@
 {/if}
 
 <style lang="less">
+	@import '../../styles/breakpoints.less';
+
 	section {
 		display: flex;
 		flex-direction: column;
 		height: 100vh;
-		width: 100vw;
-
-		@media (min-width: 800px) {
-			margin-left: 250px;
-			width: calc(100vw - 250px);
-		}
+		flex-basis: 100%;
+		overflow: hidden;
 	}
 
 	.grid {
@@ -124,7 +122,11 @@
 		flex-direction: row;
 		flex: 1;
 		overflow: scroll;
-		padding: 0 40px;
+		padding: 0 2%;
 		scroll-snap-type: x mandatory;
+
+		.one-column({
+			padding-left: calc(50vw - (250px / 2));
+		});
 	}
 </style>
