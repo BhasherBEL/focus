@@ -1,9 +1,8 @@
-import { writable } from 'svelte/store';
-import View from './View';
+import filtersApi from '$lib/api/filtersApi';
+import { toastAlert } from '$lib/utils/toasts';
 import ProjectTag from './ProjectTag';
 import TagOption from './TagOption';
-import { toastAlert } from '$lib/utils/toasts';
-import filtersApi from '$lib/api/filtersApi';
+import View from './View';
 
 export default class Filter {
 	private _id: number;
@@ -137,13 +136,13 @@ export default class Filter {
 
 		if (!view) view = View.fromId(json.view_id);
 		if (!view) {
-			toastAlert('Failed to parse filter: view not found');
+			toastAlert(`Failed to parse filter: view ${json.view_id} not found`);
 			return null;
 		}
 
 		const projectTag = ProjectTag.fromId(json.tag_id);
 		if (!projectTag) {
-			toastAlert('Failed to parse filter: projectTag not found');
+			toastAlert(`Failed to parse filter: projectTag ${json.tag_id} not found`);
 			return null;
 		}
 
