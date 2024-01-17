@@ -35,7 +35,7 @@
 
 {#if showModal}
 	<ModalCard {card} />
-{:else}{/if}
+{/if}
 
 <style lang="less">
 	.card {

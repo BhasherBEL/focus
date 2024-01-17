@@ -137,10 +137,11 @@
 
 	.column {
 		margin: 20px 10px;
-		width: 250px;
+		flex: 0 0 250px;
 
 		.one-column({
 			scroll-snap-align: center;
+			flex-basis: 80vw;
 		});
 	}
 

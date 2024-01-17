@@ -126,7 +126,7 @@
 		scroll-snap-type: x mandatory;
 
 		.one-column({
-			padding-left: calc(50vw - (250px / 2));
+			padding: 0 10%;
 		});
 	}
 </style>

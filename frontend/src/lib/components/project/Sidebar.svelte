@@ -56,12 +56,16 @@
 					{#each $views as view}
 						<!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
 						<li
-							on:click={() => currentView.set(view)}
+							on:click={() => {
+								currentView.set(view);
+								isVisible = false;
+							}}
 							role="button"
 							tabindex="0"
 							on:keydown={(e) => {
 								if (e.key === 'Enter') {
 									currentView.set(view);
+									isVisible = false;
 								}
 							}}
 							class:active={$currentView === view}
