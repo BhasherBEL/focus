@@ -4,6 +4,7 @@
 	import { cards } from '$lib/types/Card';
 	import CardTag from '$lib/types/CardTag';
 	import type ProjectTag from '$lib/types/ProjectTag';
+	import { projectTags } from '$lib/types/ProjectTag';
 	import type TagOption from '$lib/types/TagOption';
 	import TrashIcon from '../icons/TrashIcon.svelte';
 
@@ -37,6 +38,7 @@
 		if (!newOption) return;
 		if (!(await projectTag.addOption(newOption))) return;
 		newOption = '';
+		projectTags.reload();
 	}
 </script>
 
@@ -66,7 +68,7 @@
 		isOpen = false;
 	}}
 >
-	{#each projectTag.options as option}
+	{#each projectTag.options as option (option.id)}
 		<div
 			class="option"
 			on:click={() => selectOption(option)}
@@ -80,8 +82,9 @@
 		>
 			<span class="value">{option.value}</span>
 			<button
-				on:click|stopPropagation={() => {
-					projectTag.deleteOption(option);
+				on:click|stopPropagation={async () => {
+					await projectTag.deleteOption(option);
+					projectTags.reload();
 				}}><TrashIcon size={16} /></button
 			>
 		</div>

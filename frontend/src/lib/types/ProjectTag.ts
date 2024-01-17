@@ -5,7 +5,14 @@ import TagOption from './TagOption';
 import Project from './Project';
 import projectTagsApi from '$lib/api/projectTagsApi';
 
-export const projectTags = writable([] as ProjectTag[]);
+const { subscribe, update, set } = writable([] as ProjectTag[]);
+
+export const projectTags = {
+	subscribe,
+	update,
+	set,
+	reload: () => update((ps) => ps)
+};
 
 export const ProjectTagTypes = {};
 
