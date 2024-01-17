@@ -1,10 +1,10 @@
 import cardsApi from '$lib/api/cardsApi';
+import { toastAlert } from '$lib/utils/toasts';
 import { get, writable } from 'svelte/store';
 import CardTag from './CardTag';
 import Project from './Project';
-import { toastAlert } from '$lib/utils/toasts';
-import type TagOption from './TagOption';
 import type ProjectTag from './ProjectTag';
+import type TagOption from './TagOption';
 
 const { subscribe, set, update } = writable([] as Card[]);
 
@@ -21,6 +21,7 @@ export default class Card {
 	private _title: string;
 	private _content: string;
 	private _cardTags: CardTag[];
+	public showModal: boolean = false;
 
 	private constructor(
 		id: number,

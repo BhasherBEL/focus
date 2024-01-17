@@ -6,7 +6,6 @@
 	import { cards } from '$lib/types/Card';
 
 	export let card: Card;
-	export let showModal: boolean;
 
 	let newTitle: string = card.title;
 	let newContent: string = card.content;
@@ -15,7 +14,7 @@
 		if (card.title !== newTitle || card.content !== newContent) {
 			if (!(await card.update(newTitle, newContent))) return;
 		}
-		if (closeModal) showModal = false;
+		if (closeModal) card.showModal = false;
 
 		cards.reload();
 	}
@@ -37,12 +36,12 @@
 				<button
 					on:click|once={async () => {
 						await card.delete();
-						showModal = false;
+						card.showModal = false;
 					}}
 				>
 					<TrashIcon />
 				</button>
-				<button on:click|once={() => (showModal = false)}>
+				<button on:click|once={() => (card.showModal = false)}>
 					<CloseIcon />
 				</button>
 			</div>

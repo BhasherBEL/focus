@@ -68,6 +68,8 @@
 		}
 
 		cards.reload();
+
+		card.showModal = true;
 	}
 </script>
 

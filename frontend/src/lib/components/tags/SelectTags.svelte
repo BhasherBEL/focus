@@ -29,6 +29,8 @@
 		}
 		isOpen = false;
 		cards.reload();
+
+		card.showModal = true;
 	}
 
 	async function createOption() {

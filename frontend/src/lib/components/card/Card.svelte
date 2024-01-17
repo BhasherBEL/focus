@@ -4,7 +4,7 @@
 	import ModalCard from './ModalCard.svelte';
 
 	export let card: Card;
-	export let showModal = false;
+	$: showModal = card.showModal;
 </script>
 
 <div
@@ -34,8 +34,8 @@
 </div>
 
 {#if showModal}
-	<ModalCard {card} bind:showModal />
-{/if}
+	<ModalCard {card} />
+{:else}{/if}
 
 <style lang="less">
 	.card {
