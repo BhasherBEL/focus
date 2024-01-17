@@ -4,11 +4,13 @@
 	import ModalTags from '$lib/components/tags/ModalTags.svelte';
 	import type Card from '$lib/types/Card';
 	import { cards } from '$lib/types/Card';
+	import SvelteMarkdown from 'svelte-markdown';
 
 	export let card: Card;
 
 	let newTitle: string = card.title;
 	let newContent: string = card.content;
+	let editDescription: boolean = false;
 
 	async function save(closeModal: boolean = true) {
 		if (card.title !== newTitle || card.content !== newContent) {
@@ -41,7 +43,12 @@
 				>
 					<TrashIcon />
 				</button>
-				<button on:click|once={() => (card.showModal = false)}>
+				<button
+					on:click|once={() => {
+						card.showModal = false;
+						cards.reload();
+					}}
+				>
 					<CloseIcon />
 				</button>
 			</div>
@@ -50,11 +57,18 @@
 			<ModalTags {card} />
 		</div>
 		<div class="body">
-			<textarea
-				bind:value={newContent}
-				placeholder="Add a description"
-				on:blur={() => save(false)}
-			/>
+			<div class="toggleEdit" on:click|preventDefault={() => (editDescription = !editDescription)}>
+				👁
+			</div>
+			{#if editDescription}
+				<textarea
+					bind:value={newContent}
+					placeholder="Add a description"
+					on:blur={() => save(false)}
+				/>
+			{:else}
+				<SvelteMarkdown source={card.content} />
+			{/if}
 		</div>
 	</div>
 </div>
@@ -131,17 +145,37 @@
 
 	.modal .body {
 		margin-bottom: 20px;
+		// border: 1px solid red;
+		font-size: 1.5rem;
+
+		border: 1px solid #444;
+		min-height: 300px;
+		border-radius: 5px;
+		padding: 5px;
+		position: relative;
+
+		&:before {
+			transition: color 0.2s ease-in-out;
+		}
+
+		&:before:hover {
+			color: #333;
+		}
+	}
+
+	.toggleEdit {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		cursor: pointer;
 	}
 
 	.modal textarea {
 		width: 100%;
-		min-height: 200px;
-		resize: vertical;
+		min-height: 300px;
+		height: fit-content;
+		border: 0;
+		resize: none;
 		font-family: inherit;
-	}
-
-	.modal td button {
-		width: 30px;
-		height: 30px;
 	}
 </style>

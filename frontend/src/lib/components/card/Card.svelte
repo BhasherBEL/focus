@@ -12,10 +12,10 @@
 	tabindex="0"
 	draggable={true}
 	on:dragstart={() => currentDraggedCard.set(card)}
-	on:click={() => (showModal = true)}
+	on:click={() => (card.showModal = true)}
 	role="button"
 	on:keydown={(e) => {
-		if (e.key === 'Enter') showModal = true;
+		if (e.key === 'Enter') card.showModal = true;
 	}}
 >
 	<div class="header">
