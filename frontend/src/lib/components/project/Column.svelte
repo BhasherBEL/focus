@@ -183,6 +183,11 @@
 		}
 	}
 
+	ul {
+		margin: 0;
+		padding: 0;
+	}
+
 	.addEnd {
 		cursor: pointer;
 		border-radius: 4px;

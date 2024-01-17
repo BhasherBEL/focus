@@ -206,10 +206,12 @@
 			font-weight: normal;
 			font-size: 2.5rem;
 			padding: 20px 10px;
+			margin: 0;
 		}
 
 		ul {
 			padding: 10px;
+			margin: 0;
 		}
 
 		li {
@@ -269,5 +271,10 @@
 	#newView:hover {
 		cursor: pointer;
 		background-color: #fff1;
+	}
+
+	a {
+		color: inherit;
+		text-decoration: none;
 	}
 </style>

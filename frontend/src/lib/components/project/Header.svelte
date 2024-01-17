@@ -120,6 +120,7 @@
 	h2 {
 		flex-grow: 100000;
 		font-size: 3rem;
+		margin: 0;
 
 		.nosidebar({
 			padding-left: 50px;
