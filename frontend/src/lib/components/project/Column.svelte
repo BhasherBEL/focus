@@ -150,6 +150,7 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
+		font-size: 1.5rem;
 
 		input {
 			background-color: #444;
@@ -186,8 +187,8 @@
 		cursor: pointer;
 		border-radius: 4px;
 		height: 40px;
-		font-size: 2rem;
 		display: flex;
+		font-size: 2rem;
 		justify-content: center;
 		align-items: center;
 		margin-top: 10px;

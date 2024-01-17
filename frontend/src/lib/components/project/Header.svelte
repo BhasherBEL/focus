@@ -105,6 +105,8 @@
 </header>
 
 <style lang="less">
+	@import '../../styles/breakpoints.less';
+
 	header {
 		margin: 0 2%;
 		padding: 20px 0;
@@ -116,13 +118,21 @@
 	}
 
 	h2 {
+		flex-grow: 100000;
 		font-size: 3rem;
+
+		.nosidebar({
+			padding-left: 50px;
+		});
 	}
 
 	nav {
 		display: flex;
+		flex-grow: 1;
+		flex-shrink: 0;
 		flex-direction: row;
 		align-items: center;
+		justify-content: center;
 		gap: 7px;
 
 		button {
@@ -133,6 +143,7 @@
 			border: none;
 			background-color: transparent;
 			font-size: 1.5rem;
+			flex-shrink: 0;
 
 			&.defined {
 				color: #6481cc;

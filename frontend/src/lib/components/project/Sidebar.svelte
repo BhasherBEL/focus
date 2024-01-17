@@ -146,8 +146,8 @@
 	.toggle {
 		visibility: hidden;
 		position: fixed;
-		top: 5px;
-		left: 5px;
+		top: 18px;
+		left: 10px;
 		border-radius: 50%;
 		width: 50px;
 		height: 50px;
