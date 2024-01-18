@@ -46,7 +46,7 @@
 		<div id="branding">
 			<a href="/">
 				<span id="title">Focus.</span>
-				<span id="version">v0.3.4</span>
+				<span id="version">v0.4.0</span>
 			</a>
 		</div>
 		<div id="views">

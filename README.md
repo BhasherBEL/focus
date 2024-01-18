@@ -10,11 +10,15 @@ The official source code repository is at [git.bhasher.com/Bhasher/focus](https:
 ## Features
 
 - Kanban-style boards
+- Customizable views
 - RESTful API
+- Full markdown support
+- Desktop app
+- Docker images
+- Mobile-friendly
 
 ### Planned Features
 
-- Markdown support
 - Real-time collaboration
 
 ## KISS Principles
