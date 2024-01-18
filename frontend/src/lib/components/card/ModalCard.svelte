@@ -5,6 +5,8 @@
 	import type Card from '$lib/types/Card';
 	import { cards } from '$lib/types/Card';
 	import SvelteMarkdown from 'svelte-markdown';
+	import CrossedEye from '../icons/CrossedEye.svelte';
+	import EyeIcon from '../icons/EyeIcon.svelte';
 
 	export let card: Card;
 
@@ -32,7 +34,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="modal" on:click|self={() => save(true)}>
 	<div class="content">
-		<div class="header">
+		<header>
 			<input class="title" bind:value={newTitle} on:blur={() => save(false)} />
 			<div class="buttons">
 				<button
@@ -52,13 +54,17 @@
 					<CloseIcon />
 				</button>
 			</div>
-		</div>
+		</header>
 		<div class="tags">
 			<ModalTags {card} />
 		</div>
 		<div class="body">
 			<div class="toggleEdit" on:click|preventDefault={() => (editDescription = !editDescription)}>
-				👁
+				{#if editDescription}
+					<EyeIcon />
+				{:else}
+					<CrossedEye />
+				{/if}
 			</div>
 			{#if editDescription}
 				<textarea
@@ -84,22 +90,30 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-
-		.content {
-			background: #1e1e1e;
-			padding: 20px;
-			border-radius: 8px;
-			max-width: 1000px;
-			width: 100%;
-			display: flex;
-			justify-content: center;
-			flex-direction: column;
-			gap: 30px;
-		}
+		box-sizing: border-box;
 	}
 
-	.modal input,
-	.modal textarea {
+	.content {
+		background: #1e1e1e;
+		padding: 20px;
+		border-radius: 8px;
+		max-width: 1000px;
+		max-height: 90vh;
+		overflow-y: scroll;
+		width: 100%;
+		display: block;
+		box-sizing: border-box;
+	}
+
+	header {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		margin-bottom: 20px;
+	}
+
+	input,
+	.body {
 		background: none;
 		color: inherit;
 		border: 1px solid #333;
@@ -107,25 +121,26 @@
 		padding: 4px;
 	}
 
-	.modal .title {
+	input {
 		font-size: 2rem;
 		font-weight: bold;
 		width: 100%;
 	}
 
-	.modal .header {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
+	.body {
+		position: relative;
+		font-size: 1.5rem;
+		min-height: 300px;
+		margin-top: 20px;
 	}
 
-	.modal .buttons {
+	.buttons {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 	}
 
-	.modal button {
+	button {
 		margin-left: 5px;
 		height: 50px;
 		width: 50px;
@@ -134,48 +149,31 @@
 		border-radius: 10px;
 	}
 
-	.modal button:hover {
+	button:hover {
 		background-color: #333;
 		cursor: pointer;
 	}
 
-	.modal .buttons button:first-child:hover {
+	button:first-child:hover {
 		background-color: #433;
-	}
-
-	.modal .body {
-		margin-bottom: 20px;
-		// border: 1px solid red;
-		font-size: 1.5rem;
-
-		border: 1px solid #444;
-		min-height: 300px;
-		border-radius: 5px;
-		padding: 5px;
-		position: relative;
-
-		&:before {
-			transition: color 0.2s ease-in-out;
-		}
-
-		&:before:hover {
-			color: #333;
-		}
 	}
 
 	.toggleEdit {
 		position: absolute;
 		top: 10px;
 		right: 10px;
+		font-size: 2rem;
 		cursor: pointer;
 	}
 
-	.modal textarea {
+	textarea {
 		width: 100%;
 		min-height: 300px;
 		height: fit-content;
 		border: 0;
 		resize: none;
 		font-family: inherit;
+		background: none;
+		color: inherit;
 	}
 </style>
