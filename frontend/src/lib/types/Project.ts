@@ -1,7 +1,14 @@
 import projectsApi from '$lib/api/projectsApi';
 import { get, writable } from 'svelte/store';
 
-export const projects = writable([] as Project[]);
+const { subscribe, set, update } = writable([] as Project[]);
+
+export const projects = {
+	subscribe,
+	set,
+	update,
+	reload: () => update((projects) => projects)
+};
 
 export default class Project {
 	private _id: number;
@@ -35,7 +42,7 @@ export default class Project {
 
 		if (!id) return null;
 
-		const project = new Project(id, 'untitled');
+		const project = new Project(id, 'New project');
 
 		projects.update((projects) => [...projects, project]);
 
@@ -56,6 +63,10 @@ export default class Project {
 		projects.update((projects) => projects.filter((project) => project.id !== this._id));
 
 		return true;
+	}
+
+	updateFromDict(dict: any) {
+		if (dict.title) this._title = dict.title;
 	}
 
 	static parse(json: any): Project | null {

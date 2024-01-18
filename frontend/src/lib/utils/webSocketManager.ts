@@ -1,5 +1,8 @@
+import Card, { cards } from '$lib/types/Card';
 import Project, { projects } from '$lib/types/Project';
-import { getBackendWsUrl, hasPendingRequests } from '$lib/utils/api';
+import ProjectTag, { projectTags } from '$lib/types/ProjectTag';
+import View, { views } from '$lib/types/View';
+import { getBackendWsUrl, hasPendingRequests, randomID } from '$lib/utils/api';
 import { toastAlert, toastWarning } from '$lib/utils/toasts';
 import { get } from 'svelte/store';
 
@@ -61,6 +64,11 @@ export default class WebSocketManager {
 
 		this._socket.onmessage = async (event) => {
 			const data = JSON.parse(event.data);
+			const source = data['X-Request-Source'];
+			// console.log(source);
+			if (!source || source === randomID) {
+				return;
+			}
 			while (hasPendingRequests()) {
 				await new Promise((resolve) => setTimeout(resolve, 100));
 			}
@@ -74,6 +82,15 @@ function applyMessage(data: any) {
 		case 'project':
 			applyProject(data);
 			break;
+		case 'card':
+			applyCard(data);
+			break;
+		case 'view':
+			applyView(data);
+			break;
+		case 'projectTag':
+			applyProjectTag(data);
+			break;
 		default:
 			console.log('Unknown object:', data);
 	}
@@ -82,12 +99,56 @@ function applyMessage(data: any) {
 function applyProject(data: any) {
 	switch (data.action) {
 		case 'create':
-			if (get(projects).find((p) => p.id === data.id)) break;
+			Project.parse(data.data);
 		case 'update':
-			Project.parse(data.value);
+			get(projects)
+				.find((p) => p.id === data.id)
+				?.updateFromDict(data.changes);
+			projects.reload();
 			break;
 		case 'delete':
 			projects.set(get(projects).filter((p) => p.id !== data.id));
+			break;
+	}
+}
+
+function applyCard(data: any) {
+	switch (data.action) {
+		case 'create':
+			Card.parse(data.data);
+			break;
+		case 'update':
+			get(cards)
+				.find((c) => c.id === data.id)
+				?.updateFromDict(data.changes);
+			cards.reload();
+			break;
+		case 'delete':
+			cards.set(get(cards).filter((c) => c.id !== data.id));
+			break;
+	}
+}
+
+function applyView(data: any) {
+	switch (data.action) {
+		case 'create':
+		case 'update':
+			View.parse(data.value);
+			break;
+		case 'delete':
+			views.set(get(views).filter((v) => v.id !== data.id));
+			break;
+	}
+}
+
+function applyProjectTag(data: any) {
+	switch (data.action) {
+		case 'create':
+		case 'update':
+			ProjectTag.parse(data.value);
+			break;
+		case 'delete':
+			projectTags.set(get(projectTags).filter((t) => t.id !== data.id));
 			break;
 	}
 }

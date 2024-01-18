@@ -7,6 +7,9 @@ import { toastAlert } from './toasts';
 let backendUrl = 'http://localhost:3000';
 let backendWsUrl = 'ws://localhost:3000';
 
+export let randomID =
+	Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
 export function getBackendWsUrl() {
 	return backendWsUrl;
 }
@@ -48,9 +51,10 @@ const cachedInstance = setupCache(axiosInstance, {
 	modifiedSince: true
 });
 
-axiosInstance.interceptors.request.use(
+cachedInstance.interceptors.request.use(
 	(config) => {
 		pendingRequests++;
+		config.headers['X-Request-Source'] = randomID;
 		return config;
 	},
 	(error) => {
@@ -59,7 +63,7 @@ axiosInstance.interceptors.request.use(
 	}
 );
 
-axiosInstance.interceptors.response.use(
+cachedInstance.interceptors.response.use(
 	(response) => {
 		pendingRequests--;
 		return response;
@@ -70,7 +74,7 @@ axiosInstance.interceptors.response.use(
 	}
 );
 
-export default axiosInstance;
+export default cachedInstance;
 
 export function processError(response: AxiosResponse<any, any>, message: string = '') {
 	let title = `${response.status} ${response.statusText}`;

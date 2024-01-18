@@ -34,9 +34,27 @@ func CreateCard(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+	if err := c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"id": id,
+	}); err != nil {
+		return err
+	}
+
+	card.ID = id;
+
+	source := c.Get("X-Request-Source");
+	if source == "" {
+		return nil;
+	}
+
+	publish(fiber.Map{
+		"object": "card",
+		"action": "create",
+		"data": card,
+		"X-Request-Source": source,
 	})
+
+	return nil;
 }
 
 func GetCard(c *fiber.Ctx) error {
@@ -77,7 +95,23 @@ func DeleteCard(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 
-	return c.SendStatus(fiber.StatusNoContent)
+	if err := c.SendStatus(fiber.StatusNoContent); err != nil {
+		return err
+	}
+
+	source := c.Get("X-Request-Source");
+	if source == "" {
+		return nil;
+	}
+
+	publish(fiber.Map{
+		"object": "card",
+		"action": "delete",
+		"id": id,
+		"X-Request-Source": source,
+	});
+
+	return nil;
 }
 
 func UpdateCard(c *fiber.Ctx) error {
@@ -103,5 +137,22 @@ func UpdateCard(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 
-	return c.SendStatus(fiber.StatusNoContent)
+	if err := c.SendStatus(fiber.StatusNoContent); err != nil {
+		return err
+	}
+
+	source := c.Get("X-Request-Source");
+	if source == "" {
+		return nil;
+	}
+
+	publish(fiber.Map{
+		"object": "card",
+		"action": "update",
+		"id": id,
+		"changes": card,
+		"X-Request-Source": source,
+	})
+
+	return nil;
 }

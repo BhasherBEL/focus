@@ -7,11 +7,13 @@
 	import type Project from '$lib/types/Project';
 	import { views } from '$lib/types/View';
 	import { checkTauriUrl } from '$lib/utils/api';
+	import WebSocketManager from '$lib/utils/webSocketManager';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
 
 	let project: Project;
+	const wsManager = new WebSocketManager();
 
 	onMount(async () => {
 		await checkTauriUrl(window);
@@ -29,6 +31,7 @@
 		if (get(views).length > 0) {
 			currentView.set(get(views)[0]);
 		}
+		wsManager.connect();
 	});
 </script>
 

@@ -3,7 +3,6 @@ import Project from '$lib/types/Project';
 import ProjectTag from '$lib/types/ProjectTag';
 import View from '$lib/types/View';
 import api, { processError } from '$lib/utils/api';
-import { parseCards } from '$lib/utils/parser';
 import status from '$lib/utils/status';
 
 async function getAll(): Promise<Project[]> {

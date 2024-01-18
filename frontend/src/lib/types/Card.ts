@@ -152,6 +152,14 @@ export default class Card {
 		return true;
 	}
 
+	updateFromDict(dict: any) {
+		if (dict.project_id && dict.project_id !== this._project.id) {
+			this._project = Project.fromId(dict.project_id) as Project;
+		}
+		if (dict.title) this._title = dict.title;
+		if (dict.content) this._content = dict.content;
+	}
+
 	static parse(json: any): Card | null;
 	static parse(json: any, project: Project | null | undefined): Card | null;
 

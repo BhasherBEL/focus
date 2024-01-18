@@ -91,11 +91,16 @@ func CreateProject(c *fiber.Ctx) error {
 
 	p.ID = id;
 
+	source := c.Get("X-Request-Source");
+	if source == "" {
+		return nil;
+	}
+
 	publish(fiber.Map{
 		"object": "project",
 		"action": "create",
-		"id": id,
-		"value": p,
+		"data": p,
+		"X-Request-Source": source,
 	})
 
 	return nil;
@@ -130,11 +135,17 @@ func UpdateProject(c *fiber.Ctx) error {
 		return err;
 	}
 
+	source := c.Get("X-Request-Source");
+	if source == "" {
+		return nil;
+	}
+
 	publish(fiber.Map{
 		"object": "project",
 		"action": "update",
 		"id": id,
-		"value": p,
+		"changes": p,
+		"X-Request-Source": source,
 })
 
 	return nil;
@@ -164,10 +175,16 @@ func DeleteProject(c *fiber.Ctx) error {
 		return err;
 	}
 
+	source := c.Get("X-Request-Source");
+	if source == "" {
+		return nil;
+	}
+
 	publish(fiber.Map{
 		"object": "project",
 		"action": "delete",
 		"id": id,
+		"X-Request-Source": source,
 	})
 
 	return nil;
