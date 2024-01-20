@@ -67,7 +67,24 @@ func CreateCardTag(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.SendStatus(fiber.StatusCreated)
+	err = c.SendStatus(fiber.StatusCreated)
+	if err != nil {
+		return err
+	}
+
+	source := c.Get("X-Request-Source");
+	if source == "" {
+		return nil;
+	}
+
+	publish(fiber.Map{
+		"object": "cardtag",
+		"action": "create",
+		"data": cardtag,
+		"X-Request-Source": source,
+	});
+
+	return nil
 }
 
 func GetCardTags(c *fiber.Ctx) error {
@@ -143,7 +160,25 @@ func DeleteCardTag(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 
-	return c.SendStatus(fiber.StatusNoContent)
+	err = c.SendStatus(fiber.StatusNoContent)
+
+	if err != nil {	
+		return err
+	}
+
+	source := c.Get("X-Request-Source");
+	if source == "" {
+		return nil		
+	}
+
+	publish(fiber.Map{
+		"object": "cardtag",
+		"action": "delete",
+		"id": cardID,
+		"X-Request-Source": source,
+	});
+
+	return nil
 }
 
 func DeleteCardTags(c *fiber.Ctx) error {
@@ -172,6 +207,8 @@ func DeleteCardTags(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
+
+	// TODO publish event
 }
 
 func UpdateCardTag(c *fiber.Ctx) error {
@@ -224,5 +261,24 @@ func UpdateCardTag(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 
-	return c.SendStatus(fiber.StatusNoContent)
+	err = c.SendStatus(fiber.StatusNoContent)
+	if err != nil {
+		return err
+	}
+
+	source := c.Get("X-Request-Source");
+	if source == "" {
+		return nil
+	}
+
+	publish(fiber.Map{
+		"object": "cardtag",
+		"action": "update",
+		"card_id": cardID,
+		"tag_id": tagID,
+		"changes": cardtag,
+		"X-Request-Source": source,
+	})
+
+	return nil
 }

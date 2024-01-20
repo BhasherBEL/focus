@@ -35,7 +35,26 @@ func CreateTag(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"id": id})
+	err = c.Status(fiber.StatusCreated).JSON(fiber.Map{"id": id})
+	if err != nil {
+		return err
+	}
+
+	tag.ID = id
+
+	source := c.Get("X-Request-Source")
+	if source == "" {
+		return nil
+	}
+
+	publish(fiber.Map{
+		"object": "tag",
+		"action": "create",
+		"data": tag,
+		"X-Request-Source": source,
+	})
+
+	return nil
 }
 
 func GetTag(c *fiber.Ctx) error {
@@ -76,7 +95,24 @@ func DeleteTag(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 
-	return c.SendStatus(fiber.StatusNoContent)
+	err = c.SendStatus(fiber.StatusNoContent)
+	if err != nil {
+		return err
+	}
+
+	source := c.Get("X-Request-Source")
+	if source == "" {
+		return nil
+	}
+
+	publish(fiber.Map{
+		"object": "tag",
+		"action": "delete",
+		"id": id,
+		"X-Request-Source": source,
+	})
+
+	return nil
 }
 
 func UpdateTag(c *fiber.Ctx) error {
@@ -102,7 +138,25 @@ func UpdateTag(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 
-	return c.SendStatus(fiber.StatusNoContent)
+	err = c.SendStatus(fiber.StatusNoContent)
+	if err != nil {
+		return err
+	}
+
+	source := c.Get("X-Request-Source")
+	if source == "" {
+		return nil
+	}
+
+	publish(fiber.Map{
+		"object": "tag",
+		"action": "update",
+		"id": id,
+		"changes": tag,
+		"X-Request-Source": source,
+	})
+
+	return nil
 }
 
 func CreateTagOption(c *fiber.Ctx) error {
@@ -135,7 +189,26 @@ func CreateTagOption(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"id": id})
+	err = c.Status(fiber.StatusCreated).JSON(fiber.Map{"id": id})
+	if err != nil {
+		return err
+	}
+
+	option.ID = id
+
+	source := c.Get("X-Request-Source")
+	if source == "" {
+		return nil
+	}
+
+	publish(fiber.Map{
+		"object": "tagoption",
+		"action": "create",
+		"data": option,
+		"X-Request-Source": source,
+	})
+
+	return nil
 }
 
 func GetTagOptions(c *fiber.Ctx) error {
@@ -200,7 +273,25 @@ func DeleteTagOption(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 
-	return c.SendStatus(fiber.StatusNoContent)
+	err = c.SendStatus(fiber.StatusNoContent)
+	if err != nil {
+		return err
+	}
+
+	source := c.Get("X-Request-Source")
+	if source == "" {
+		return nil
+	}
+
+	publish(fiber.Map{
+		"object": "tagoption",
+		"action": "delete",
+		"tag_id": tagID,
+		"option_id": optionID,
+		"X-Request-Source": source,
+	})
+
+	return nil
 }
 
 func UpdateTagOption(c *fiber.Ctx) error {
@@ -242,7 +333,26 @@ func UpdateTagOption(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 
-	return c.SendStatus(fiber.StatusNoContent)
+	err = c.SendStatus(fiber.StatusNoContent)
+	if err != nil {
+		return err
+	}
+
+	source := c.Get("X-Request-Source")
+	if source == "" {
+		return nil
+	}
+
+	publish(fiber.Map{
+		"object": "tagoption",
+		"action": "update",
+		"tag_id": tagID,
+		"option_id": optionID,
+		"changes": option,
+		"X-Request-Source": source,
+	})
+
+	return nil
 }
 
 func DeleteTagOptions(c *fiber.Ctx) error {
@@ -271,4 +381,6 @@ func DeleteTagOptions(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
+
+	// TODO: publish event
 }

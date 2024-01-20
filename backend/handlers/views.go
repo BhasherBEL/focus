@@ -35,9 +35,28 @@ func CreateView(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+	err = c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"id": id,
 	})
+	if err != nil {
+		return err
+	}
+
+	view.ID = id
+
+	source := c.Get("X-Request-Source")
+	if source == "" {
+		return nil
+	}
+
+	publish(fiber.Map{
+		"object": "view",
+		"action": "create",
+		"data": view,
+		"X-Request-Source": source,
+	})
+
+	return nil
 }
 
 func GetView(c *fiber.Ctx) error {
@@ -85,7 +104,25 @@ func UpdateView(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 
-	return c.SendStatus(fiber.StatusNoContent)
+	err = c.SendStatus(fiber.StatusNoContent)
+	if err != nil {
+		return err
+	}
+
+	source := c.Get("X-Request-Source")
+	if source == "" {
+		return nil
+	}
+
+	publish(fiber.Map{
+		"object": "view",
+		"action": "update",
+		"id": id,
+		"changes": view,
+		"X-Request-Source": source,
+	})
+
+	return nil
 }
 
 func DeleteView(c *fiber.Ctx) error {
@@ -106,7 +143,24 @@ func DeleteView(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusNotFound)
 	}
 
-	return c.SendStatus(fiber.StatusNoContent)
+	err = c.SendStatus(fiber.StatusNoContent)
+	if err != nil {
+		return err
+	}
+
+	source := c.Get("X-Request-Source")
+	if source == "" {
+		return nil
+	}
+
+	publish(fiber.Map{
+		"object": "view",
+		"action": "delete",
+		"id": id,
+		"X-Request-Source": source,
+	})
+
+	return nil
 }
 
 func GetViewFilters(c *fiber.Ctx) error {
