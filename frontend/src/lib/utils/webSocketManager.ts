@@ -1,4 +1,5 @@
 import Card, { cards } from '$lib/types/Card';
+import CardTag from '$lib/types/CardTag';
 import Project, { projects } from '$lib/types/Project';
 import ProjectTag, { projectTags } from '$lib/types/ProjectTag';
 import View, { views } from '$lib/types/View';
@@ -78,77 +79,99 @@ export default class WebSocketManager {
 }
 
 function applyMessage(data: any) {
-	switch (data.object) {
-		case 'project':
-			applyProject(data);
-			break;
-		case 'card':
-			applyCard(data);
-			break;
-		case 'view':
-			applyView(data);
-			break;
-		case 'projectTag':
-			applyProjectTag(data);
-			break;
-		default:
-			console.log('Unknown object:', data);
+	console.debug('WebSocket message:', data);
+	if (!data.object) {
+		toastWarning('Failed to parse WebSocket message: missing object');
+		return;
 	}
+
+	if (!data.action) {
+		toastWarning('Failed to parse WebSocket message: missing action');
+		return;
+	}
+
+	if (data.object === 'project') applyProject(data);
+	else if (data.object === 'cardTag') applyCardTag(data);
+	else if (data.object === 'card') applyCard(data);
+	else if (data.object === 'view') applyView(data);
+	else if (data.object === 'projectTag') applyProjectTag(data);
+	else if (data.object === 'filter') applyFilter(data);
+	else toastWarning('Failed to parse WebSocket message: unknown object');
 }
 
 function applyProject(data: any) {
-	switch (data.action) {
-		case 'create':
-			Project.parse(data.data);
-		case 'update':
-			get(projects)
-				.find((p) => p.id === data.id)
-				?.updateFromDict(data.changes);
-			projects.reload();
-			break;
-		case 'delete':
-			projects.set(get(projects).filter((p) => p.id !== data.id));
-			break;
+	if (data.action === 'create') {
+		Project.parse(data.data);
+		return;
 	}
+	if (data.action === 'delete') {
+		Project.parseDelete(data.id);
+		return;
+	}
+
+	const project = Project.fromId(data.id);
+	if (!project) {
+		toastWarning('Failed to parse project update: project not found');
+		return;
+	}
+
+	if (data.action !== 'update') {
+		toastWarning('Failed to parse project update: unknown action');
+		return;
+	}
+
+	project.parseUpdate(data.changes);
+	projects.reload();
 }
 
 function applyCard(data: any) {
-	switch (data.action) {
-		case 'create':
-			Card.parse(data.data);
-			break;
-		case 'update':
-			get(cards)
-				.find((c) => c.id === data.id)
-				?.updateFromDict(data.changes);
-			cards.reload();
-			break;
-		case 'delete':
-			cards.set(get(cards).filter((c) => c.id !== data.id));
-			break;
+	if (data.action === 'create') {
+		Card.parse(data.data);
+		return;
 	}
+	if (data.action === 'delete') {
+		Card.parseDelete(data.id);
+		return;
+	}
+
+	const card = Card.fromId(data.id);
+	if (!card) {
+		toastWarning('Failed to parse card update: card not found');
+		return;
+	}
+
+	if (data.action !== 'update') {
+		toastWarning('Failed to parse card update: unknown action');
+		return;
+	}
+
+	card.parseUpdate(data.changes);
+	cards.reload();
 }
 
-function applyView(data: any) {
-	switch (data.action) {
-		case 'create':
-		case 'update':
-			View.parse(data.value);
-			break;
-		case 'delete':
-			views.set(get(views).filter((v) => v.id !== data.id));
-			break;
+function applyCardTag(data: any) {
+	const card = Card.fromId(data.card_id);
+	if (!card) {
+		toastWarning('Failed to parse card tag update: card not found');
+		return;
 	}
+
+	if (data.action === 'create') {
+		card.parseTag(data.data);
+	} else if (data.action === 'update') {
+		card.parseTagUpdate(data.changes);
+	} else if (data.action === 'delete') {
+		card.parseTagDelete(data.tag_id);
+	} else {
+		toastWarning('Failed to parse card tag update: unknown action');
+		return;
+	}
+
+	cards.reload();
 }
 
-function applyProjectTag(data: any) {
-	switch (data.action) {
-		case 'create':
-		case 'update':
-			ProjectTag.parse(data.value);
-			break;
-		case 'delete':
-			projectTags.set(get(projectTags).filter((t) => t.id !== data.id));
-			break;
-	}
-}
+function applyView(data: any) {}
+
+function applyProjectTag(data: any) {}
+
+function applyFilter(data: any) {}

@@ -71,6 +71,35 @@ export default class CardTag {
 		return true;
 	}
 
+	parseUpdate(dict: any) {
+		if (dict.card_id && dict.card_id !== this._card.id) {
+			toastAlert('Failed to parse card tag update: card id mismatch');
+			return;
+		}
+
+		if (dict.tag_id && dict.tag_id !== this._projectTag.id) {
+			toastAlert('Failed to parse card tag update: projectTag id mismatch');
+			return;
+		}
+
+		if (dict.option_id) {
+			const option = this._projectTag.options.find((option) => option.id === dict.option_id);
+			if (!option) {
+				toastAlert('Failed to parse card tag update: option not found');
+				return;
+			}
+			this._option = option;
+		} else if (this._option) {
+			this._option = null;
+		}
+
+		if (dict.value) {
+			this._value = dict.value;
+		} else if (this._value) {
+			this._value = null;
+		}
+	}
+
 	static parse(json: any): CardTag | null;
 	static parse(json: any, card: Card | null | undefined): CardTag | null;
 

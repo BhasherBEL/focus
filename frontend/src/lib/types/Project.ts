@@ -65,8 +65,12 @@ export default class Project {
 		return true;
 	}
 
-	updateFromDict(dict: any) {
+	parseUpdate(dict: any) {
 		if (dict.title) this._title = dict.title;
+	}
+
+	static parseDelete(id: any) {
+		projects.update((projects) => projects.filter((project) => project.id !== id));
 	}
 
 	static parse(json: any): Project | null {

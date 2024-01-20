@@ -48,7 +48,7 @@ func CreateTag(c *fiber.Ctx) error {
 	}
 
 	publish(fiber.Map{
-		"object": "tag",
+		"object": "projectTag",
 		"action": "create",
 		"data": tag,
 		"X-Request-Source": source,
@@ -106,7 +106,7 @@ func DeleteTag(c *fiber.Ctx) error {
 	}
 
 	publish(fiber.Map{
-		"object": "tag",
+		"object": "projectTag",
 		"action": "delete",
 		"id": id,
 		"X-Request-Source": source,
@@ -149,7 +149,7 @@ func UpdateTag(c *fiber.Ctx) error {
 	}
 
 	publish(fiber.Map{
-		"object": "tag",
+		"object": "projectTag",
 		"action": "update",
 		"id": id,
 		"changes": tag,
@@ -202,7 +202,7 @@ func CreateTagOption(c *fiber.Ctx) error {
 	}
 
 	publish(fiber.Map{
-		"object": "tagoption",
+		"object": "tagOption",
 		"action": "create",
 		"data": option,
 		"X-Request-Source": source,
@@ -284,7 +284,7 @@ func DeleteTagOption(c *fiber.Ctx) error {
 	}
 
 	publish(fiber.Map{
-		"object": "tagoption",
+		"object": "tagOption",
 		"action": "delete",
 		"tag_id": tagID,
 		"option_id": optionID,
@@ -344,7 +344,7 @@ func UpdateTagOption(c *fiber.Ctx) error {
 	}
 
 	publish(fiber.Map{
-		"object": "tagoption",
+		"object": "tagOption",
 		"action": "update",
 		"tag_id": tagID,
 		"option_id": optionID,

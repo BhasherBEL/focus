@@ -152,12 +152,37 @@ export default class Card {
 		return true;
 	}
 
-	updateFromDict(dict: any) {
+	parseUpdate(dict: any) {
 		if (dict.project_id && dict.project_id !== this._project.id) {
 			this._project = Project.fromId(dict.project_id) as Project;
 		}
 		if (dict.title) this._title = dict.title;
 		if (dict.content) this._content = dict.content;
+	}
+
+	static parseDelete(id: any) {
+		cards.update((cards) => cards.filter((c) => c.id !== id));
+	}
+
+	parseTag(dict: any) {
+		const cardTag = CardTag.parse(dict, this);
+		if (!cardTag) return;
+
+		this._cardTags = [...this._cardTags, cardTag];
+	}
+
+	parseTagUpdate(dict: any) {
+		const cardTag = this._cardTags.find((ct) => ct.projectTag.id === dict.tag_id);
+		if (!cardTag) {
+			toastAlert('Failed to parse card tag update: card tag not found');
+			return;
+		}
+
+		cardTag.parseUpdate(dict);
+	}
+
+	parseTagDelete(id: any) {
+		this._cardTags = this._cardTags.filter((ct) => ct.projectTag.id !== id);
 	}
 
 	static parse(json: any): Card | null;

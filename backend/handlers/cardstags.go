@@ -78,8 +78,9 @@ func CreateCardTag(c *fiber.Ctx) error {
 	}
 
 	publish(fiber.Map{
-		"object": "cardtag",
+		"object": "cardTag",
 		"action": "create",
+		"card_id": cardID,
 		"data": cardtag,
 		"X-Request-Source": source,
 	});
@@ -172,9 +173,10 @@ func DeleteCardTag(c *fiber.Ctx) error {
 	}
 
 	publish(fiber.Map{
-		"object": "cardtag",
+		"object": "cardTag",
 		"action": "delete",
-		"id": cardID,
+		"card_id": cardID,
+		"tag_id": tagID,
 		"X-Request-Source": source,
 	});
 
@@ -272,7 +274,7 @@ func UpdateCardTag(c *fiber.Ctx) error {
 	}
 
 	publish(fiber.Map{
-		"object": "cardtag",
+		"object": "cardTag",
 		"action": "update",
 		"card_id": cardID,
 		"tag_id": tagID,
