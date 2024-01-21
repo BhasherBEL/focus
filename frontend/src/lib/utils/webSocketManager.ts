@@ -109,14 +109,14 @@ function applyProject(data: any) {
 		return;
 	}
 
-	const project = Project.fromId(data.id);
-	if (!project) {
-		toastWarning('Failed to parse project update: project not found');
+	if (data.action !== 'update') {
+		toastWarning('Failed to parse project update: unknown action');
 		return;
 	}
 
-	if (data.action !== 'update') {
-		toastWarning('Failed to parse project update: unknown action');
+	const project = Project.fromId(data.id);
+	if (!project) {
+		toastWarning('Failed to parse project update: project not found');
 		return;
 	}
 
@@ -134,14 +134,14 @@ function applyCard(data: any) {
 		return;
 	}
 
-	const card = Card.fromId(data.id);
-	if (!card) {
-		toastWarning('Failed to parse card update: card not found');
+	if (data.action !== 'update') {
+		toastWarning('Failed to parse card update: unknown action');
 		return;
 	}
 
-	if (data.action !== 'update') {
-		toastWarning('Failed to parse card update: unknown action');
+	const card = Card.fromId(data.id);
+	if (!card) {
+		toastWarning('Failed to parse card update: card not found');
 		return;
 	}
 
@@ -170,7 +170,30 @@ function applyCardTag(data: any) {
 	cards.reload();
 }
 
-function applyView(data: any) {}
+function applyView(data: any) {
+	if (data.action === 'create') {
+		View.parse(data.data);
+		return;
+	}
+	if (data.action === 'delete') {
+		View.parseDelete(data.id);
+		return;
+	}
+
+	if (data.action !== 'update') {
+		toastWarning('Failed to parse view update: unknown action');
+		return;
+	}
+
+	const view = View.fromId(data.id);
+	if (!view) {
+		toastWarning('Failed to parse view update: view not found');
+		return;
+	}
+
+	view.parseUpdate(data.changes);
+	views.reload(view);
+}
 
 function applyProjectTag(data: any) {}
 
