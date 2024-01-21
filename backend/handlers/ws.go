@@ -3,13 +3,14 @@ package handlers
 import (
 	"encoding/json"
 	"log"
+	"sync"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
 )
 
 var (
-	subscribers = make(map[*websocket.Conn]bool)
+	subscribers = sync.Map{}
 )
 
 func wsRouter(router fiber.Router) error {
@@ -27,9 +28,9 @@ func upgradeWebsocket(c *fiber.Ctx) error {
 }
 
 func handleWebsocket(c *websocket.Conn) {
-	subscribers[c] = true
+	subscribers.Store(c, true)
 	defer func() {
-		delete(subscribers, c)
+		subscribers.Delete(c)
 		c.Close()
 	}()
 
@@ -48,10 +49,13 @@ func publish(content fiber.Map) {
 		return
 	}
 
-	for s := range subscribers {
+	subscribers.Range(func(key, value interface{}) bool {
+		s := key.(*websocket.Conn)
 		if err := s.WriteMessage(websocket.TextMessage, jsonMessage); err != nil {
 			log.Println("Error writing to websocket:", err)
 			s.Close()
+			subscribers.Delete(s)
 		}
-	}
+		return true
+	})
 }
