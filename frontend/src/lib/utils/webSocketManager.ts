@@ -1,11 +1,9 @@
 import Card, { cards } from '$lib/types/Card';
-import CardTag from '$lib/types/CardTag';
 import Project, { projects } from '$lib/types/Project';
 import ProjectTag, { projectTags } from '$lib/types/ProjectTag';
 import View, { views } from '$lib/types/View';
 import { getBackendWsUrl, hasPendingRequests, randomID } from '$lib/utils/api';
 import { toastAlert, toastWarning } from '$lib/utils/toasts';
-import { get } from 'svelte/store';
 
 export default class WebSocketManager {
 	_socket: WebSocket | null;
@@ -95,6 +93,7 @@ function applyMessage(data: any) {
 	else if (data.object === 'card') applyCard(data);
 	else if (data.object === 'view') applyView(data);
 	else if (data.object === 'projectTag') applyProjectTag(data);
+	else if (data.object === 'tagOption') applyProjectTagOption(data);
 	else if (data.object === 'filter') applyFilter(data);
 	else toastWarning('Failed to parse WebSocket message: unknown object');
 }
@@ -195,6 +194,69 @@ function applyView(data: any) {
 	views.reload(view);
 }
 
-function applyProjectTag(data: any) {}
+function applyProjectTag(data: any) {
+	if (data.action === 'create') {
+		ProjectTag.parse(data.data);
+		return;
+	}
+	if (data.action === 'delete') {
+		ProjectTag.parseDelete(data.id);
+		return;
+	}
 
-function applyFilter(data: any) {}
+	if (data.action !== 'update') {
+		toastWarning('Failed to parse project tag update: unknown action');
+		return;
+	}
+
+	const projectTag = ProjectTag.fromId(data.id);
+	if (!projectTag) {
+		toastWarning('Failed to parse project tag update: project tag not found');
+		return;
+	}
+
+	projectTag.parseUpdate(data.changes);
+	projectTags.reload();
+}
+
+function applyProjectTagOption(data: any) {
+	const projectTag = ProjectTag.fromId(data.project_tag_id);
+	if (!projectTag) {
+		toastWarning('Failed to parse project tag option update: project tag not found');
+		return;
+	}
+
+	if (data.action === 'create') {
+		projectTag.parseOption(data.data);
+	} else if (data.action === 'update') {
+		projectTag.parseOptionUpdate(data.changes);
+	} else if (data.action === 'delete') {
+		projectTag.parseOptionDelete(data.id);
+	} else {
+		toastWarning('Failed to parse project tag option update: unknown action');
+		return;
+	}
+
+	projectTags.reload();
+}
+
+function applyFilter(data: any) {
+	const view = View.fromId(data.view_id);
+	if (!view) {
+		toastWarning('Failed to parse filter update: view not found');
+		return;
+	}
+
+	if (data.action === 'create') {
+		view.parseFilter(data.data);
+	} else if (data.action === 'update') {
+		view.parseFilterUpdate(data.changes);
+	} else if (data.action === 'delete') {
+		view.parseFilterDelete(data.id);
+	} else {
+		toastWarning('Failed to parse filter update: unknown action');
+		return;
+	}
+
+	views.reload(view);
+}

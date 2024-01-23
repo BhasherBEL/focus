@@ -73,4 +73,8 @@ export default class TagOption {
 
 		return options;
 	}
+
+	parseUpdate(dict: any) {
+		if (dict.value) this._value = dict.value;
+	}
 }

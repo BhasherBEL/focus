@@ -150,4 +150,20 @@ export default class Filter {
 
 		return new Filter(json.id, view, projectTag, json.filter_type, tagOption || null);
 	}
+
+	parseUpdate(changes: any) {
+		if (changes.tag_id) {
+			const projectTag = ProjectTag.fromId(changes.tag_id);
+			if (projectTag) this._projectTag = projectTag;
+		}
+
+		if (changes.filter_type) {
+			this._filterType = changes.filter_type;
+		}
+
+		if (changes.option_id) {
+			this._tagOption =
+				this.projectTag.options.find((option) => option.id === changes.option_id) || null;
+		}
+	}
 }

@@ -1,11 +1,11 @@
+import viewsApi from '$lib/api/viewsApi';
+import currentView from '$lib/stores/currentView';
+import { toastAlert } from '$lib/utils/toasts';
 import { get, writable } from 'svelte/store';
+import Filter from './Filter';
 import Project from './Project';
 import ProjectTag from './ProjectTag';
-import viewsApi from '$lib/api/viewsApi';
-import { toastAlert } from '$lib/utils/toasts';
-import Filter from './Filter';
 import type TagOption from './TagOption';
-import currentView from '$lib/stores/currentView';
 
 const { subscribe, set, update } = writable([] as View[]);
 
@@ -283,5 +283,25 @@ export default class View {
 		}
 
 		return views;
+	}
+
+	parseFilter(json: any) {
+		const filter = Filter.parse(json, this);
+
+		if (!filter) return;
+
+		this._filters = [...this._filters, filter];
+	}
+
+	parseFilterUpdate(json: any) {
+		const filter = this._filters.find((f) => f.id === json.id);
+
+		if (!filter) return;
+
+		filter.parseUpdate(json);
+	}
+
+	parseFilterDelete(id: number) {
+		this._filters = this._filters.filter((f) => f.id !== id);
 	}
 }

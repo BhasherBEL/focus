@@ -1,9 +1,9 @@
 // import type TagOption from './TagOption';
 
-import { get, writable } from 'svelte/store';
-import TagOption from './TagOption';
-import Project from './Project';
 import projectTagsApi from '$lib/api/projectTagsApi';
+import { get, writable } from 'svelte/store';
+import Project from './Project';
+import TagOption from './TagOption';
 
 const { subscribe, update, set } = writable([] as ProjectTag[]);
 
@@ -148,5 +148,38 @@ export default class ProjectTag {
 		}
 
 		return projectTags;
+	}
+
+	static parseDelete(id: number) {
+		projectTags.update((projectTags) => projectTags.filter((projectTag) => projectTag.id !== id));
+	}
+
+	parseUpdate(json: any) {
+		if (!json) return;
+
+		if (json.title) this._title = json.title;
+		if (json.type) this._type = json.type;
+	}
+
+	parseOption(json: any) {
+		if (!json) return;
+
+		const option = TagOption.parse(json, this);
+		if (!option) return;
+
+		this._options = [...this._options, option];
+	}
+
+	parseOptionDelete(id: number) {
+		this._options = this._options.filter((option) => option.id !== id);
+	}
+
+	parseOptionUpdate(json: any) {
+		if (!json) return;
+
+		const option = this._options.find((option) => option.id === json.id);
+		if (!option) return;
+
+		option.parseUpdate(json);
 	}
 }
