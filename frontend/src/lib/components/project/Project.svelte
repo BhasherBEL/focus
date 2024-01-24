@@ -52,6 +52,27 @@
 		return true;
 	}
 
+	function columnPassFilters(tagOption: TagOption | null, filters: Filter[]): boolean {
+		let is: TagOption[] = [];
+
+		for (const filter of filters) {
+			if ($currentView?.sortTag !== filter.projectTag) continue;
+			if (!filter.tagOption) continue;
+
+			if (filter.filterType === 0) {
+				is.push(filter.tagOption);
+			} else if (filter.filterType === 1) {
+				if (tagOption === filter.tagOption) return false;
+			}
+		}
+
+		if (is.length > 0) {
+			if (!is.some((o) => o === tagOption)) return false;
+		}
+
+		return true;
+	}
+
 	function extractColumnCards(view: View | null, cards: Card[], tagOption: TagOption | null) {
 		if (!view) return cards;
 
@@ -77,6 +98,17 @@
 
 		return sortedCards;
 	}
+
+	function isFiltered(tagOption: TagOption) {
+		if (!$currentView) return false;
+		if (!$currentView.filters) return false;
+
+		for (const filter of $currentView.filters) {
+			if (filter.tagOption === tagOption) return true;
+		}
+
+		return false;
+	}
 </script>
 
 {#if project}
@@ -87,19 +119,23 @@
 				<div class="grid">
 					{#if $currentView.primaryTag}
 						{#each $currentView.primaryTag.options as option (option.id)}
-							<Column
-								{option}
-								primaryTag={$currentView.primaryTag}
-								columnCards={extractColumnCards($currentView, $cards, option)}
-								{project}
-							/>
+							{#if columnPassFilters(option, $currentView.filters)}
+								<Column
+									{option}
+									primaryTag={$currentView.primaryTag}
+									columnCards={extractColumnCards($currentView, $cards, option)}
+									{project}
+								/>
+							{/if}
 						{/each}
 					{/if}
-					<Column
-						primaryTag={$currentView.primaryTag}
-						columnCards={extractColumnCards($currentView, $cards, null)}
-						{project}
-					/>
+					{#if columnPassFilters(null, $currentView.filters)}
+						<Column
+							primaryTag={$currentView.primaryTag}
+							columnCards={extractColumnCards($currentView, $cards, null)}
+							{project}
+						/>
+					{/if}
 				</div>
 			{/if}
 		{/if}
