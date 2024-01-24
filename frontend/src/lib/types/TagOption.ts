@@ -13,6 +13,10 @@ export default class TagOption {
 		this._value = value;
 	}
 
+	static compare(a: TagOption, b: TagOption): number {
+		return a.value.localeCompare(b.value);
+	}
+
 	get id(): number {
 		return this._id;
 	}

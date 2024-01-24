@@ -5,7 +5,7 @@
 	import type Project from '$lib/types/Project';
 	import type ProjectTag from '$lib/types/ProjectTag';
 	import { projectTags } from '$lib/types/ProjectTag';
-	import type TagOption from '$lib/types/TagOption';
+	import TagOption from '$lib/types/TagOption';
 	import type View from '$lib/types/View';
 	import Column from './Column.svelte';
 	import Header from './Header.svelte';
@@ -118,7 +118,7 @@
 			{#if $cards}
 				<div class="grid">
 					{#if $currentView.primaryTag}
-						{#each $currentView.primaryTag.options as option (option.id)}
+						{#each [...$currentView.primaryTag.options].sort(TagOption.compare) as option (option.id)}
 							{#if columnPassFilters(option, $currentView.filters)}
 								<Column
 									{option}

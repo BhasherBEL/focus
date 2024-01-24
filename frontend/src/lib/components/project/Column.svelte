@@ -71,6 +71,15 @@
 
 		card.showModal = true;
 	}
+
+	async function setOptionValue() {
+		if (!option || !primaryTag) return;
+		if (newOptionValue === option.value) return;
+
+		await option.setValue(newOptionValue);
+		newOptionValue = option.value;
+		currentView.reload();
+	}
 </script>
 
 <div
@@ -86,12 +95,11 @@
 		<input
 			bind:value={newOptionValue}
 			type="text"
-			on:blur={async () => {
-				if (!option || !primaryTag) return;
-				if (newOptionValue === option.value) return;
-
-				await option.setValue(newOptionValue);
-				newOptionValue = option.value;
+			on:blur={setOptionValue}
+			on:keydown={(e) => {
+				if (e.key === 'Enter') {
+					setOptionValue();
+				}
 			}}
 			disabled={option === null}
 		/>
