@@ -1,6 +1,7 @@
 // import type TagOption from './TagOption';
 
 import projectTagsApi from '$lib/api/projectTagsApi';
+import { toastAlert } from '$lib/utils/toasts';
 import { get, writable } from 'svelte/store';
 import Project from './Project';
 import TagOption from './TagOption';
@@ -69,11 +70,10 @@ export default class ProjectTag {
 	}
 
 	static async create(project: Project, title: string, type: number): Promise<ProjectTag | null> {
-		const response = await projectTagsApi.create(project.id, title, type);
+		const id = await projectTagsApi.create(project.id, title, type);
+		if (!id) return null;
 
-		if (!response) return null;
-
-		const projectTag = new ProjectTag(0, project, title, type, []);
+		const projectTag = new ProjectTag(id, project, title, type, []);
 
 		projectTags.update((projectTags) => [...projectTags, projectTag]);
 
@@ -81,7 +81,14 @@ export default class ProjectTag {
 	}
 
 	async delete(): Promise<boolean> {
-		return await projectTagsApi.delete(this.id);
+		const res = await projectTagsApi.delete(this.id);
+		if (!res) return false;
+
+		projectTags.update((projectTags) =>
+			projectTags.filter((projectTag) => projectTag.id !== this.id)
+		);
+
+		return true;
 	}
 
 	async update(title: string, type: number): Promise<boolean> {
@@ -112,12 +119,18 @@ export default class ProjectTag {
 	static parse(json: any, project: Project | null | undefined): ProjectTag | null;
 
 	static parse(json: any, project?: Project | null): ProjectTag | null {
-		if (!json) return null;
+		if (!json) {
+			toastAlert('Failed to parse ProjectTag');
+			return null;
+		}
 
-		if (!project) project = Project.fromId(json.project);
-		if (!project) return null;
+		if (!project) project = Project.fromId(json.project_id);
+		if (!project) {
+			toastAlert('Failed to parse ProjectTag: project not found');
+			return null;
+		}
 
-		const projectTag = new ProjectTag(json.id, json.project, json.title, json.type, []);
+		const projectTag = new ProjectTag(json.id, project, json.title, json.type, []);
 
 		const options = TagOption.parseAll(json.options, projectTag);
 

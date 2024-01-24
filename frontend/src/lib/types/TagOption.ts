@@ -1,4 +1,5 @@
 import tagsOptions from '$lib/api/tagsOptions';
+import { toastAlert } from '$lib/utils/toasts';
 import ProjectTag from './ProjectTag';
 
 export default class TagOption {
@@ -50,10 +51,16 @@ export default class TagOption {
 	static parse(json: any, projectTag: ProjectTag | null | undefined): TagOption | null;
 
 	static parse(json: any, projectTag?: ProjectTag | null | undefined): TagOption | null {
-		if (!json) return null;
+		if (!json) {
+			toastAlert('Failed to parse TagOption');
+			return null;
+		}
 
 		if (!projectTag) projectTag = ProjectTag.fromId(json.tag_id);
-		if (!projectTag) return null;
+		if (!projectTag) {
+			toastAlert('Failed to parse TagOption: ProjectTag not found');
+			return null;
+		}
 
 		return new TagOption(json.id, projectTag, json.value);
 	}
