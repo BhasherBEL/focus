@@ -34,6 +34,7 @@
 
 <style lang="less">
 	.menu {
+		z-index: 100;
 		position: absolute;
 		display: flex;
 		flex-direction: column;
