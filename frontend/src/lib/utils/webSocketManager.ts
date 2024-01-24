@@ -1,3 +1,4 @@
+import currentView from '$lib/stores/currentView';
 import Card, { cards } from '$lib/types/Card';
 import Project, { projects } from '$lib/types/Project';
 import ProjectTag, { projectTags } from '$lib/types/ProjectTag';
@@ -241,22 +242,17 @@ function applyProjectTagOption(data: any) {
 }
 
 function applyFilter(data: any) {
-	const view = View.fromId(data.view_id);
-	if (!view) {
-		toastWarning('Failed to parse filter update: view not found');
-		return;
-	}
-
 	if (data.action === 'create') {
-		view.parseFilter(data.data);
+		View.parseFilter(data.data);
 	} else if (data.action === 'update') {
-		view.parseFilterUpdate(data.changes);
+		View.parseFilterUpdate(data.changes);
 	} else if (data.action === 'delete') {
-		view.parseFilterDelete(data.id);
+		View.parseFilterDelete(data.id);
 	} else {
 		toastWarning('Failed to parse filter update: unknown action');
 		return;
 	}
 
-	views.reload(view);
+	views.reload();
+	currentView.reload();
 }

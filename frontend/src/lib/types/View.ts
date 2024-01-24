@@ -285,23 +285,27 @@ export default class View {
 		return views;
 	}
 
-	parseFilter(json: any) {
-		const filter = Filter.parse(json, this);
-
+	static parseFilter(json: any) {
+		const filter = Filter.parse(json);
 		if (!filter) return;
 
-		this._filters = [...this._filters, filter];
+		filter.view._filters = [...filter.view._filters, filter];
 	}
 
-	parseFilterUpdate(json: any) {
-		const filter = this._filters.find((f) => f.id === json.id);
+	static parseFilterUpdate(json: any) {
+		const view = get(views).find((v) => v._filters.map((f) => f.id).includes(json.id));
+		if (!view) return;
 
+		const filter = view._filters.find((f) => f.id === json.id);
 		if (!filter) return;
 
 		filter.parseUpdate(json);
 	}
 
-	parseFilterDelete(id: number) {
-		this._filters = this._filters.filter((f) => f.id !== id);
+	static parseFilterDelete(id: number) {
+		const view = get(views).find((v) => v._filters.map((f) => f.id).includes(id));
+		if (!view) return;
+
+		view._filters = view._filters.filter((f) => f.id !== id);
 	}
 }
