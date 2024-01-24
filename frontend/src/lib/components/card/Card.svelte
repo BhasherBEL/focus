@@ -23,6 +23,9 @@
 		<div class="id">#{card.id}</div>
 	</div>
 	<div class="tags">
+		{#if card.content}
+			☰
+		{/if}
 		{#each card.cardTags as tag}
 			{#if tag.option}
 				<span class="tag" style="border: 1px solid #333">{tag.option.value}</span>
