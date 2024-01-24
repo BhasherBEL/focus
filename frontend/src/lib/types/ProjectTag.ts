@@ -177,7 +177,7 @@ export default class ProjectTag {
 	parseOptionUpdate(json: any) {
 		if (!json) return;
 
-		const option = this._options.find((option) => option.id === json.id);
+		const option = this._options.find((option) => option.id === json.option_id);
 		if (!option) return;
 
 		option.parseUpdate(json);

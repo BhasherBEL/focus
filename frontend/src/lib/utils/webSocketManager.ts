@@ -221,18 +221,15 @@ function applyProjectTag(data: any) {
 }
 
 function applyProjectTagOption(data: any) {
-	const projectTag = ProjectTag.fromId(data.project_tag_id);
-	if (!projectTag) {
-		toastWarning('Failed to parse project tag option update: project tag not found');
-		return;
-	}
-
 	if (data.action === 'create') {
-		projectTag.parseOption(data.data);
+		const projectTag = ProjectTag.fromId(data.data.tag_id);
+		projectTag?.parseOption(data.data);
 	} else if (data.action === 'update') {
-		projectTag.parseOptionUpdate(data.changes);
+		const projectTag = ProjectTag.fromId(data.tag_id);
+		projectTag?.parseOptionUpdate(data.changes);
 	} else if (data.action === 'delete') {
-		projectTag.parseOptionDelete(data.id);
+		const projectTag = ProjectTag.fromId(data.tag_id);
+		projectTag?.parseOptionDelete(data.option_id);
 	} else {
 		toastWarning('Failed to parse project tag option update: unknown action');
 		return;
