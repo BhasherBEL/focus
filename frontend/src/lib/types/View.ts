@@ -51,6 +51,10 @@ export default class View {
 		this._filters = filters;
 	}
 
+	static compare(a: View, b: View): number {
+		return a.title.localeCompare(b.title);
+	}
+
 	get id(): number {
 		return this._id;
 	}
@@ -165,6 +169,8 @@ export default class View {
 			return false;
 
 		this._title = title;
+
+		views.reload(this);
 
 		return true;
 	}

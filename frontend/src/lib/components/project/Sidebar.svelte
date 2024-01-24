@@ -53,7 +53,7 @@
 			<h2>{project.title}</h2>
 			{#if views}
 				<ul>
-					{#each $views as view (view.id)}
+					{#each [...$views].sort(View.compare) as view (view.id)}
 						<!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
 						<li
 							on:click={() => {
