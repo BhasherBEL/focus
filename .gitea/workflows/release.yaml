@@ -40,6 +40,9 @@ jobs:
               http = true
               insecure = true
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
       - name: Login
         uses: docker/login-action@v2
         with:
@@ -174,7 +177,7 @@ jobs:
       - name: Generate PKGBUILD
         env:
           RELEASE_TAG: ${{ steps.tagName.outputs.tag }}
-        run: ./ci/generate-pkgbuild-server.py
+        run: ./ci/generate-pkgbuild-server-bin.py
 
       - name: Publish AUR package
         uses: KSXGitHub/github-actions-deploy-aur@v2.7.0
