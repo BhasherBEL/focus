@@ -1,0 +1,13 @@
+{
+	"short_name": "Focus",
+	"name": "Focus",
+	"start_url": "/",
+	"display": "standalone",
+	"icons": [
+		{
+			"src": "/img/icon.svg",
+			"type": "image/svg+xml",
+			"sizes": "any"
+		}
+	]
+}
