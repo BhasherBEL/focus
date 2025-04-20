@@ -1,4 +1,3 @@
-import type Card from '$lib/types/Card';
 import api, { processError } from '../utils/api';
 import status from '../utils/status';
 
